@@ -95,4 +95,5 @@ jobs:
             --image="${{ steps.image.outputs.sha_tag }}" \
             --service-account="${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
             --port=3000 \
+            --no-invoker-iam-check \
             --quiet
