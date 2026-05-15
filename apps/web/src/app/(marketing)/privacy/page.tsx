@@ -1,9 +1,7 @@
-import { MarketingPage } from "@/app/(marketing)/_components/marketing-page";
-import { metadataForLegalPage } from "@/app/(marketing)/_lib/page-helpers";
+import { permanentRedirect } from "next/navigation";
 
-export const generateMetadata = () =>
-  metadataForLegalPage("/privacy", "legalPage.privacy");
+export const generateMetadata = () => ({ title: "Privacy Policy" });
 
 export default function PrivacyPage() {
-  return <MarketingPage legalPageId="legalPage.privacy" />;
+  permanentRedirect("/privacy-policy");
 }

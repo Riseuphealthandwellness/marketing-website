@@ -1,9 +1,7 @@
-import { MarketingPage } from "@/app/(marketing)/_components/marketing-page";
-import { metadataForLegalPage } from "@/app/(marketing)/_lib/page-helpers";
+import { permanentRedirect } from "next/navigation";
 
-export const generateMetadata = () =>
-  metadataForLegalPage("/terms", "legalPage.terms");
+export const generateMetadata = () => ({ title: "Terms of Service" });
 
 export default function TermsPage() {
-  return <MarketingPage legalPageId="legalPage.terms" />;
+  permanentRedirect("/terms-of-service");
 }

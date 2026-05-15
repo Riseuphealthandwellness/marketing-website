@@ -1,0 +1,98 @@
+name: Deploy Marketing Website
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'marketing-website-494107' }}
+  GCP_REGION: ${{ vars.GCP_REGION || secrets.GCP_REGION || 'us-east4' }}
+  GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER || secrets.GCP_WORKLOAD_IDENTITY_PROVIDER || 'projects/494499026781/locations/global/workloadIdentityPools/riseup-mktg-github/providers/riseup-mktg-provider' }}
+  GCP_DEPLOYER_SERVICE_ACCOUNT: ${{ vars.GCP_DEPLOYER_SERVICE_ACCOUNT || secrets.GCP_DEPLOYER_SERVICE_ACCOUNT || vars.GCP_TERRAFORM_SERVICE_ACCOUNT || secrets.GCP_TERRAFORM_SERVICE_ACCOUNT || 'riseup-mktg-tf-deployer@marketing-website-494107.iam.gserviceaccount.com' }}
+  ARTIFACT_REPOSITORY_ID: ${{ vars.ARTIFACT_REPOSITORY_ID || secrets.ARTIFACT_REPOSITORY_ID || 'riseup-web' }}
+  CLOUD_RUN_SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_NAME || secrets.CLOUD_RUN_SERVICE_NAME || 'riseup-marketing-web' }}
+  RUNTIME_SERVICE_ACCOUNT_ID: ${{ vars.RUNTIME_SERVICE_ACCOUNT_ID || secrets.RUNTIME_SERVICE_ACCOUNT_ID || 'riseup-web-runtime' }}
+  IMAGE_NAME: marketing-website
+
+jobs:
+  deploy:
+    name: Build, Push, and Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    concurrency:
+      group: cloud-run-marketing-website-production
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required workflow config
+        run: |
+          set -euo pipefail
+
+          missing=0
+          for var in GCP_PROJECT_ID GCP_WORKLOAD_IDENTITY_PROVIDER GCP_DEPLOYER_SERVICE_ACCOUNT; do
+            if [ -z "${!var}" ]; then
+              echo "::error::Missing required GitHub Actions variable/secret: ${var}"
+              missing=1
+            fi
+          done
+
+          if [ "${missing}" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_DEPLOYER_SERVICE_ACCOUNT }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          create_credentials_file: true
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Set image tags
+        id: image
+        run: |
+          set -euo pipefail
+
+          registry="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REPOSITORY_ID}"
+          image="${registry}/${IMAGE_NAME}"
+
+          echo "sha_tag=${image}:${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
+          echo "latest_tag=${image}:latest" >> "${GITHUB_OUTPUT}"
+
+      - name: Build and push container image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ steps.image.outputs.sha_tag }}
+            ${{ steps.image.outputs.latest_tag }}
+
+      - name: Deploy new Cloud Run revision
+        run: |
+          set -euo pipefail
+
+          gcloud run deploy "${CLOUD_RUN_SERVICE_NAME}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --image="${{ steps.image.outputs.sha_tag }}" \
+            --service-account="${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
+            --port=3000 \
+            --quiet
