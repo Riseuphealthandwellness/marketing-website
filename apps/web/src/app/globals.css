@@ -1,0 +1,205 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource/lato/700.css";
+@import "@fontsource/lato/900.css";
+@import "@fontsource/open-sans/400.css";
+@import "@fontsource/open-sans/500.css";
+@import "@fontsource/open-sans/600.css";
+@import "@fontsource/open-sans/700.css";
+
+@font-face {
+  font-family: "Geometos";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src:
+    url("/fonts/geometos/Geometos.woff2") format("woff2"),
+    url("/fonts/geometos/Geometos.woff") format("woff"),
+    url("/fonts/geometos/Geometos.ttf") format("truetype");
+}
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-brand-rise-red: var(--brand-rise-red);
+  --color-brand-ember-orange: var(--brand-ember-orange);
+  --color-brand-sunburst-gold: var(--brand-sunburst-gold);
+  --color-brand-dawn-coral: var(--brand-dawn-coral);
+  --color-brand-coal: var(--brand-coal);
+  --color-brand-warm-white: var(--brand-warm-white);
+  --color-brand-deep-slate: var(--brand-deep-slate);
+  --color-brand-action: var(--brand-action);
+  --color-brand-action-hover: var(--brand-action-hover);
+  --color-brand-warm-accent: var(--brand-warm-accent);
+  --color-brand-soft-accent: var(--brand-soft-accent);
+  --color-brand-emphasis: var(--brand-emphasis);
+  --color-brand-trust: var(--brand-trust);
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --shadow-soft: var(--shadow-soft);
+}
+
+:root {
+  --radius: 0.5rem;
+  --font-sans: "Open Sans", Arial, Helvetica, sans-serif;
+  --font-heading: "Lato", Arial, Helvetica, sans-serif;
+  --font-logo: "Geometos", "Lato", Arial, Helvetica, sans-serif;
+
+  --brand-rise-red: #d84b2a;
+  --brand-ember-orange: #f26a2e;
+  --brand-sunburst-gold: #f2c14e;
+  --brand-dawn-coral: #f29a6b;
+  --brand-coal: #1f1c19;
+  --brand-warm-white: #f7f3ee;
+  --brand-deep-slate: #4e6570;
+
+  /* Palette roles:
+     action = strong CTAs; warm accent = approachable support;
+     soft accent = icons on dark panels; emphasis = sparing highlights;
+     trust = stable navigation, panels, and structural UI. */
+  --brand-action: var(--brand-rise-red);
+  --brand-action-hover: #b83a20;
+  --brand-warm-accent: var(--brand-ember-orange);
+  --brand-soft-accent: var(--brand-dawn-coral);
+  --brand-emphasis: var(--brand-sunburst-gold);
+  --brand-trust: var(--brand-deep-slate);
+
+  --background: var(--brand-warm-white);
+  --foreground: var(--brand-coal);
+
+  --card: #fffdfa;
+  --card-foreground: var(--foreground);
+  --popover: #fffdfa;
+  --popover-foreground: var(--foreground);
+
+  --primary: var(--brand-action);
+  --primary-foreground: var(--brand-warm-white);
+  --secondary: var(--brand-trust);
+  --secondary-foreground: var(--brand-warm-white);
+  --accent: var(--brand-emphasis);
+  --accent-foreground: var(--brand-warm-white);
+  --muted: #eee7df;
+  --muted-foreground: #62594f;
+  --destructive: var(--brand-action);
+  --border: #dfd2c8;
+  --input: #dfd2c8;
+  --ring: var(--brand-action);
+  --surface: #fff8ef;
+  --surface-foreground: var(--brand-coal);
+  --shadow-soft: 0 18px 45px rgb(31 28 25 / 8%);
+}
+
+.dark {
+  /* Slightly lifted charcoal for a calmer healthcare feel (avoid near-black). */
+  --background: #26211e;
+  --foreground: var(--brand-warm-white);
+
+  --card: #3a322c;
+  --card-foreground: var(--foreground);
+  --popover: #3a322c;
+  --popover-foreground: var(--foreground);
+
+  --primary: var(--brand-ember-orange);
+  --primary-foreground: var(--brand-coal);
+  /* Used heavily for link/label accents (e.g. text-secondary), so it must stay high-contrast in dark mode. */
+  --secondary: var(--brand-dawn-coral);
+  --secondary-foreground: var(--brand-coal);
+  --accent: var(--brand-sunburst-gold);
+  --accent-foreground: var(--brand-coal);
+  --muted: #403731;
+  --muted-foreground: #d8cec3;
+  --destructive: var(--brand-rise-red);
+  --border: #594c45;
+  --input: #594c45;
+  --ring: var(--brand-dawn-coral);
+  --surface: #352e29;
+  --surface-foreground: var(--brand-warm-white);
+  --shadow-soft: 0 18px 45px rgb(0 0 0 / 35%);
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  overscroll-behavior-y: none;
+  scroll-behavior: smooth;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  overscroll-behavior-y: none;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-feature-settings: "kern";
+}
+
+a {
+  text-underline-offset: 0.18em;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+::selection {
+  background: rgb(242 193 78 / 40%);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-logo {
+  font-family: var(--font-logo);
+  font-synthesis: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

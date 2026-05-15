@@ -1,0 +1,225 @@
+"use client";
+
+import { Send } from "lucide-react";
+import { useRef, useState } from "react";
+
+import { Container } from "@/components/layout/container";
+import { Section } from "@/components/layout/section";
+import { Button } from "@/components/ui/button";
+
+const topics = [
+  "General question",
+  "New patient access",
+  "Referral question",
+  "Billing or insurance",
+  "Careers",
+  "Other",
+];
+
+type FormState = {
+  error?: string;
+  ok?: boolean;
+};
+
+export function ContactFormSection() {
+  const startedAtRef = useRef<number | null>(null);
+  const [state, setState] = useState<FormState>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  function markStarted() {
+    startedAtRef.current ??= Date.now();
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    markStarted();
+    setIsSubmitting(true);
+    setState({});
+
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      topic: formData.get("topic"),
+      message: formData.get("message"),
+      consent: formData.get("consent") === "on",
+      website: formData.get("website"),
+      startedAt: startedAtRef.current,
+    };
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = (await response.json()) as FormState;
+
+      if (!response.ok || data.error) {
+        setState({ error: data.error || "The message could not be sent right now." });
+        return;
+      }
+
+      event.currentTarget.reset();
+      setState({ ok: true });
+    } catch {
+      setState({ error: "The message could not be sent right now. Please call or email us directly." });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <Section className="bg-surface">
+      <Container className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+        <div className="max-w-3xl">
+          <p className="font-heading text-sm font-black uppercase text-brand-warm-accent">
+            Contact form
+          </p>
+          <h2 className="mt-3 text-3xl font-black leading-tight tracking-normal text-foreground sm:text-4xl">
+            Send a non-urgent message.
+          </h2>
+          <p className="mt-5 text-lg leading-8 text-muted-foreground">
+            Please do not include medical details, symptoms, medication questions,
+            insurance identifiers, Social Security numbers, or urgent concerns.
+          </p>
+          <p className="mt-4 text-base leading-7 text-muted-foreground">
+            For emergencies, call 911. For active care questions, appointment changes,
+            or private clinical information, use the approved patient channel or call
+            the office.
+          </p>
+        </div>
+
+        <form
+          className="rounded-lg border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:p-6"
+          onChangeCapture={markStarted}
+          onFocusCapture={markStarted}
+          onSubmit={handleSubmit}
+        >
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label className="text-sm font-bold text-foreground" htmlFor="contact-name">
+                Name
+              </label>
+              <input
+                autoComplete="name"
+                className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                id="contact-name"
+                maxLength={80}
+                name="name"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-foreground" htmlFor="contact-email">
+                Email
+              </label>
+              <input
+                autoComplete="email"
+                className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                id="contact-email"
+                maxLength={254}
+                name="email"
+                required
+                type="email"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-foreground" htmlFor="contact-phone">
+                Phone
+              </label>
+              <input
+                autoComplete="tel"
+                className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                id="contact-phone"
+                maxLength={30}
+                name="phone"
+                type="tel"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-foreground" htmlFor="contact-topic">
+                Topic
+              </label>
+              <select
+                className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                defaultValue=""
+                id="contact-topic"
+                name="topic"
+                required
+              >
+                <option disabled value="">
+                  Select a topic
+                </option>
+                {topics.map((topic) => (
+                  <option key={topic} value={topic}>
+                    {topic}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-5">
+            <label className="text-sm font-bold text-foreground" htmlFor="contact-message">
+              Message
+            </label>
+            <textarea
+              className="mt-2 min-h-36 w-full resize-y rounded-md border border-input bg-background px-3 py-3 text-base leading-7 text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              id="contact-message"
+              maxLength={1500}
+              minLength={20}
+              name="message"
+              required
+            />
+          </div>
+
+          <div className="hidden" aria-hidden="true">
+            <label htmlFor="contact-website">Website</label>
+            <input
+              autoComplete="off"
+              id="contact-website"
+              name="website"
+              tabIndex={-1}
+              type="text"
+            />
+          </div>
+
+          <label className="mt-5 flex items-start gap-3 text-sm leading-6 text-muted-foreground">
+            <input
+              className="mt-1 size-4 rounded border-input accent-brand-action"
+              name="consent"
+              required
+              type="checkbox"
+            />
+            <span>
+              I understand this form is for non-urgent contact only and I have not
+              included protected health information or clinical details.
+            </span>
+          </label>
+
+          {state.error ? (
+            <p className="mt-4 rounded-md border border-brand-action/30 bg-brand-action/10 px-4 py-3 text-sm font-semibold text-brand-action">
+              {state.error}
+            </p>
+          ) : null}
+
+          {state.ok ? (
+            <p className="mt-4 rounded-md border border-brand-trust/30 bg-brand-trust/10 px-4 py-3 text-sm font-semibold text-brand-trust">
+              Your message was sent.
+            </p>
+          ) : null}
+
+          <Button className="mt-6" disabled={isSubmitting} type="submit">
+            <Send aria-hidden="true" className="size-4" />
+            {isSubmitting ? "Sending" : "Send message"}
+          </Button>
+        </form>
+      </Container>
+    </Section>
+  );
+}

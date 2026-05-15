@@ -1,0 +1,31 @@
+{
+  "name": "riseup",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "npm@11.1.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20.19.0",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "dev": "turbo dev --parallel",
+    "dev:web": "npm run dev --workspace @riseupwv/web",
+    "dev:studio": "npm run dev --workspace @riseupwv/studio",
+    "build": "turbo build",
+    "build:web": "npm run build --workspace @riseupwv/web",
+    "build:studio": "npm run build --workspace @riseupwv/studio",
+    "lint": "turbo lint",
+    "lint:web": "npm run lint --workspace @riseupwv/web",
+    "lint:studio": "npm run lint --workspace @riseupwv/studio",
+    "typecheck": "turbo typecheck",
+    "typecheck:web": "npm run typecheck --workspace @riseupwv/web",
+    "clean": "bash ./scripts/clean-ephemeral.sh",
+    "clean:deep": "bash ./scripts/clean-ephemeral.sh --deep"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.8"
+  }
+}
