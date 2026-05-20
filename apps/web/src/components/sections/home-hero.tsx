@@ -119,7 +119,7 @@ export function HomeHero({
           ) : null}
         </div>
 
-        <div className="self-end">
+        <div className="hidden self-end lg:block">
           <Image
             alt="Rise Up care team illustration"
             className="h-auto w-full object-contain"

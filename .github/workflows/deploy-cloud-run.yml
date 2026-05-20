@@ -18,6 +18,8 @@ env:
   ARTIFACT_REPOSITORY_ID: ${{ vars.ARTIFACT_REPOSITORY_ID || secrets.ARTIFACT_REPOSITORY_ID || 'riseup-web' }}
   CLOUD_RUN_SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_NAME || secrets.CLOUD_RUN_SERVICE_NAME || 'riseup-marketing-web' }}
   RUNTIME_SERVICE_ACCOUNT_ID: ${{ vars.RUNTIME_SERVICE_ACCOUNT_ID || secrets.RUNTIME_SERVICE_ACCOUNT_ID || 'riseup-web-runtime' }}
+  CONTACT_TO_EMAIL: ${{ vars.CONTACT_TO_EMAIL || 'contact@riseupwv.com' }}
+  CONTACT_FROM_EMAIL: ${{ vars.CONTACT_FROM_EMAIL || 'Rise Up Website <contact@riseupwv.com>' }}
   IMAGE_NAME: marketing-website
 
 jobs:
@@ -64,6 +66,33 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
 
+      - name: Seed Resend API key in Secret Manager
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${RESEND_API_KEY}" ]; then
+            echo "::error::Missing required GitHub Actions secret: RESEND_API_KEY"
+            exit 1
+          fi
+
+          if ! gcloud secrets describe RESEND_API_KEY --project="${GCP_PROJECT_ID}" >/dev/null 2>&1; then
+            gcloud secrets create RESEND_API_KEY \
+              --project="${GCP_PROJECT_ID}" \
+              --replication-policy=automatic
+          fi
+
+          printf '%s' "${RESEND_API_KEY}" | gcloud secrets versions add RESEND_API_KEY \
+            --project="${GCP_PROJECT_ID}" \
+            --data-file=-
+
+          gcloud secrets add-iam-policy-binding RESEND_API_KEY \
+            --project="${GCP_PROJECT_ID}" \
+            --member="serviceAccount:${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
+            --role="roles/secretmanager.secretAccessor" \
+            --quiet
+
       - name: Set image tags
         id: image
         run: |
@@ -94,7 +123,8 @@ jobs:
             --region="${GCP_REGION}" \
             --image="${{ steps.image.outputs.sha_tag }}" \
             --service-account="${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
-            --set-secrets="SANITY_REVALIDATE_SECRET=SANITY_REVALIDATE_SECRET:latest" \
+            --set-env-vars="CONTACT_TO_EMAIL=${CONTACT_TO_EMAIL},CONTACT_FROM_EMAIL=${CONTACT_FROM_EMAIL}" \
+            --set-secrets="SANITY_REVALIDATE_SECRET=SANITY_REVALIDATE_SECRET:latest,RESEND_API_KEY=RESEND_API_KEY:latest" \
             --port=3000 \
             --no-invoker-iam-check \
             --quiet
