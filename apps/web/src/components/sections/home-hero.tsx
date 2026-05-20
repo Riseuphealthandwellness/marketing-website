@@ -77,9 +77,10 @@ export function HomeHero({
   accessLinks,
 }: HomeHeroProps) {
   const renderedHeading = renderPortableHeadingText(heading);
+  const referralHref = accessLinks?.referral && accessLinks.referral !== "#" ? accessLinks.referral : "/referrals";
   const resolvedHeroButtons = (buttons ?? []).slice(0, 2).map((button) => ({
     ...button,
-    href: button.href || accessLinks?.referral || "#",
+    href: button.href && button.href !== "#" ? button.href : referralHref,
   }));
   const backgroundImageUrl =
     backgroundImage?.url || "/images/brand/appalachian-sunrise-valley.png";
