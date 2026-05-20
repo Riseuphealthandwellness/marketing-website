@@ -19,7 +19,7 @@ env:
   CLOUD_RUN_SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_NAME || secrets.CLOUD_RUN_SERVICE_NAME || 'riseup-marketing-web' }}
   RUNTIME_SERVICE_ACCOUNT_ID: ${{ vars.RUNTIME_SERVICE_ACCOUNT_ID || secrets.RUNTIME_SERVICE_ACCOUNT_ID || 'riseup-web-runtime' }}
   CONTACT_TO_EMAIL: ${{ vars.CONTACT_TO_EMAIL || 'contact@riseupwv.com' }}
-  REFERRAL_TO_EMAIL: ${{ vars.REFERRAL_TO_EMAIL || 'referral@riseupwv.com' }}
+  REFERRAL_TO_EMAIL: ${{ vars.REFERRAL_TO_EMAIL || 'contact@riseupwv.com' }}
   CONTACT_FROM_EMAIL: ${{ vars.CONTACT_FROM_EMAIL || 'Rise Up Website <contact@riseupwv.com>' }}
   IMAGE_NAME: marketing-website
 
@@ -94,6 +94,33 @@ jobs:
             --role="roles/secretmanager.secretAccessor" \
             --quiet
 
+      - name: Seed Mapbox access token in Secret Manager
+        env:
+          MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${MAPBOX_ACCESS_TOKEN}" ]; then
+            echo "::error::Missing required GitHub Actions secret: MAPBOX_ACCESS_TOKEN"
+            exit 1
+          fi
+
+          if ! gcloud secrets describe MAPBOX_ACCESS_TOKEN --project="${GCP_PROJECT_ID}" >/dev/null 2>&1; then
+            gcloud secrets create MAPBOX_ACCESS_TOKEN \
+              --project="${GCP_PROJECT_ID}" \
+              --replication-policy=automatic
+          fi
+
+          printf '%s' "${MAPBOX_ACCESS_TOKEN}" | gcloud secrets versions add MAPBOX_ACCESS_TOKEN \
+            --project="${GCP_PROJECT_ID}" \
+            --data-file=-
+
+          gcloud secrets add-iam-policy-binding MAPBOX_ACCESS_TOKEN \
+            --project="${GCP_PROJECT_ID}" \
+            --member="serviceAccount:${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
+            --role="roles/secretmanager.secretAccessor" \
+            --quiet
+
       - name: Set image tags
         id: image
         run: |
@@ -125,7 +152,7 @@ jobs:
             --image="${{ steps.image.outputs.sha_tag }}" \
             --service-account="${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
             --set-env-vars="CONTACT_TO_EMAIL=${CONTACT_TO_EMAIL},REFERRAL_TO_EMAIL=${REFERRAL_TO_EMAIL},CONTACT_FROM_EMAIL=${CONTACT_FROM_EMAIL}" \
-            --set-secrets="SANITY_REVALIDATE_SECRET=SANITY_REVALIDATE_SECRET:latest,RESEND_API_KEY=RESEND_API_KEY:latest" \
+            --set-secrets="SANITY_REVALIDATE_SECRET=SANITY_REVALIDATE_SECRET:latest,RESEND_API_KEY=RESEND_API_KEY:latest,MAPBOX_ACCESS_TOKEN=MAPBOX_ACCESS_TOKEN:latest" \
             --port=3000 \
             --no-invoker-iam-check \
             --quiet
