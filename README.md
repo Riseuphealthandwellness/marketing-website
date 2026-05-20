@@ -106,3 +106,19 @@ gcloud run deploy riseupwv-marketing \
 ```
 
 Add the patient access, Sanity, map, and analytics environment variables from `.env.example` in Cloud Run service settings or with `--set-env-vars` / `--set-secrets`.
+
+## Sanity Content Updates
+
+The web app caches Sanity reads for up to 5 minutes and also exposes a protected
+on-demand revalidation endpoint for Sanity webhooks:
+
+```text
+POST https://riseupwv.org/api/revalidate
+Authorization: Bearer SANITY_REVALIDATE_SECRET
+```
+
+Set `SANITY_REVALIDATE_SECRET` on the Cloud Run service, then create a Sanity
+webhook for publish/delete events that calls `/api/revalidate`. When the webhook
+fires, the app clears the Sanity cache tag and the next page request fetches
+fresh content. A full Cloud Run container rebuild is only needed for code,
+dependency, or environment changes, not routine CMS edits.

@@ -94,6 +94,7 @@ jobs:
             --region="${GCP_REGION}" \
             --image="${{ steps.image.outputs.sha_tag }}" \
             --service-account="${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
+            --set-secrets="SANITY_REVALIDATE_SECRET=SANITY_REVALIDATE_SECRET:latest" \
             --port=3000 \
             --no-invoker-iam-check \
             --quiet
