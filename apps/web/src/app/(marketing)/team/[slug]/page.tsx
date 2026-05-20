@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
+import { Badge } from "@/components/ui/badge";
 import { getAllProviderSlugs, getProviderBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
 
@@ -21,8 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!provider) return {};
   return createPageMetadata({
     title: provider.name,
-    description: `${provider.role} at RiseUp Health & Wellness.`,
+    description: provider.shortBio ?? `${provider.role} at RiseUp Health & Wellness.`,
     path: `/team/${slug}`,
+    seo: provider.seo,
     site: settings ?? undefined,
   });
 }
@@ -57,9 +59,21 @@ export default async function ProviderPage({ params }: Props) {
 
             {/* Bio */}
             <div className="flex flex-col justify-center">
-              <p className="font-heading text-sm font-black uppercase tracking-widest text-brand-warm-accent">
-                {provider.role}
-              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="font-heading text-sm font-black uppercase tracking-widest text-brand-warm-accent">
+                  {provider.role}
+                </p>
+                {provider.department ? (
+                  <Badge className="border-brand-trust/20 bg-brand-trust/10 text-brand-trust">
+                    {provider.department}
+                  </Badge>
+                ) : null}
+                {provider.acceptingNewPatients ? (
+                  <Badge className="border-brand-action/20 bg-brand-action/10 text-brand-action">
+                    Accepting new patients
+                  </Badge>
+                ) : null}
+              </div>
               <h1 className="mt-2 font-heading text-4xl font-black leading-tight tracking-normal text-foreground sm:text-5xl">
                 {provider.name}
                 {provider.credentials ? (
@@ -68,13 +82,70 @@ export default async function ProviderPage({ params }: Props) {
                   </span>
                 ) : null}
               </h1>
+              {provider.pronouns ? (
+                <p className="mt-3 text-sm font-semibold text-muted-foreground">{provider.pronouns}</p>
+              ) : null}
+              {provider.shortBio ? (
+                <p className="mt-6 max-w-3xl text-xl leading-8 text-foreground">{provider.shortBio}</p>
+              ) : null}
               {provider.bio ? (
-                <p className="mt-6 text-lg leading-8 text-muted-foreground">{provider.bio}</p>
+                <p className="mt-6 max-w-3xl whitespace-pre-line text-lg leading-8 text-muted-foreground">
+                  {provider.bio}
+                </p>
               ) : null}
             </div>
           </div>
         </Container>
       </section>
+
+      {provider.specialties?.length || provider.languages?.length || provider.locations?.length ? (
+        <Section>
+          <Container>
+            <div className="grid gap-8 md:grid-cols-3">
+              {provider.specialties?.length ? (
+                <div>
+                  <h2 className="font-heading text-lg font-black tracking-normal text-foreground">
+                    Specialties
+                  </h2>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {provider.specialties.map((specialty) => (
+                      <Badge key={specialty}>
+                        {specialty}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {provider.languages?.length ? (
+                <div>
+                  <h2 className="font-heading text-lg font-black tracking-normal text-foreground">
+                    Languages
+                  </h2>
+                  <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                    {provider.languages.map((language) => (
+                      <li key={language}>{language}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {provider.locations?.length ? (
+                <div>
+                  <h2 className="font-heading text-lg font-black tracking-normal text-foreground">
+                    Locations
+                  </h2>
+                  <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                    {provider.locations.map((location) => (
+                      <li key={location.slug}>{location.name}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </div>
+          </Container>
+        </Section>
+      ) : null}
 
       <ContactBand />
     </>

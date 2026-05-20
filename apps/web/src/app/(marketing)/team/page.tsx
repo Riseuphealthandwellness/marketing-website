@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PageHero } from "@/components/sections/page-hero";
+import { Badge } from "@/components/ui/badge";
 import { getProviders, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
 
@@ -55,6 +56,11 @@ export default async function TeamPage() {
                     <div className="aspect-[4/3] w-full bg-muted" />
                   )}
                   <div className="flex flex-1 flex-col p-5">
+                    {provider.department ? (
+                      <Badge className="mb-3 w-fit border-brand-trust/20 bg-brand-trust/10 text-brand-trust">
+                        {provider.department}
+                      </Badge>
+                    ) : null}
                     <h2 className="font-heading text-lg font-black tracking-normal text-foreground group-hover:text-brand-action">
                       {provider.name}
                       {provider.credentials ? (
@@ -66,8 +72,22 @@ export default async function TeamPage() {
                     <p className="mt-1 text-sm font-semibold uppercase tracking-wider text-brand-warm-accent">
                       {provider.role}
                     </p>
-                    {provider.bio ? (
-                      <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{provider.bio}</p>
+                    {provider.shortBio || provider.bio ? (
+                      <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
+                        {provider.shortBio ?? provider.bio}
+                      </p>
+                    ) : null}
+                    {provider.specialties?.length ? (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {provider.specialties.slice(0, 3).map((specialty) => (
+                          <span
+                            className="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground"
+                            key={specialty}
+                          >
+                            {specialty}
+                          </span>
+                        ))}
+                      </div>
                     ) : null}
                     <span className="mt-4 text-sm font-semibold text-brand-action group-hover:underline">
                       View profile →

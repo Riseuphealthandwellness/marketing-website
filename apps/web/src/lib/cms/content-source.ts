@@ -7,6 +7,7 @@ import type {
   MarketingPage,
   Program,
   Provider,
+  ReferralSettings,
   Service,
   SiteNavItem,
   SiteSettings,
@@ -71,6 +72,11 @@ export async function getLegalPage(id: "legalPage.privacy" | "legalPage.terms"):
 export async function getHomepageContent(): Promise<HomepageContent | null> {
   if (!isCmsConfigured) return null;
   return sanityClient.fetch<HomepageContent | null>(cmsQueries.homepage, {}, sanityFetchOptions);
+}
+
+export async function getReferralSettings(): Promise<ReferralSettings | null> {
+  if (!isCmsConfigured) return null;
+  return sanityClient.fetch<ReferralSettings | null>(cmsQueries.referralSettings, {}, sanityFetchOptions);
 }
 
 // Services

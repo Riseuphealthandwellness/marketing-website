@@ -43,6 +43,11 @@ export const structure: StructureResolver = (S) =>
                 .title('Navigation menus')
                 .icon(ListIcon)
                 .child(S.documentTypeList('navigation').title('Navigation menus')),
+              S.documentListItem()
+                .schemaType('referralSettings')
+                .id('referralSettings')
+                .title('Referral settings')
+                .icon(DocumentTextIcon),
               S.listItem()
                 .title('Legal pages')
                 .icon(DocumentTextIcon)
@@ -97,7 +102,7 @@ export const structure: StructureResolver = (S) =>
           S.list()
             .title('People & places')
             .items([
-              S.documentTypeListItem('provider').title('Providers').icon(UsersIcon),
+              S.documentTypeListItem('provider').title('Team members').icon(UsersIcon),
               S.documentTypeListItem('location').title('Locations').icon(PinIcon),
             ]),
         ),

@@ -70,8 +70,16 @@ export type Provider = {
   name: string;
   role: string;
   credentials?: string;
+  department?: string;
+  pronouns?: string;
+  shortBio?: string;
   bio: string;
   image?: CmsImage;
+  specialties?: string[];
+  languages?: string[];
+  locations?: Pick<Location, "slug" | "name">[];
+  acceptingNewPatients?: boolean;
+  seo?: SeoFields;
 };
 
 export type Location = {
@@ -164,6 +172,16 @@ export type CmsImage = {
   alt?: string;
   width?: number;
   height?: number;
+};
+
+export type CmsFile = {
+  url: string;
+  originalFilename?: string;
+};
+
+export type ReferralSettings = {
+  downloadLabel?: string;
+  referralPdf?: CmsFile;
 };
 
 export type BrandTextColor =

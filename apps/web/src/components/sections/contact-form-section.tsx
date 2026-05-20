@@ -21,6 +21,29 @@ type FormState = {
   ok?: boolean;
 };
 
+function cleanText(value: FormDataEntryValue | null, maxLength: number) {
+  return typeof value === "string" ? value.trim().replace(/\s+/g, " ").slice(0, maxLength) : "";
+}
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
+}
+
+function includesEmergencyLanguage(value: string) {
+  return /\b(911|emergency|urgent|overdose|suicid(?:e|al)|self[-\s]?harm|chest pain|can't breathe|cannot breathe)\b/i.test(
+    value,
+  );
+}
+
+function includesLikelySensitiveDetails(value: string) {
+  return (
+    /\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/.test(value) ||
+    /\b(?:dob|date of birth|birthdate|ssn|social security|medical record|mrn|policy number|member id|insurance id)\b/i.test(
+      value,
+    )
+  );
+}
+
 export function ContactFormSection() {
   const startedAtRef = useRef<number | null>(null);
   const [state, setState] = useState<FormState>({});
@@ -32,18 +55,77 @@ export function ContactFormSection() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     markStarted();
     setIsSubmitting(true);
     setState({});
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
+    const name = cleanText(formData.get("name"), 80);
+    const email = cleanText(formData.get("email"), 254).toLowerCase();
+    const phone = cleanText(formData.get("phone"), 30);
+    const topic = cleanText(formData.get("topic"), 40);
+    const message = cleanText(formData.get("message"), 1_500);
+    const consent = formData.get("consent") === "on";
+
+    if (!name) {
+      setState({ error: "Please enter your name." });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setState({ error: "Please enter a valid email address." });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!topics.includes(topic)) {
+      setState({ error: "Please select a topic." });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (message.length < 20) {
+      setState({ error: "Please enter a message with at least 20 characters." });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (includesEmergencyLanguage(message)) {
+      setState({
+        error:
+          "This form is not monitored for urgent concerns. Please call 911 or use your approved care channel.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (includesLikelySensitiveDetails(message)) {
+      setState({
+        error:
+          "Please remove protected health, insurance, or identity details before sending this message.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!consent) {
+      setState({
+        error:
+          "Please confirm that your message is non-urgent and does not include protected health information.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     const payload = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      phone: formData.get("phone"),
-      topic: formData.get("topic"),
-      message: formData.get("message"),
-      consent: formData.get("consent") === "on",
+      name,
+      email,
+      phone,
+      topic,
+      message,
+      consent,
       website: formData.get("website"),
       startedAt: startedAtRef.current,
     };
@@ -61,7 +143,8 @@ export function ContactFormSection() {
         return;
       }
 
-      event.currentTarget.reset();
+      form.reset();
+      startedAtRef.current = null;
       setState({ ok: true });
     } catch {
       setState({ error: "The message could not be sent right now. Please call or email us directly." });

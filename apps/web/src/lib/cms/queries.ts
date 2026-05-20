@@ -5,6 +5,11 @@ const imageProjection = `{
   "height": asset->metadata.dimensions.height
 }`;
 
+const fileProjection = `{
+  "url": asset->url,
+  "originalFilename": asset->originalFilename
+}`;
+
 const seoProjection = `{ title, description, canonicalUrl, noIndex, ogImage }`;
 
 const serviceProjection = `{
@@ -31,8 +36,16 @@ const providerProjection = `{
   name,
   role,
   credentials,
+  department,
+  pronouns,
+  shortBio,
   bio,
-  "image": image ${imageProjection}
+  "image": image ${imageProjection},
+  specialties,
+  languages,
+  acceptingNewPatients,
+  "locations": locations[]->{ "slug": slug.current, name },
+  seo ${seoProjection}
 }`;
 
 const locationProjection = `{
@@ -140,6 +153,11 @@ export const cmsQueries = {
 
   legalPageById: `*[_type == "legalPage" && _id == $id][0]{ title, body, seo }`,
 
+  referralSettings: `*[_type == "referralSettings" && _id == "referralSettings"][0]{
+    downloadLabel,
+    "referralPdf": referralPdf ${fileProjection}
+  }`,
+
   services: `*[_type == "service"] | order(title asc) ${serviceProjection}`,
 
   serviceBySlug: `*[_type == "service" && slug.current == $slug][0] ${serviceProjection}`,
@@ -152,7 +170,7 @@ export const cmsQueries = {
 
   allProgramSlugs: `*[_type == "program" && defined(slug.current)]{ "slug": slug.current }`,
 
-  providers: `*[_type == "provider"] | order(lastName asc, firstName asc) ${providerProjection}`,
+  providers: `*[_type == "provider" && coalesce(showOnTeamPage, true)] | order(coalesce(sortOrder, 9999) asc, lastName asc, firstName asc, name asc) ${providerProjection}`,
 
   providerBySlug: `*[_type == "provider" && slug.current == $slug][0] ${providerProjection}`,
 

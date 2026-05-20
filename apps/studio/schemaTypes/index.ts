@@ -7,6 +7,7 @@ import {navigation} from './documents/navigation'
 import {page} from './documents/page'
 import {program} from './documents/program'
 import {provider} from './documents/provider'
+import {referralSettings} from './documents/referralSettings'
 import {service} from './documents/service'
 import {siteSettings} from './documents/siteSettings'
 import {ctaButton} from './objects/ctaButton'
@@ -24,6 +25,7 @@ export const schemaTypes = [
   siteSettings,
   navigation,
   homepage,
+  referralSettings,
   page,
   service,
   program,

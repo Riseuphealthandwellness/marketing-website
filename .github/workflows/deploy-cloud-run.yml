@@ -19,6 +19,7 @@ env:
   CLOUD_RUN_SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_NAME || secrets.CLOUD_RUN_SERVICE_NAME || 'riseup-marketing-web' }}
   RUNTIME_SERVICE_ACCOUNT_ID: ${{ vars.RUNTIME_SERVICE_ACCOUNT_ID || secrets.RUNTIME_SERVICE_ACCOUNT_ID || 'riseup-web-runtime' }}
   CONTACT_TO_EMAIL: ${{ vars.CONTACT_TO_EMAIL || 'contact@riseupwv.com' }}
+  REFERRAL_TO_EMAIL: ${{ vars.REFERRAL_TO_EMAIL || 'referral@riseupwv.com' }}
   CONTACT_FROM_EMAIL: ${{ vars.CONTACT_FROM_EMAIL || 'Rise Up Website <contact@riseupwv.com>' }}
   IMAGE_NAME: marketing-website
 
@@ -123,7 +124,7 @@ jobs:
             --region="${GCP_REGION}" \
             --image="${{ steps.image.outputs.sha_tag }}" \
             --service-account="${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
-            --set-env-vars="CONTACT_TO_EMAIL=${CONTACT_TO_EMAIL},CONTACT_FROM_EMAIL=${CONTACT_FROM_EMAIL}" \
+            --set-env-vars="CONTACT_TO_EMAIL=${CONTACT_TO_EMAIL},REFERRAL_TO_EMAIL=${REFERRAL_TO_EMAIL},CONTACT_FROM_EMAIL=${CONTACT_FROM_EMAIL}" \
             --set-secrets="SANITY_REVALIDATE_SECRET=SANITY_REVALIDATE_SECRET:latest,RESEND_API_KEY=RESEND_API_KEY:latest" \
             --port=3000 \
             --no-invoker-iam-check \
