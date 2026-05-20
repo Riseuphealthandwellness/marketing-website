@@ -11,7 +11,7 @@
     "npm": ">=10"
   },
   "scripts": {
-    "dev": "turbo dev --parallel",
+    "dev": "turbo dev",
     "dev:web": "npm run dev --workspace @riseupwv/web",
     "dev:studio": "npm run dev --workspace @riseupwv/studio",
     "build": "turbo build",
