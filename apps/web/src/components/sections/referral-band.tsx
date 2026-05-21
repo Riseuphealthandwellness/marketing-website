@@ -14,7 +14,8 @@ type ReferralBandProps = {
 };
 
 function usableHref(href?: string) {
-  return href && href !== "#" ? href : undefined;
+  const trimmed = href?.trim();
+  return trimmed && trimmed !== "#" ? trimmed : undefined;
 }
 
 export function ReferralBand({ cta, accessLinks }: ReferralBandProps) {

@@ -5,6 +5,36 @@ import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { getFooterNav, getSiteSettings } from "@/lib/cms/content-source";
 
+const copyrightTokenPattern = /(\[year\]|\[name\]|\[privacy\]|\[terms\])/g;
+
+function renderCopyrightText(template: string | undefined, name: string | undefined) {
+  const text =
+    template?.trim() ||
+    "© [year] [name]. All rights reserved. | [privacy] | [terms]";
+  const year = String(new Date().getFullYear());
+
+  return text.split(copyrightTokenPattern).map((part, index) => {
+    if (part === "[year]") return year;
+    if (part === "[name]") return name ?? "";
+    if (part === "[privacy]") {
+      return (
+        <Link className="hover:text-brand-warm-white" href="/privacy-policy" key={`${part}-${index}`}>
+          Privacy policy
+        </Link>
+      );
+    }
+    if (part === "[terms]") {
+      return (
+        <Link className="hover:text-brand-warm-white" href="/terms-of-service" key={`${part}-${index}`}>
+          Terms of service
+        </Link>
+      );
+    }
+
+    return part;
+  });
+}
+
 export async function SiteFooter() {
   const [settings, footerNav] = await Promise.all([getSiteSettings(), getFooterNav()]);
 
@@ -103,8 +133,8 @@ export async function SiteFooter() {
         </div>
 
         <div className="mt-10 border-t border-brand-warm-white/14 pt-6 text-sm text-brand-warm-white/62">
-          <p>
-            © {new Date().getFullYear()} {settings?.name ?? ""}. All rights reserved.
+          <p className="flex flex-wrap gap-x-2 gap-y-1">
+            {renderCopyrightText(settings?.copyrightText, settings?.name)}
           </p>
         </div>
       </Container>

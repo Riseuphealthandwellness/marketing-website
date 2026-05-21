@@ -28,11 +28,9 @@ export async function getNavigation(slug: string): Promise<SiteNavItem[]> {
   if (!isCmsConfigured) return [];
   const doc = await sanityClient.fetch<{ items: SiteNavItem[] } | null>(
     cmsQueries.navigation,
-    { slug },
+    { id: `navigation.${slug}` },
     sanityFetchOptions,
   );
-  // DEBUG: remove after confirming nav data is correct
-  console.log("[nav]", slug, JSON.stringify(doc, null, 2));
   return doc?.items ?? [];
 }
 
@@ -43,7 +41,7 @@ export async function getFooterNav(): Promise<{ title: string; links: { label: s
     slugs.map((slug) =>
       sanityClient.fetch<{ title: string; items: { label: string; href: string }[] } | null>(
         cmsQueries.navigation,
-        { slug },
+        { id: `navigation.${slug}` },
         sanityFetchOptions,
       ),
     ),

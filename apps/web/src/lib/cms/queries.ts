@@ -69,6 +69,7 @@ export const cmsQueries = {
   siteSettings: `*[_type == "siteSettings"][0]{
     name,
     tagline,
+    copyrightText,
     url,
     phone,
     email,
@@ -83,7 +84,7 @@ export const cmsQueries = {
     "logo": logo ${imageProjection}
   }`,
 
-  navigation: `*[_type == "navigation" && key == $slug][0]{
+  navigation: `*[_type == "navigation" && _id == $id][0]{
     title,
     items[]{
       _type,
@@ -109,7 +110,11 @@ export const cmsQueries = {
     }
   }`,
 
-  homepage: `*[_type == "homepage"][0]{
+  homepage: `select(
+    defined(*[_type == "homepageSettings" && _id == "homepageSettings"][0].hero) => *[_type == "homepageSettings" && _id == "homepageSettings"][0],
+    defined(*[_type == "pageSettings" && _id == "pageSettings"][0].homepage.hero) => *[_type == "pageSettings" && _id == "pageSettings"][0].homepage,
+    *[_type == "homepage"][0]
+  ){
     hero{
       eyebrow,
       heading[]{
@@ -131,7 +136,11 @@ export const cmsQueries = {
     seo
   }`,
 
-  pageBySlug: `*[_type == "page" && slug.current == $slug && status == "published"][0]{
+  pageBySlug: `select(
+    defined(*[_type == "landingPageSettings" && _id == "landingPageSettings"][0].landingPages[slug == $slug][0].title) => *[_type == "landingPageSettings" && _id == "landingPageSettings"][0].landingPages[slug == $slug][0],
+    defined(*[_type == "pageSettings" && _id == "pageSettings"][0].landingPages[slug == $slug][0].title) => *[_type == "pageSettings" && _id == "pageSettings"][0].landingPages[slug == $slug][0],
+    *[_type == "page" && slug.current == $slug && status == "published"][0]
+  ){
     title,
     eyebrow,
     description,
@@ -153,7 +162,11 @@ export const cmsQueries = {
 
   legalPageById: `*[_type == "legalPage" && _id == $id][0]{ title, body, seo }`,
 
-  referralSettings: `*[_type == "referralSettings" && _id == "referralSettings"][0]{
+  referralSettings: `select(
+    defined(*[_type == "referralPageSettings" && _id == "referralPageSettings"][0].referralPdf) => *[_type == "referralPageSettings" && _id == "referralPageSettings"][0],
+    defined(*[_type == "pageSettings" && _id == "pageSettings"][0].referrals.referralPdf) => *[_type == "pageSettings" && _id == "pageSettings"][0].referrals,
+    *[_type == "referralSettings" && _id == "referralSettings"][0]
+  ){
     downloadLabel,
     "referralPdf": referralPdf ${fileProjection}
   }`,

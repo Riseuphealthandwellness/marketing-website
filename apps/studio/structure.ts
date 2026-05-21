@@ -6,48 +6,98 @@ import {
   HeartIcon,
   HelpCircleIcon,
   HomeIcon,
+  LaunchIcon,
   ListIcon,
-  PinIcon,
   StackIcon,
   UsersIcon,
 } from '@sanity/icons'
 import type {StructureResolver} from 'sanity/structure'
+import {navigationSingletons} from './schemaTypes/documents/navigation'
 
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title('RiseUp WV')
+    .title('Marketing website')
     .items([
-      // ── Site settings (singleton) ────────────────────────────────────────
-      S.documentListItem()
-        .schemaType('siteSettings')
-        .id('siteSettings')
-        .title('Site settings')
-        .icon(CogIcon),
+      S.listItem()
+        .title('Organization profile')
+        .icon(CogIcon)
+        .child(
+          S.document()
+            .schemaType('siteSettings')
+            .documentId('siteSettings')
+            .title('Organization profile'),
+        ),
+      S.listItem()
+        .title('Page settings')
+        .icon(DocumentsIcon)
+        .child(
+          S.list()
+            .title('Page settings')
+            .items([
+              S.listItem()
+                .title('Homepage')
+                .icon(HomeIcon)
+                .child(
+                  S.document()
+                    .schemaType('homepageSettings')
+                    .documentId('homepageSettings')
+                    .title('Homepage settings'),
+                ),
+              S.listItem()
+                .title('Landing pages')
+                .icon(DocumentsIcon)
+                .child(
+                  S.document()
+                    .schemaType('landingPageSettings')
+                    .documentId('landingPageSettings')
+                    .title('Landing page settings'),
+                ),
+              S.listItem()
+                .title('Referrals')
+                .icon(LaunchIcon)
+                .child(
+                  S.document()
+                    .schemaType('referralPageSettings')
+                    .documentId('referralPageSettings')
+                    .title('Referral page settings'),
+                ),
+            ]),
+        ),
 
       S.divider(),
 
-      // ── Site structure ───────────────────────────────────────────────────
       S.listItem()
-        .title('Site structure')
-        .icon(CogIcon)
+        .title('Website content')
+        .icon(DocumentsIcon)
         .child(
           S.list()
-            .title('Site structure')
+            .title('Website content')
             .items([
-              S.documentListItem()
-                .schemaType('homepage')
-                .id('homepage')
-                .title('Homepage')
-                .icon(HomeIcon),
+              S.listItem()
+                .title('Page builder')
+                .icon(DocumentsIcon)
+                .child(S.documentTypeList('page').title('Page builder')),
               S.listItem()
                 .title('Navigation menus')
                 .icon(ListIcon)
-                .child(S.documentTypeList('navigation').title('Navigation menus')),
-              S.documentListItem()
-                .schemaType('referralSettings')
-                .id('referralSettings')
-                .title('Referral settings')
-                .icon(DocumentTextIcon),
+                .child(
+                  S.list()
+                    .title('Navigation menus')
+                    .items(
+                      navigationSingletons.map((nav) =>
+                        S.listItem()
+                          .title(nav.title)
+                          .icon(ListIcon)
+                          .child(
+                            S.document()
+                              .schemaType('navigation')
+                              .documentId(nav.id)
+                              .initialValueTemplate(`navigation-${nav.key}`)
+                              .title(nav.title),
+                          ),
+                      ),
+                    ),
+                ),
               S.listItem()
                 .title('Legal pages')
                 .icon(DocumentTextIcon)
@@ -55,16 +105,24 @@ export const structure: StructureResolver = (S) =>
                   S.list()
                     .title('Legal pages')
                     .items([
-                      S.documentListItem()
-                        .schemaType('legalPage')
-                        .id('legalPage.privacy')
+                      S.listItem()
                         .title('Privacy policy')
-                        .icon(DocumentTextIcon),
-                      S.documentListItem()
-                        .schemaType('legalPage')
-                        .id('legalPage.terms')
+                        .icon(DocumentTextIcon)
+                        .child(
+                          S.document()
+                            .schemaType('legalPage')
+                            .documentId('legalPage.privacy')
+                            .title('Privacy policy'),
+                        ),
+                      S.listItem()
                         .title('Terms of service')
-                        .icon(DocumentTextIcon),
+                        .icon(DocumentTextIcon)
+                        .child(
+                          S.document()
+                            .schemaType('legalPage')
+                            .documentId('legalPage.terms')
+                            .title('Terms of service'),
+                        ),
                     ]),
                 ),
             ]),
@@ -72,21 +130,12 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
-      // ── Pages ────────────────────────────────────────────────────────────
       S.listItem()
-        .title('Pages')
-        .icon(DocumentsIcon)
-        .child(S.documentTypeList('page').title('Pages')),
-
-      S.divider(),
-
-      // ── Care content ─────────────────────────────────────────────────────
-      S.listItem()
-        .title('Care content')
+        .title('Care library')
         .icon(HeartIcon)
         .child(
           S.list()
-            .title('Care content')
+            .title('Care library')
             .items([
               S.documentTypeListItem('service').title('Services').icon(HeartIcon),
               S.documentTypeListItem('program').title('Programs').icon(StackIcon),
@@ -94,22 +143,19 @@ export const structure: StructureResolver = (S) =>
             ]),
         ),
 
-      // ── People & places ──────────────────────────────────────────────────
       S.listItem()
-        .title('People & places')
+        .title('Team')
         .icon(UsersIcon)
         .child(
           S.list()
-            .title('People & places')
+            .title('Team')
             .items([
               S.documentTypeListItem('provider').title('Team members').icon(UsersIcon),
-              S.documentTypeListItem('location').title('Locations').icon(PinIcon),
             ]),
         ),
 
       S.divider(),
 
-      // ── Operations ───────────────────────────────────────────────────────
       S.listItem()
         .title('Operations')
         .icon(BellIcon)
