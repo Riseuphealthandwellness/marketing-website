@@ -13,8 +13,13 @@ type ReferralBandProps = {
   accessLinks?: PatientAccessLinks;
 };
 
+function usableHref(href?: string) {
+  const trimmed = href?.trim();
+  return trimmed && trimmed !== "#" ? trimmed : undefined;
+}
+
 export function ReferralBand({ cta, accessLinks }: ReferralBandProps) {
-  const primaryHref = cta?.primaryHref || accessLinks?.referral || "#";
+  const primaryHref = usableHref(cta?.primaryHref) || usableHref(accessLinks?.referral) || "/referrals";
   const secondaryHref = cta?.secondaryHref || "/contact";
   const referralIsExternal = isExternalUrl(primaryHref);
 

@@ -109,6 +109,7 @@ export type PatientAccessLinks = {
 export type SiteSettings = {
   name: string;
   tagline?: string;
+  copyrightText?: string;
   url: string;
   phone: string;
   email: string;

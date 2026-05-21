@@ -1,12 +1,16 @@
 import {announcement} from './documents/announcement'
 import {faq} from './documents/faq'
 import {homepage} from './documents/homepage'
+import {homepageSettings} from './documents/homepageSettings'
+import {landingPageSettings} from './documents/landingPageSettings'
 import {location} from './documents/location'
 import {legalPage} from './documents/legalPage'
 import {navigation} from './documents/navigation'
 import {page} from './documents/page'
+import {pageSettings} from './documents/pageSettings'
 import {program} from './documents/program'
 import {provider} from './documents/provider'
+import {referralPageSettings} from './documents/referralPageSettings'
 import {referralSettings} from './documents/referralSettings'
 import {service} from './documents/service'
 import {siteSettings} from './documents/siteSettings'
@@ -24,6 +28,10 @@ import {textColor} from './objects/textColor'
 export const schemaTypes = [
   siteSettings,
   navigation,
+  homepageSettings,
+  landingPageSettings,
+  referralPageSettings,
+  pageSettings,
   homepage,
   referralSettings,
   page,
