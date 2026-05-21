@@ -1,21 +1,21 @@
 import {announcement} from './documents/announcement'
 import {faq} from './documents/faq'
-import {homepage} from './documents/homepage'
 import {homepageSettings} from './documents/homepageSettings'
 import {landingPageSettings} from './documents/landingPageSettings'
 import {location} from './documents/location'
 import {legalPage} from './documents/legalPage'
 import {navigation} from './documents/navigation'
 import {page} from './documents/page'
-import {pageSettings} from './documents/pageSettings'
 import {program} from './documents/program'
 import {provider} from './documents/provider'
 import {referralPageSettings} from './documents/referralPageSettings'
-import {referralSettings} from './documents/referralSettings'
 import {service} from './documents/service'
 import {siteSettings} from './documents/siteSettings'
+import {accessLinks} from './objects/accessLinks'
 import {ctaButton} from './objects/ctaButton'
 import {ctaBlock} from './objects/ctaBlock'
+import {homepageHero} from './objects/homepageHero'
+import {landingPageSetting} from './objects/landingPageSetting'
 import {link} from './objects/link'
 import {navLink} from './objects/navLink'
 import {navMegaMenu} from './objects/navMegaMenu'
@@ -31,9 +31,6 @@ export const schemaTypes = [
   homepageSettings,
   landingPageSettings,
   referralPageSettings,
-  pageSettings,
-  homepage,
-  referralSettings,
   page,
   service,
   program,
@@ -42,6 +39,9 @@ export const schemaTypes = [
   legalPage,
   faq,
   announcement,
+  accessLinks,
+  homepageHero,
+  landingPageSetting,
   link,
   navLink,
   navMegaMenu,

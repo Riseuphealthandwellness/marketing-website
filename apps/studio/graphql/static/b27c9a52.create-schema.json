@@ -1,0 +1,2776 @@
+[
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "rows": 2,
+        "description": "Shown below the site name in the header logo. Use Enter to break across two lines.",
+        "name": "tagline",
+        "type": "text",
+        "title": "Logo subtitle"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "name": "url",
+        "type": "url",
+        "title": "Site URL"
+      },
+      {
+        "name": "phone",
+        "type": "string"
+      },
+      {
+        "name": "email",
+        "type": "email"
+      },
+      {
+        "rows": 3,
+        "name": "address",
+        "type": "text"
+      },
+      {
+        "name": "location",
+        "type": "geopoint",
+        "title": "Map location"
+      },
+      {
+        "initialValue": 13,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              },
+              {
+                "flag": "max",
+                "constraint": 22
+              }
+            ]
+          }
+        ],
+        "name": "locationZoom",
+        "type": "number",
+        "title": "Map zoom"
+      },
+      {
+        "description": "Brand mark shown in the header and footer. Falls back to the built-in image if not set.",
+        "fields": [
+          {
+            "name": "alt",
+            "type": "string",
+            "title": "Alt text"
+          }
+        ],
+        "name": "logo",
+        "type": "image",
+        "title": "Logo image"
+      },
+      {
+        "description": "Shown in the footer. Supports [year], [name], [privacy], and [terms]. Defaults to \"© [year] [name]. All rights reserved. | [privacy] | [terms]\" if left blank.",
+        "name": "copyrightText",
+        "type": "string",
+        "title": "Copyright text"
+      },
+      {
+        "name": "headerCta",
+        "type": "ctaButton",
+        "title": "Header call to action"
+      },
+      {
+        "fields": [
+          {
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "uri",
+                    "constraint": {
+                      "options": {
+                        "scheme": [
+                          "/^http$/",
+                          "/^https$/"
+                        ],
+                        "allowRelative": false,
+                        "relativeOnly": false,
+                        "allowCredentials": false
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "name": "portal",
+            "type": "url",
+            "title": "Patient portal URL"
+          },
+          {
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "uri",
+                    "constraint": {
+                      "options": {
+                        "scheme": [
+                          "/^http$/",
+                          "/^https$/"
+                        ],
+                        "allowRelative": false,
+                        "relativeOnly": false,
+                        "allowCredentials": false
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "name": "scheduling",
+            "type": "url",
+            "title": "Scheduling URL"
+          },
+          {
+            "description": "Use a site path such as /patient-resources or a full external URL.",
+            "name": "intake",
+            "type": "string",
+            "title": "Intake URL"
+          },
+          {
+            "description": "Use a site path such as /referrals or a full external URL.",
+            "name": "referral",
+            "type": "string",
+            "title": "Referral URL"
+          }
+        ],
+        "name": "accessLinks",
+        "type": "object",
+        "title": "Access links"
+      }
+    ],
+    "name": "siteSettings",
+    "type": "document",
+    "title": "Organization profile"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "options": {
+          "list": [
+            {
+              "title": "Main navigation",
+              "value": "main"
+            },
+            {
+              "title": "Footer: Care",
+              "value": "footer-care"
+            },
+            {
+              "title": "Footer: Patients",
+              "value": "footer-patients"
+            },
+            {
+              "title": "Footer: About",
+              "value": "footer-about"
+            }
+          ]
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "valid",
+                "constraint": [
+                  "main",
+                  "footer-care",
+                  "footer-patients",
+                  "footer-about"
+                ]
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "custom"
+              }
+            ]
+          }
+        ],
+        "description": "Internal frontend key. Use the fixed navigation entries in the Studio desk.",
+        "readOnly": true,
+        "name": "key",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              },
+              {
+                "flag": "custom"
+              }
+            ]
+          }
+        ],
+        "of": [
+          {
+            "type": "navLink",
+            "title": "Link"
+          },
+          {
+            "type": "navMegaMenu",
+            "title": "Mega menu"
+          }
+        ],
+        "name": "items",
+        "type": "array"
+      }
+    ],
+    "name": "navigation",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ]
+              }
+            ],
+            "name": "eyebrow",
+            "type": "string"
+          },
+          {
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  },
+                  {
+                    "flag": "min",
+                    "constraint": 1
+                  }
+                ]
+              }
+            ],
+            "description": "Use the text color annotation to apply approved brand palette colors.",
+            "of": [
+              {
+                "marks": {
+                  "annotations": [
+                    {
+                      "name": "textColor",
+                      "type": "textColor",
+                      "title": "Text color"
+                    }
+                  ]
+                },
+                "of": [],
+                "styles": [
+                  {
+                    "value": "normal",
+                    "title": "Normal"
+                  }
+                ],
+                "type": "block"
+              }
+            ],
+            "name": "heading",
+            "type": "array"
+          },
+          {
+            "rows": 3,
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ]
+              }
+            ],
+            "name": "description",
+            "type": "text"
+          },
+          {
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "max",
+                    "constraint": 2
+                  }
+                ]
+              }
+            ],
+            "of": [
+              {
+                "type": "ctaButton",
+                "title": "CTA button"
+              }
+            ],
+            "name": "buttons",
+            "type": "array"
+          },
+          {
+            "options": {
+              "hotspot": true
+            },
+            "fields": [
+              {
+                "name": "alt",
+                "type": "string",
+                "title": "Alt text"
+              }
+            ],
+            "name": "backgroundImage",
+            "type": "image",
+            "title": "Background image"
+          },
+          {
+            "options": {
+              "hotspot": true
+            },
+            "fields": [
+              {
+                "name": "alt",
+                "type": "string",
+                "title": "Alt text"
+              }
+            ],
+            "name": "featureImage",
+            "type": "image",
+            "title": "Right-side feature image"
+          }
+        ],
+        "name": "hero",
+        "type": "object"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "careModelHighlights",
+        "type": "array",
+        "title": "Care model highlights"
+      },
+      {
+        "of": [
+          {
+            "type": "serviceHighlight",
+            "title": "Service highlight"
+          }
+        ],
+        "name": "serviceHighlights",
+        "type": "array",
+        "title": "Care option cards"
+      },
+      {
+        "name": "referralCta",
+        "type": "ctaBlock",
+        "title": "Referral CTA"
+      },
+      {
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      }
+    ],
+    "name": "homepageSettings",
+    "type": "document",
+    "title": "Homepage settings"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ]
+          }
+        ],
+        "description": "Page-specific hero, body, and SEO settings for top-level marketing pages.",
+        "of": [
+          {
+            "fields": [
+              {
+                "options": {
+                  "list": [
+                    {
+                      "title": "Contact",
+                      "value": "contact"
+                    },
+                    {
+                      "title": "Careers",
+                      "value": "careers"
+                    },
+                    {
+                      "title": "Insurance & payment",
+                      "value": "insurance-payment"
+                    },
+                    {
+                      "title": "Patient resources",
+                      "value": "patient-resources"
+                    },
+                    {
+                      "title": "Primary care",
+                      "value": "primary-care"
+                    },
+                    {
+                      "title": "Programs",
+                      "value": "programs"
+                    },
+                    {
+                      "title": "Referrals",
+                      "value": "referrals"
+                    },
+                    {
+                      "title": "Services",
+                      "value": "services"
+                    }
+                  ]
+                },
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "valid",
+                        "constraint": [
+                          "contact",
+                          "careers",
+                          "insurance-payment",
+                          "patient-resources",
+                          "primary-care",
+                          "programs",
+                          "referrals",
+                          "services"
+                        ]
+                      },
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "slug",
+                "type": "string",
+                "title": "Page"
+              },
+              {
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "title",
+                "type": "string"
+              },
+              {
+                "name": "eyebrow",
+                "type": "string"
+              },
+              {
+                "rows": 3,
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "description",
+                "type": "text"
+              },
+              {
+                "of": [
+                  {
+                    "type": "pageSection",
+                    "title": "Content section"
+                  },
+                  {
+                    "type": "ctaBlock",
+                    "title": "CTA block"
+                  }
+                ],
+                "name": "blocks",
+                "type": "array",
+                "title": "Page blocks"
+              },
+              {
+                "name": "seo",
+                "type": "seoFields",
+                "title": "SEO"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "landingPages",
+        "type": "array",
+        "title": "Landing pages"
+      }
+    ],
+    "name": "landingPageSettings",
+    "type": "document",
+    "title": "Landing page settings"
+  },
+  {
+    "fields": [
+      {
+        "options": {
+          "accept": "application/pdf"
+        },
+        "description": "Upload the printable referral form shown as a download button on the referrals page.",
+        "name": "referralPdf",
+        "type": "file",
+        "title": "Referral PDF"
+      },
+      {
+        "initialValue": "Download referral PDF",
+        "name": "downloadLabel",
+        "type": "string",
+        "title": "Download button label"
+      }
+    ],
+    "name": "referralPageSettings",
+    "type": "document",
+    "title": "Referral page settings"
+  },
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "fields": [
+              {
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "eyebrow",
+                "type": "string"
+              },
+              {
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      },
+                      {
+                        "flag": "min",
+                        "constraint": 1
+                      }
+                    ]
+                  }
+                ],
+                "description": "Use the text color annotation to apply approved brand palette colors.",
+                "of": [
+                  {
+                    "marks": {
+                      "annotations": [
+                        {
+                          "name": "textColor",
+                          "type": "textColor",
+                          "title": "Text color"
+                        }
+                      ]
+                    },
+                    "of": [],
+                    "styles": [
+                      {
+                        "value": "normal",
+                        "title": "Normal"
+                      }
+                    ],
+                    "type": "block"
+                  }
+                ],
+                "name": "heading",
+                "type": "array"
+              },
+              {
+                "rows": 3,
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "description",
+                "type": "text"
+              },
+              {
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "max",
+                        "constraint": 2
+                      }
+                    ]
+                  }
+                ],
+                "of": [
+                  {
+                    "type": "ctaButton",
+                    "title": "CTA button"
+                  }
+                ],
+                "name": "buttons",
+                "type": "array"
+              },
+              {
+                "options": {
+                  "hotspot": true
+                },
+                "fields": [
+                  {
+                    "name": "alt",
+                    "type": "string",
+                    "title": "Alt text"
+                  }
+                ],
+                "name": "backgroundImage",
+                "type": "image",
+                "title": "Background image"
+              },
+              {
+                "options": {
+                  "hotspot": true
+                },
+                "fields": [
+                  {
+                    "name": "alt",
+                    "type": "string",
+                    "title": "Alt text"
+                  }
+                ],
+                "name": "featureImage",
+                "type": "image",
+                "title": "Right-side feature image"
+              }
+            ],
+            "name": "hero",
+            "type": "object"
+          },
+          {
+            "of": [
+              {
+                "type": "string"
+              }
+            ],
+            "name": "careModelHighlights",
+            "type": "array",
+            "title": "Care model highlights"
+          },
+          {
+            "of": [
+              {
+                "type": "serviceHighlight",
+                "title": "Service highlight"
+              }
+            ],
+            "name": "serviceHighlights",
+            "type": "array",
+            "title": "Care option cards"
+          },
+          {
+            "name": "referralCta",
+            "type": "ctaBlock",
+            "title": "Referral CTA"
+          },
+          {
+            "name": "seo",
+            "type": "seoFields",
+            "title": "SEO"
+          }
+        ],
+        "name": "homepage",
+        "type": "object"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ]
+          }
+        ],
+        "description": "Page-specific hero, body, and SEO settings for top-level marketing pages.",
+        "of": [
+          {
+            "fields": [
+              {
+                "options": {
+                  "list": [
+                    {
+                      "title": "Contact",
+                      "value": "contact"
+                    },
+                    {
+                      "title": "Careers",
+                      "value": "careers"
+                    },
+                    {
+                      "title": "Insurance & payment",
+                      "value": "insurance-payment"
+                    },
+                    {
+                      "title": "Patient resources",
+                      "value": "patient-resources"
+                    },
+                    {
+                      "title": "Primary care",
+                      "value": "primary-care"
+                    },
+                    {
+                      "title": "Programs",
+                      "value": "programs"
+                    },
+                    {
+                      "title": "Referrals",
+                      "value": "referrals"
+                    },
+                    {
+                      "title": "Services",
+                      "value": "services"
+                    }
+                  ]
+                },
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "valid",
+                        "constraint": [
+                          "contact",
+                          "careers",
+                          "insurance-payment",
+                          "patient-resources",
+                          "primary-care",
+                          "programs",
+                          "referrals",
+                          "services"
+                        ]
+                      },
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "slug",
+                "type": "string",
+                "title": "Page"
+              },
+              {
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "title",
+                "type": "string"
+              },
+              {
+                "name": "eyebrow",
+                "type": "string"
+              },
+              {
+                "rows": 3,
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "presence",
+                        "constraint": "required"
+                      }
+                    ]
+                  }
+                ],
+                "name": "description",
+                "type": "text"
+              },
+              {
+                "of": [
+                  {
+                    "type": "pageSection",
+                    "title": "Content section"
+                  },
+                  {
+                    "type": "ctaBlock",
+                    "title": "CTA block"
+                  }
+                ],
+                "name": "blocks",
+                "type": "array",
+                "title": "Page blocks"
+              },
+              {
+                "name": "seo",
+                "type": "seoFields",
+                "title": "SEO"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "landingPages",
+        "type": "array",
+        "title": "Landing pages"
+      },
+      {
+        "fields": [
+          {
+            "options": {
+              "accept": "application/pdf"
+            },
+            "description": "Upload the printable referral form shown as a download button on the referrals page.",
+            "name": "referralPdf",
+            "type": "file",
+            "title": "Referral PDF"
+          },
+          {
+            "initialValue": "Download referral PDF",
+            "name": "downloadLabel",
+            "type": "string",
+            "title": "Download button label"
+          }
+        ],
+        "name": "referrals",
+        "type": "object",
+        "title": "Referrals page"
+      }
+    ],
+    "name": "pageSettings",
+    "type": "document",
+    "title": "Page settings"
+  },
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ]
+              }
+            ],
+            "name": "eyebrow",
+            "type": "string"
+          },
+          {
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  },
+                  {
+                    "flag": "min",
+                    "constraint": 1
+                  }
+                ]
+              }
+            ],
+            "description": "Use the text color annotation to apply approved brand palette colors.",
+            "of": [
+              {
+                "marks": {
+                  "annotations": [
+                    {
+                      "name": "textColor",
+                      "type": "textColor",
+                      "title": "Text color"
+                    }
+                  ]
+                },
+                "of": [],
+                "styles": [
+                  {
+                    "value": "normal",
+                    "title": "Normal"
+                  }
+                ],
+                "type": "block"
+              }
+            ],
+            "name": "heading",
+            "type": "array"
+          },
+          {
+            "rows": 3,
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ]
+              }
+            ],
+            "name": "description",
+            "type": "text"
+          },
+          {
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "max",
+                    "constraint": 2
+                  }
+                ]
+              }
+            ],
+            "of": [
+              {
+                "type": "ctaButton",
+                "title": "CTA button"
+              }
+            ],
+            "name": "buttons",
+            "type": "array"
+          },
+          {
+            "options": {
+              "hotspot": true
+            },
+            "fields": [
+              {
+                "name": "alt",
+                "type": "string",
+                "title": "Alt text"
+              }
+            ],
+            "name": "backgroundImage",
+            "type": "image",
+            "title": "Background image"
+          },
+          {
+            "options": {
+              "hotspot": true
+            },
+            "fields": [
+              {
+                "name": "alt",
+                "type": "string",
+                "title": "Alt text"
+              }
+            ],
+            "name": "featureImage",
+            "type": "image",
+            "title": "Right-side feature image"
+          }
+        ],
+        "name": "hero",
+        "type": "object"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "careModelHighlights",
+        "type": "array",
+        "title": "Care model highlights"
+      },
+      {
+        "of": [
+          {
+            "type": "serviceHighlight",
+            "title": "Service highlight"
+          }
+        ],
+        "name": "serviceHighlights",
+        "type": "array",
+        "title": "Care option cards"
+      },
+      {
+        "name": "referralCta",
+        "type": "ctaBlock",
+        "title": "Referral CTA"
+      },
+      {
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      }
+    ],
+    "name": "homepage",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "options": {
+          "accept": "application/pdf"
+        },
+        "description": "Upload the printable referral form shown as a download button on the referrals page.",
+        "name": "referralPdf",
+        "type": "file",
+        "title": "Referral PDF"
+      },
+      {
+        "initialValue": "Download referral PDF",
+        "name": "downloadLabel",
+        "type": "string",
+        "title": "Download button label"
+      }
+    ],
+    "name": "referralSettings",
+    "type": "document",
+    "title": "Referral settings"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "description": "Shown as the page heading and in the browser tab.",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "title"
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "description": "The URL path for this page, e.g. \"about\" → /about",
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "options": {
+          "layout": "radio",
+          "list": [
+            {
+              "title": "Published",
+              "value": "published"
+            },
+            {
+              "title": "Draft",
+              "value": "draft"
+            }
+          ]
+        },
+        "initialValue": "draft",
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "valid",
+                "constraint": [
+                  "published",
+                  "draft"
+                ]
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "status",
+        "type": "string"
+      },
+      {
+        "description": "Small label shown above the page title.",
+        "name": "eyebrow",
+        "type": "string"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "description": "Shown below the title in the page header.",
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "description": "Build the page body by adding and reordering blocks.",
+        "of": [
+          {
+            "type": "pageSection",
+            "title": "Content section"
+          },
+          {
+            "type": "ctaBlock",
+            "title": "CTA block"
+          }
+        ],
+        "name": "blocks",
+        "type": "array",
+        "title": "Page blocks"
+      },
+      {
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      }
+    ],
+    "name": "page",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "title"
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "description": "Used in card previews and search results.",
+        "name": "description",
+        "type": "text",
+        "title": "Short description"
+      },
+      {
+        "description": "Detailed content shown on the service page or expanded view.",
+        "of": [
+          {
+            "lists": [
+              {
+                "value": "bullet",
+                "title": "Bullet"
+              },
+              {
+                "value": "number",
+                "title": "Numbered"
+              }
+            ],
+            "marks": {
+              "annotations": [],
+              "decorators": [
+                {
+                  "value": "strong",
+                  "title": "Strong"
+                },
+                {
+                  "value": "em",
+                  "title": "Emphasis"
+                }
+              ]
+            },
+            "of": [],
+            "styles": [
+              {
+                "value": "normal",
+                "title": "Normal"
+              },
+              {
+                "value": "h3",
+                "title": "Heading"
+              },
+              {
+                "value": "h4",
+                "title": "Sub-heading"
+              }
+            ],
+            "type": "block"
+          }
+        ],
+        "name": "body",
+        "type": "array",
+        "title": "Full description"
+      },
+      {
+        "description": "Override the default service URL. Leave blank to use the slug.",
+        "name": "href",
+        "type": "string",
+        "title": "URL or path"
+      },
+      {
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      }
+    ],
+    "name": "service",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "title"
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "description": "Who this program is designed for, e.g. \"Adults 18+\".",
+        "name": "audience",
+        "type": "string"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "description": "Used in card previews and search results.",
+        "name": "description",
+        "type": "text",
+        "title": "Short description"
+      },
+      {
+        "description": "Detailed content shown on the program page or expanded view.",
+        "of": [
+          {
+            "lists": [
+              {
+                "value": "bullet",
+                "title": "Bullet"
+              },
+              {
+                "value": "number",
+                "title": "Numbered"
+              }
+            ],
+            "marks": {
+              "annotations": [],
+              "decorators": [
+                {
+                  "value": "strong",
+                  "title": "Strong"
+                },
+                {
+                  "value": "em",
+                  "title": "Emphasis"
+                }
+              ]
+            },
+            "of": [],
+            "styles": [
+              {
+                "value": "normal",
+                "title": "Normal"
+              },
+              {
+                "value": "h3",
+                "title": "Heading"
+              },
+              {
+                "value": "h4",
+                "title": "Sub-heading"
+              }
+            ],
+            "type": "block"
+          }
+        ],
+        "name": "body",
+        "type": "array",
+        "title": "Full description"
+      },
+      {
+        "description": "Override the default program URL. Leave blank to use the slug.",
+        "name": "href",
+        "type": "string",
+        "title": "URL or path"
+      },
+      {
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      }
+    ],
+    "name": "program",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "name": "firstName",
+        "type": "string",
+        "title": "First name"
+      },
+      {
+        "name": "lastName",
+        "type": "string",
+        "title": "Last name"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string",
+        "title": "Display name"
+      },
+      {
+        "options": {
+          "source": "name"
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "role",
+        "type": "string"
+      },
+      {
+        "name": "credentials",
+        "type": "string"
+      },
+      {
+        "options": {
+          "list": [
+            "Primary care",
+            "Behavioral health",
+            "Treatment services",
+            "Care coordination",
+            "Administration",
+            "Operations",
+            "Community outreach"
+          ]
+        },
+        "name": "department",
+        "type": "string"
+      },
+      {
+        "name": "pronouns",
+        "type": "string"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "fields": [
+          {
+            "description": "Describe the image for screen readers.",
+            "name": "alt",
+            "type": "string",
+            "title": "Alt text"
+          }
+        ],
+        "name": "image",
+        "type": "image",
+        "title": "Headshot"
+      },
+      {
+        "rows": 3,
+        "description": "Brief summary used on team cards.",
+        "name": "shortBio",
+        "type": "text",
+        "title": "Short bio"
+      },
+      {
+        "rows": 6,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "bio",
+        "type": "text",
+        "title": "Full bio"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "specialties",
+        "type": "array"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "languages",
+        "type": "array"
+      },
+      {
+        "of": [
+          {
+            "to": [
+              {
+                "type": "location"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to location"
+          }
+        ],
+        "name": "locations",
+        "type": "array"
+      },
+      {
+        "initialValue": false,
+        "name": "acceptingNewPatients",
+        "type": "boolean",
+        "title": "Accepting new patients"
+      },
+      {
+        "initialValue": true,
+        "name": "showOnTeamPage",
+        "type": "boolean",
+        "title": "Show on team page"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              }
+            ]
+          }
+        ],
+        "description": "Lower numbers appear first.",
+        "name": "sortOrder",
+        "type": "number",
+        "title": "Sort order"
+      },
+      {
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      }
+    ],
+    "name": "provider",
+    "type": "document",
+    "title": "Team member"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "name"
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "address",
+        "type": "text"
+      },
+      {
+        "name": "phone",
+        "type": "string"
+      },
+      {
+        "name": "email",
+        "type": "email"
+      },
+      {
+        "description": "One entry per line, e.g. \"Monday–Friday: 8am–5pm\".",
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "hours",
+        "type": "array"
+      },
+      {
+        "rows": 2,
+        "description": "Parking and transportation information shown on the locations page.",
+        "name": "parking",
+        "type": "text"
+      },
+      {
+        "rows": 2,
+        "description": "ADA compliance, accessible entrances, etc.",
+        "name": "accessibilityNotes",
+        "type": "text",
+        "title": "Accessibility notes"
+      },
+      {
+        "rows": 2,
+        "description": "What patients should know before their appointment.",
+        "name": "appointmentNotes",
+        "type": "text",
+        "title": "Appointment notes"
+      },
+      {
+        "description": "Geographic area or counties served from this location.",
+        "name": "serviceArea",
+        "type": "string",
+        "title": "Service area"
+      },
+      {
+        "description": "Used to pin this location on the map.",
+        "name": "coordinates",
+        "type": "geopoint"
+      }
+    ],
+    "name": "location",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "of": [
+          {
+            "lists": [
+              {
+                "value": "bullet",
+                "title": "Bullet"
+              },
+              {
+                "value": "number",
+                "title": "Numbered"
+              }
+            ],
+            "marks": {
+              "annotations": [],
+              "decorators": [
+                {
+                  "value": "strong",
+                  "title": "Strong"
+                },
+                {
+                  "value": "em",
+                  "title": "Emphasis"
+                }
+              ]
+            },
+            "of": [],
+            "styles": [
+              {
+                "value": "normal",
+                "title": "Normal"
+              },
+              {
+                "value": "h2",
+                "title": "Heading"
+              },
+              {
+                "value": "h3",
+                "title": "Sub-heading"
+              }
+            ],
+            "type": "block"
+          }
+        ],
+        "name": "body",
+        "type": "array"
+      },
+      {
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      }
+    ],
+    "name": "legalPage",
+    "type": "document",
+    "title": "Legal page"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "question",
+        "type": "string"
+      },
+      {
+        "rows": 4,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "answer",
+        "type": "text"
+      },
+      {
+        "options": {
+          "list": [
+            {
+              "title": "Care",
+              "value": "care"
+            },
+            {
+              "title": "Patients",
+              "value": "patients"
+            },
+            {
+              "title": "Referrals",
+              "value": "referrals"
+            },
+            {
+              "title": "Billing and access",
+              "value": "billing"
+            }
+          ]
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "valid",
+                "constraint": [
+                  "care",
+                  "patients",
+                  "referrals",
+                  "billing"
+                ]
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "category",
+        "type": "string"
+      },
+      {
+        "initialValue": 0,
+        "name": "orderRank",
+        "type": "number",
+        "title": "Sort order"
+      }
+    ],
+    "name": "faq",
+    "type": "document",
+    "title": "FAQ"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "message",
+        "type": "text"
+      },
+      {
+        "options": {
+          "list": [
+            {
+              "title": "Draft",
+              "value": "draft"
+            },
+            {
+              "title": "Published",
+              "value": "published"
+            },
+            {
+              "title": "Archived",
+              "value": "archived"
+            }
+          ]
+        },
+        "initialValue": "draft",
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "valid",
+                "constraint": [
+                  "draft",
+                  "published",
+                  "archived"
+                ]
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "status",
+        "type": "string"
+      },
+      {
+        "name": "publishedAt",
+        "type": "datetime",
+        "title": "Published at"
+      },
+      {
+        "name": "link",
+        "type": "link",
+        "title": "Optional link"
+      }
+    ],
+    "name": "announcement",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "label",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "description": "Use site paths such as /care or full URLs for external links.",
+        "name": "href",
+        "type": "string",
+        "title": "URL or path"
+      },
+      {
+        "rows": 2,
+        "name": "description",
+        "type": "text"
+      }
+    ],
+    "name": "link",
+    "type": "object"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "label",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "description": "Use site paths such as /care or full URLs for external links.",
+        "name": "href",
+        "type": "string",
+        "title": "URL or path"
+      }
+    ],
+    "name": "navLink",
+    "type": "object",
+    "title": "Link"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "description": "The button text shown in the nav bar.",
+        "name": "label",
+        "type": "string"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "image",
+        "type": "image",
+        "title": "Feature image"
+      },
+      {
+        "name": "imageAlt",
+        "type": "string",
+        "title": "Image alt text"
+      },
+      {
+        "name": "eyebrow",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string",
+        "title": "Featured panel title"
+      },
+      {
+        "rows": 3,
+        "name": "description",
+        "type": "text",
+        "title": "Featured panel description"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "ctaLabel",
+        "type": "string",
+        "title": "Featured panel CTA label"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "ctaHref",
+        "type": "string",
+        "title": "Featured panel CTA URL or path"
+      },
+      {
+        "of": [
+          {
+            "type": "navItemGroup",
+            "title": "Nav item group"
+          }
+        ],
+        "name": "groups",
+        "type": "array",
+        "title": "Link groups"
+      }
+    ],
+    "name": "navMegaMenu",
+    "type": "object",
+    "title": "Mega menu"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string",
+        "title": "Group title"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ]
+          }
+        ],
+        "of": [
+          {
+            "type": "link"
+          }
+        ],
+        "name": "links",
+        "type": "array"
+      }
+    ],
+    "name": "navItemGroup",
+    "type": "object",
+    "title": "Nav item group"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "heading",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "of": [
+          {
+            "lists": [
+              {
+                "value": "bullet",
+                "title": "Bullet"
+              },
+              {
+                "value": "number",
+                "title": "Numbered"
+              }
+            ],
+            "marks": {
+              "annotations": [],
+              "decorators": [
+                {
+                  "value": "strong",
+                  "title": "Strong"
+                },
+                {
+                  "value": "em",
+                  "title": "Emphasis"
+                }
+              ]
+            },
+            "of": [],
+            "styles": [
+              {
+                "value": "normal",
+                "title": "Normal"
+              },
+              {
+                "value": "h3",
+                "title": "Heading"
+              },
+              {
+                "value": "h4",
+                "title": "Sub-heading"
+              }
+            ],
+            "type": "block"
+          }
+        ],
+        "name": "body",
+        "type": "array"
+      }
+    ],
+    "name": "pageSection",
+    "type": "object",
+    "title": "Content section"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "max",
+                "constraint": 70
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string",
+        "title": "Meta title"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "max",
+                "constraint": 170
+              }
+            ]
+          }
+        ],
+        "name": "description",
+        "type": "text",
+        "title": "Meta description"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "name": "canonicalUrl",
+        "type": "url",
+        "title": "Canonical URL"
+      },
+      {
+        "initialValue": false,
+        "name": "noIndex",
+        "type": "boolean",
+        "title": "Hide from search engines"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "fields": [
+          {
+            "name": "alt",
+            "type": "string",
+            "title": "Alt text"
+          }
+        ],
+        "name": "ogImage",
+        "type": "image",
+        "title": "Social image"
+      }
+    ],
+    "name": "seoFields",
+    "type": "object",
+    "title": "SEO"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "label",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "description": "Use site paths such as /contact or full URLs for external links.",
+        "name": "href",
+        "type": "string",
+        "title": "URL or path"
+      },
+      {
+        "options": {
+          "layout": "radio",
+          "list": [
+            {
+              "title": "Primary",
+              "value": "primary"
+            },
+            {
+              "title": "Secondary",
+              "value": "secondary"
+            }
+          ]
+        },
+        "initialValue": "primary",
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "valid",
+                "constraint": [
+                  "primary",
+                  "secondary"
+                ]
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "style",
+        "type": "string"
+      }
+    ],
+    "name": "ctaButton",
+    "type": "object",
+    "title": "CTA button"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "heading",
+        "type": "string"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "primaryLabel",
+        "type": "string",
+        "title": "Primary button label"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "primaryHref",
+        "type": "string",
+        "title": "Primary button URL or path"
+      },
+      {
+        "name": "secondaryLabel",
+        "type": "string",
+        "title": "Secondary button label"
+      },
+      {
+        "hidden": "conditional",
+        "name": "secondaryHref",
+        "type": "string",
+        "title": "Secondary button URL or path"
+      }
+    ],
+    "name": "ctaBlock",
+    "type": "object",
+    "title": "CTA block"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "href",
+        "type": "string",
+        "title": "URL or path"
+      }
+    ],
+    "name": "serviceHighlight",
+    "type": "object",
+    "title": "Service highlight"
+  },
+  {
+    "fields": [
+      {
+        "options": {
+          "layout": "dropdown",
+          "list": [
+            {
+              "title": "Default",
+              "value": "default"
+            },
+            {
+              "title": "Rise Red",
+              "value": "riseRed"
+            },
+            {
+              "title": "Ember Orange",
+              "value": "emberOrange"
+            },
+            {
+              "title": "Sunburst Gold",
+              "value": "sunburstGold"
+            },
+            {
+              "title": "Dawn Coral",
+              "value": "dawnCoral"
+            },
+            {
+              "title": "Deep Slate",
+              "value": "deepSlate"
+            },
+            {
+              "title": "Coal",
+              "value": "coal"
+            }
+          ]
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "valid",
+                "constraint": [
+                  "default",
+                  "riseRed",
+                  "emberOrange",
+                  "sunburstGold",
+                  "dawnCoral",
+                  "deepSlate",
+                  "coal"
+                ]
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "color",
+        "type": "string"
+      }
+    ],
+    "name": "textColor",
+    "type": "object",
+    "title": "Text color"
+  }
+]
