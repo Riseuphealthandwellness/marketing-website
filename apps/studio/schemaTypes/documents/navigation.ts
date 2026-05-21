@@ -3,25 +3,25 @@ import {defineField, defineType} from 'sanity'
 
 export const navigationSingletons = [
   {
-    id: 'navigation.main',
+    id: 'navigation-main',
     key: 'main',
     title: 'Main navigation',
     description: 'Header navigation used across the site.',
   },
   {
-    id: 'navigation.footer-care',
+    id: 'navigation-footer-care',
     key: 'footer-care',
     title: 'Footer: Care',
     description: 'First footer link column.',
   },
   {
-    id: 'navigation.footer-patients',
+    id: 'navigation-footer-patients',
     key: 'footer-patients',
     title: 'Footer: Patients',
     description: 'Second footer link column.',
   },
   {
-    id: 'navigation.footer-about',
+    id: 'navigation-footer-about',
     key: 'footer-about',
     title: 'Footer: About',
     description: 'Third footer link column.',
