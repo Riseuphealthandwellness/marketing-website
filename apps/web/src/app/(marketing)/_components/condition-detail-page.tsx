@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { PortableTextContent } from "@/components/cms/portable-text-content";
@@ -45,6 +46,22 @@ export async function ConditionDetailPage({ slug, serviceSlug, serviceLabel }: P
         <Section>
           <Container>
             <PortableTextContent className="max-w-3xl" value={condition.body} />
+          </Container>
+        </Section>
+      ) : null}
+
+      {condition.learnMoreUrl ? (
+        <Section>
+          <Container>
+            <a
+              className="inline-flex items-center gap-2.5 rounded-lg border border-border bg-card px-5 py-4 text-sm font-semibold text-brand-trust shadow-[var(--shadow-soft)] transition-colors hover:border-brand-action/30 hover:text-brand-action"
+              href={condition.learnMoreUrl}
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
+              {condition.learnMoreLabel || "Learn more"}
+            </a>
           </Container>
         </Section>
       ) : null}

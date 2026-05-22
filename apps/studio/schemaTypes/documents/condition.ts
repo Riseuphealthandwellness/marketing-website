@@ -49,6 +49,18 @@ export const condition = defineType({
       of: [{type: 'block'}],
     }),
     defineField({
+      name: 'learnMoreUrl',
+      title: 'External learn more URL',
+      type: 'url',
+      description: 'Optional link to an external resource (e.g. the official treatment or medication website).',
+    }),
+    defineField({
+      name: 'learnMoreLabel',
+      title: 'External link label',
+      type: 'string',
+      description: 'Text shown for the external link. Defaults to "Learn more" if left blank.',
+    }),
+    defineField({
       name: 'seo',
       title: 'SEO',
       type: 'seoFields',

@@ -325,6 +325,8 @@ export type Condition = {
   category: string;
   shortDescription: string;
   body?: unknown[];
+  learnMoreUrl?: string;
+  learnMoreLabel?: string;
   seo?: SeoFields;
 };
 

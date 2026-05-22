@@ -215,7 +215,7 @@ export const cmsQueries = {
 
   conditionsByCategory: `*[_type == "condition" && category == $category] | order(title asc){ "slug": slug.current, title, shortDescription }`,
 
-  conditionBySlug: `*[_type == "condition" && slug.current == $slug][0]{ "slug": slug.current, title, category, shortDescription, body, seo }`,
+  conditionBySlug: `*[_type == "condition" && slug.current == $slug][0]{ "slug": slug.current, title, category, shortDescription, body, learnMoreUrl, learnMoreLabel, seo }`,
 
   allConditionSlugs: `*[_type == "condition" && defined(slug.current)]{ "slug": slug.current, category }`,
 
