@@ -28,6 +28,7 @@ import {navItemGroup} from './objects/navItemGroup'
 import {newPatientAccessCard} from './objects/newPatientAccessCard'
 import {newPatientStep} from './objects/newPatientStep'
 import {careModelBlock} from './objects/careModelBlock'
+import {careModelItem} from './objects/careModelItem'
 import {conditionsBlock} from './objects/conditionsBlock'
 import {faqBlock} from './objects/faqBlock'
 import {pageSection} from './objects/pageSection'
@@ -67,6 +68,7 @@ export const schemaTypes = [
   newPatientAccessCard,
   newPatientStep,
   careModelBlock,
+  careModelItem,
   conditionsBlock,
   faqBlock,
   pageSection,
