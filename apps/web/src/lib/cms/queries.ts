@@ -73,6 +73,8 @@ export const cmsQueries = {
     url,
     phone,
     email,
+    contactInboxEmail,
+    referralInboxEmail,
     address,
     "location": {
       "lat": location.lat,

@@ -113,6 +113,8 @@ export type SiteSettings = {
   url: string;
   phone: string;
   email: string;
+  contactInboxEmail?: string;
+  referralInboxEmail?: string;
   address: string;
   location: {
     lat?: number;

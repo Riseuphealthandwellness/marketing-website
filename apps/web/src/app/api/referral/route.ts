@@ -1,3 +1,5 @@
+import { getSiteSettings } from "@/lib/cms/content-source";
+
 const MAX_BODY_BYTES = 16_000;
 const MIN_SUBMIT_TIME_MS = 3_000;
 const MAX_SUBMIT_TIME_MS = 2 * 60 * 60 * 1000;
@@ -105,7 +107,12 @@ function buildEmailBody(input: {
 
 async function sendReferralEmail(input: Parameters<typeof buildEmailBody>[0]) {
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.REFERRAL_TO_EMAIL || process.env.CONTACT_TO_EMAIL || process.env.CONTACT_EMAIL;
+  const settings = await getSiteSettings();
+  const to =
+    settings?.referralInboxEmail ||
+    process.env.REFERRAL_TO_EMAIL ||
+    process.env.CONTACT_TO_EMAIL ||
+    process.env.CONTACT_EMAIL;
   const from = process.env.CONTACT_FROM_EMAIL || "Rise Up Website <onboarding@resend.dev>";
 
   if (!apiKey || !to) {

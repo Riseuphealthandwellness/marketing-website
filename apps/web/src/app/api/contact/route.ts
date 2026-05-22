@@ -1,3 +1,5 @@
+import { getSiteSettings } from "@/lib/cms/content-source";
+
 const MAX_BODY_BYTES = 12_000;
 const MIN_SUBMIT_TIME_MS = 3_000;
 const MAX_SUBMIT_TIME_MS = 2 * 60 * 60 * 1000;
@@ -108,7 +110,11 @@ async function sendContactEmail(input: {
   topic: string;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO_EMAIL || process.env.CONTACT_EMAIL;
+  const settings = await getSiteSettings();
+  const to =
+    settings?.contactInboxEmail ||
+    process.env.CONTACT_TO_EMAIL ||
+    process.env.CONTACT_EMAIL;
   const from = process.env.CONTACT_FROM_EMAIL || "Rise Up Website <onboarding@resend.dev>";
 
   if (!apiKey || !to) {

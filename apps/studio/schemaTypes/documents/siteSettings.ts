@@ -46,6 +46,21 @@ export const siteSettings = defineType({
       name: 'email',
       title: 'Email',
       type: 'email',
+      description: 'Publicly displayed contact email.',
+      group: 'contact',
+    }),
+    defineField({
+      name: 'contactInboxEmail',
+      title: 'Contact form inbox',
+      type: 'email',
+      description: 'Where contact form submissions are delivered. Not publicly displayed. Overrides the CONTACT_TO_EMAIL environment variable.',
+      group: 'contact',
+    }),
+    defineField({
+      name: 'referralInboxEmail',
+      title: 'Referral form inbox',
+      type: 'email',
+      description: 'Where referral form submissions are delivered. Not publicly displayed. Overrides the REFERRAL_TO_EMAIL environment variable.',
       group: 'contact',
     }),
     defineField({
