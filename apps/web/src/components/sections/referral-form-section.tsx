@@ -59,14 +59,14 @@ export function ReferralFormSection({ settings, siteSettings }: ReferralFormSect
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const formConsentLabel = settings?.formConsentLabel?.trim();
+  const formConsentLabel =
+    settings?.formConsentLabel?.trim() ||
+    "I understand this online form only accepts the last 4 digits of Social Security numbers and does not accept labs, radiology reports, progress notes, or attachments. Supporting documents will be sent through the approved secure channel.";
   const formDescription = settings?.formDescription?.trim();
   const formDocumentNote = settings?.formDocumentNote?.trim();
-  const formEyebrow = settings?.formEyebrow?.trim();
-  const formHeading = settings?.formHeading?.trim();
+  const formEyebrow = settings?.formEyebrow?.trim() || "Online referral";
+  const formHeading = settings?.formHeading?.trim() || "Send referral details.";
   const referralPdf = settings?.referralPdf;
-
-  if (!settings || !formConsentLabel || !formHeading) return null;
 
   function markStarted() {
     startedAtRef.current ??= Date.now();

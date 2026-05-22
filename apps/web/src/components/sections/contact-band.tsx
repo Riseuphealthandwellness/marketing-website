@@ -9,8 +9,12 @@ export async function ContactBand() {
   const lat = settings?.location.lat;
   const lng = settings?.location.lng;
   const zoom = settings?.location.zoom ?? 13;
-  const content = settings?.contactBand;
-  if (!content) return null;
+  const content = settings?.contactBand ?? {
+    eyebrow: "Contact",
+    heading: "Start with the team, not a maze of forms.",
+    description:
+      "Public contact should stay simple and low-friction. Clinical details, appointment changes, and urgent concerns belong in approved care channels or direct staff communication.",
+  };
 
   const hasCoords = Number.isFinite(lat) && Number.isFinite(lng);
   const mapStyle = encodeURIComponent("mapbox/streets-v12");
