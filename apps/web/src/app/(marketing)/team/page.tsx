@@ -41,7 +41,6 @@ export default async function TeamPage() {
                     <TeamMemberPortrait
                       image={provider.image}
                       name={provider.name}
-                      toneKey={provider.slug}
                       className="transition-transform duration-300 group-hover:scale-[1.03]"
                     />
                   </div>
