@@ -6,12 +6,17 @@ import { useRef, useState } from "react";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { Button } from "@/components/ui/button";
+import type { ReferralSettings } from "@/lib/cms/types";
 
 const sexOptions = ["Female", "Male", "Other", "Prefer not to say"];
 
 type FormState = {
   error?: string;
   ok?: boolean;
+};
+
+type ReferralFormSectionProps = {
+  settings?: ReferralSettings | null;
 };
 
 function cleanText(value: FormDataEntryValue | null, maxLength: number) {
@@ -22,10 +27,17 @@ function includesSsn(value: string) {
   return /\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/.test(value);
 }
 
-export function ReferralFormSection() {
+export function ReferralFormSection({ settings }: ReferralFormSectionProps) {
   const startedAtRef = useRef<number | null>(null);
   const [state, setState] = useState<FormState>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formConsentLabel = settings?.formConsentLabel?.trim();
+  const formDescription = settings?.formDescription?.trim();
+  const formDocumentNote = settings?.formDocumentNote?.trim();
+  const formEyebrow = settings?.formEyebrow?.trim();
+  const formHeading = settings?.formHeading?.trim();
+
+  if (!settings || !formConsentLabel || !formHeading) return null;
 
   function markStarted() {
     startedAtRef.current ??= Date.now();
@@ -86,7 +98,7 @@ export function ReferralFormSection() {
     if (!payload.consent) {
       setState({
         error:
-          "Please confirm that labs, progress notes, and other clinical documents will be sent through the approved secure channel.",
+          "Please confirm that supporting documents will be sent separately through the appropriate secure channel.",
       });
       setIsSubmitting(false);
       return;
@@ -119,20 +131,24 @@ export function ReferralFormSection() {
     <Section className="bg-surface">
       <Container className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
         <div className="max-w-3xl">
-          <p className="font-heading text-sm font-black uppercase text-brand-warm-accent">
-            Online referral
-          </p>
+          {formEyebrow ? (
+            <p className="font-heading text-sm font-black uppercase text-brand-warm-accent">
+              {formEyebrow}
+            </p>
+          ) : null}
           <h2 className="mt-3 text-3xl font-black leading-tight tracking-normal text-foreground sm:text-4xl">
-            Send referral details.
+            {formHeading}
           </h2>
-          <p className="mt-5 text-lg leading-8 text-muted-foreground">
-            This form is for referral intake coordination. Only include the last 4 digits of Social Security numbers.
-            labs, radiology reports, progress notes, or other attachments here.
-          </p>
-          <p className="mt-4 text-base leading-7 text-muted-foreground">
-            Send supporting clinical documents through the approved secure channel or use the
-            printable referral PDF.
-          </p>
+          {formDescription ? (
+            <p className="mt-5 text-lg leading-8 text-muted-foreground">
+              {formDescription}
+            </p>
+          ) : null}
+          {formDocumentNote ? (
+            <p className="mt-4 text-base leading-7 text-muted-foreground">
+              {formDocumentNote}
+            </p>
+          ) : null}
         </div>
 
         <form
@@ -356,11 +372,7 @@ export function ReferralFormSection() {
               required
               type="checkbox"
             />
-            <span>
-              I understand this online form only accepts the last 4 digits of Social Security numbers and does not accept labs,
-              radiology reports, progress notes, or attachments. Supporting documents will be
-              sent through the approved secure channel.
-            </span>
+            <span>{formConsentLabel}</span>
           </label>
 
           {state.error ? (

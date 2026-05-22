@@ -1,6 +1,10 @@
 import { isCmsConfigured, sanityClient } from "@/lib/cms/client";
 import { cmsQueries } from "@/lib/cms/queries";
 import type {
+  Announcement,
+  CareModelBlock,
+  Condition,
+  Faq,
   HomepageContent,
   LegalPageContent,
   Location,
@@ -62,7 +66,7 @@ export async function getAllPageSlugs(): Promise<string[]> {
   return rows?.map((r) => r.slug) ?? [];
 }
 
-export async function getLegalPage(id: "legalPage.privacy" | "legalPage.terms"): Promise<LegalPageContent | null> {
+export async function getLegalPage(id: "legal-page-privacy" | "legal-page-terms"): Promise<LegalPageContent | null> {
   if (!isCmsConfigured) return null;
   return sanityClient.fetch<LegalPageContent | null>(cmsQueries.legalPageById, { id }, sanityFetchOptions);
 }
@@ -75,6 +79,47 @@ export async function getHomepageContent(): Promise<HomepageContent | null> {
 export async function getReferralSettings(): Promise<ReferralSettings | null> {
   if (!isCmsConfigured) return null;
   return sanityClient.fetch<ReferralSettings | null>(cmsQueries.referralSettings, {}, sanityFetchOptions);
+}
+
+// Conditions
+
+export async function getConditionsByCategory(category: string): Promise<Condition[]> {
+  if (!isCmsConfigured) return [];
+  const rows = await sanityClient.fetch<Condition[] | null>(cmsQueries.conditionsByCategory, { category }, sanityFetchOptions);
+  return rows ?? [];
+}
+
+export async function getConditionBySlug(slug: string): Promise<Condition | null> {
+  if (!isCmsConfigured) return null;
+  return sanityClient.fetch<Condition | null>(cmsQueries.conditionBySlug, { slug }, sanityFetchOptions);
+}
+
+export async function getAllConditionSlugs(): Promise<{ slug: string; category: string }[]> {
+  if (!isCmsConfigured) return [];
+  const rows = await sanityClient.fetch<{ slug: string; category: string }[] | null>(cmsQueries.allConditionSlugs, {}, sanityFetchOptions);
+  return rows ?? [];
+}
+
+// Care model
+
+export async function getCareModelBlock(): Promise<CareModelBlock | null> {
+  if (!isCmsConfigured) return null;
+  return sanityClient.fetch<CareModelBlock | null>(cmsQueries.careModelBlock, {}, sanityFetchOptions);
+}
+
+// FAQs
+
+export async function getFaqsByCategory(category: string): Promise<Faq[]> {
+  if (!isCmsConfigured) return [];
+  const rows = await sanityClient.fetch<Faq[] | null>(cmsQueries.faqsByCategory, { category }, sanityFetchOptions);
+  return rows ?? [];
+}
+
+// Announcements
+
+export async function getAnnouncement(): Promise<Announcement | null> {
+  if (!isCmsConfigured) return null;
+  return sanityClient.fetch<Announcement | null>(cmsQueries.announcement, {}, sanityFetchOptions);
 }
 
 // Services

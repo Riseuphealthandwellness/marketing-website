@@ -12,21 +12,90 @@ import {
   UsersIcon,
 } from '@sanity/icons'
 import type {StructureResolver} from 'sanity/structure'
+import {landingPageSettingPages} from './schemaTypes/documents/landingPageSettings'
 import {navigationSingletons} from './schemaTypes/documents/navigation'
+
+const pageSettingGroups = [
+  {
+    title: 'Patient access',
+    icon: LaunchIcon,
+    items: [
+      {
+        title: 'Referrals',
+        icon: LaunchIcon,
+        child: (S: Parameters<StructureResolver>[0]) =>
+          S.document()
+            .schemaType('referralPageSettings')
+            .documentId('referralPageSettings')
+            .title('Referral page settings'),
+      },
+      ...landingPageSettingPages.filter((page) => page.group === 'patientAccess'),
+    ],
+  },
+  {
+    title: 'Care pages',
+    icon: HeartIcon,
+    items: landingPageSettingPages.filter((page) => page.group === 'care'),
+  },
+  {
+    title: 'Organization pages',
+    icon: UsersIcon,
+    items: landingPageSettingPages.filter((page) => page.group === 'organization'),
+  },
+] as const
+
+function pageSettingsListItem(S: Parameters<StructureResolver>[0], page: (typeof landingPageSettingPages)[number]) {
+  return S.listItem()
+    .title(page.title)
+    .icon(DocumentsIcon)
+    .child(
+      S.document()
+        .schemaType('landingPageSettings')
+        .documentId(page.id)
+        .initialValueTemplate(`landing-page-settings-${page.slug}`)
+        .title(`${page.title} page settings`),
+    )
+}
 
 export const structure: StructureResolver = (S) =>
   S.list()
     .title('Marketing website')
     .items([
       S.listItem()
-        .title('Organization profile')
-        .icon(CogIcon)
+        .title('Care library')
+        .icon(HeartIcon)
         .child(
-          S.document()
-            .schemaType('siteSettings')
-            .documentId('siteSettings')
-            .title('Organization profile'),
+          S.list()
+            .title('Care library')
+            .items([
+              S.documentTypeListItem('service').title('Services').icon(HeartIcon),
+              S.documentTypeListItem('condition').title('Conditions').icon(HeartIcon),
+              S.documentTypeListItem('program').title('Programs').icon(StackIcon),
+              S.documentTypeListItem('faq').title('FAQs').icon(HelpCircleIcon),
+            ]),
         ),
+
+      S.divider(),
+
+      S.listItem()
+        .title('Operations')
+        .icon(BellIcon)
+        .child(
+          S.list()
+            .title('Operations')
+            .items([
+              S.documentTypeListItem('provider').title('Team members').icon(UsersIcon),
+              S.documentTypeListItem('announcement').title('Announcements').icon(BellIcon),
+            ]),
+        ),
+
+      S.divider(),
+
+      S.listItem()
+        .title('Page builder')
+        .icon(DocumentsIcon)
+        .child(S.documentTypeList('page').title('Page builder')),
+
       S.listItem()
         .title('Page settings')
         .icon(DocumentsIcon)
@@ -44,39 +113,53 @@ export const structure: StructureResolver = (S) =>
                     .title('Homepage settings'),
                 ),
               S.listItem()
-                .title('Landing pages')
-                .icon(DocumentsIcon)
-                .child(
-                  S.document()
-                    .schemaType('landingPageSettings')
-                    .documentId('landingPageSettings')
-                    .title('Landing page settings'),
-                ),
-              S.listItem()
-                .title('Referrals')
+                .title('Patient access')
                 .icon(LaunchIcon)
                 .child(
-                  S.document()
-                    .schemaType('referralPageSettings')
-                    .documentId('referralPageSettings')
-                    .title('Referral page settings'),
+                  S.list()
+                    .title('Patient access')
+                    .items(
+                      pageSettingGroups[0].items.map((item) => {
+                        if ('child' in item) {
+                          return S.listItem()
+                            .title(item.title)
+                            .icon(item.icon)
+                            .child(item.child(S))
+                        }
+
+                        return pageSettingsListItem(S, item)
+                      }),
+                    ),
                 ),
+              ...pageSettingGroups.slice(1).map((group) =>
+                S.listItem()
+                  .title(group.title)
+                  .icon(group.icon)
+                  .child(
+                    S.list()
+                      .title(group.title)
+                      .items(group.items.map((page) => pageSettingsListItem(S, page))),
+                  ),
+              ),
             ]),
         ),
 
-      S.divider(),
-
       S.listItem()
-        .title('Website content')
-        .icon(DocumentsIcon)
+        .title('Site settings')
+        .icon(CogIcon)
         .child(
           S.list()
-            .title('Website content')
+            .title('Site settings')
             .items([
               S.listItem()
-                .title('Page builder')
-                .icon(DocumentsIcon)
-                .child(S.documentTypeList('page').title('Page builder')),
+                .title('Organization profile')
+                .icon(CogIcon)
+                .child(
+                  S.document()
+                    .schemaType('siteSettings')
+                    .documentId('siteSettings')
+                    .title('Organization profile'),
+                ),
               S.listItem()
                 .title('Navigation menus')
                 .icon(ListIcon)
@@ -111,7 +194,7 @@ export const structure: StructureResolver = (S) =>
                         .child(
                           S.document()
                             .schemaType('legalPage')
-                            .documentId('legalPage.privacy')
+                            .documentId('legal-page-privacy')
                             .title('Privacy policy'),
                         ),
                       S.listItem()
@@ -120,50 +203,11 @@ export const structure: StructureResolver = (S) =>
                         .child(
                           S.document()
                             .schemaType('legalPage')
-                            .documentId('legalPage.terms')
+                            .documentId('legal-page-terms')
                             .title('Terms of service'),
                         ),
                     ]),
                 ),
-            ]),
-        ),
-
-      S.divider(),
-
-      S.listItem()
-        .title('Care library')
-        .icon(HeartIcon)
-        .child(
-          S.list()
-            .title('Care library')
-            .items([
-              S.documentTypeListItem('service').title('Services').icon(HeartIcon),
-              S.documentTypeListItem('program').title('Programs').icon(StackIcon),
-              S.documentTypeListItem('faq').title('FAQs').icon(HelpCircleIcon),
-            ]),
-        ),
-
-      S.listItem()
-        .title('Team')
-        .icon(UsersIcon)
-        .child(
-          S.list()
-            .title('Team')
-            .items([
-              S.documentTypeListItem('provider').title('Team members').icon(UsersIcon),
-            ]),
-        ),
-
-      S.divider(),
-
-      S.listItem()
-        .title('Operations')
-        .icon(BellIcon)
-        .child(
-          S.list()
-            .title('Operations')
-            .items([
-              S.documentTypeListItem('announcement').title('Announcements').icon(BellIcon),
             ]),
         ),
     ])

@@ -5,11 +5,6 @@ export const generateMetadata = () => metadataForPage("patient-resources");
 
 export default function PatientResourcesPage() {
   return (
-    <StaticMarketingPage
-      description="Helpful links and guidance for patients navigating care, appointments, and support resources."
-      eyebrow="Patient resources"
-      slug="patient-resources"
-      title="Patient resources"
-    />
+    <StaticMarketingPage slug="patient-resources" />
   );
 }

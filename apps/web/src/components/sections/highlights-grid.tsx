@@ -9,24 +9,29 @@ import Link from "next/link";
 
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
-import type { ServiceHighlight } from "@/lib/cms/types";
+import type { HomepageCareOptions, ServiceHighlight } from "@/lib/cms/types";
 
 const serviceIcons = [HeartPulse, ClipboardList, Route];
 
 type HighlightsGridProps = {
+  content?: HomepageCareOptions;
   services?: ServiceHighlight[];
 };
 
-export function HighlightsGrid({ services }: HighlightsGridProps) {
+export function HighlightsGrid({ content, services }: HighlightsGridProps) {
   const items = services ?? [];
+  if (!content && items.length === 0) return null;
+
   return (
-    <Section className="bg-background py-20 sm:py-24">
+    <Section className="bg-background pb-12 pt-20 sm:pb-14 sm:pt-24">
       <Container>
         <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
           <div className="lg:order-2">
-            <p className="font-heading text-sm font-black uppercase text-brand-emphasis">
-              Care options
-            </p>
+            {content?.eyebrow ? (
+              <p className="font-heading text-sm font-black uppercase text-brand-emphasis">
+                {content.eyebrow}
+              </p>
+            ) : null}
             <Image
               alt="Clinicians standing near healthcare service doors"
               className="mt-6 h-auto w-full object-contain"
@@ -35,21 +40,25 @@ export function HighlightsGrid({ services }: HighlightsGridProps) {
               src="/images/illustrations/Asset%2034.png"
               width={1424}
             />
-            <h2 className="mt-4 text-4xl font-black leading-tight tracking-normal text-foreground sm:text-5xl">
-              Choose the door that matches the need.
-            </h2>
-            <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
-              Some visitors arrive looking for treatment support. Others need
-              primary care, program information, or a referral route. Keep each
-              path distinct and easy to scan.
-            </p>
-            <Link
-              className="mt-7 inline-flex items-center gap-2 font-heading text-sm font-bold text-brand-trust hover:text-brand-action-hover hover:underline"
-              href="/care"
-            >
-              View care overview
-              <ArrowRight aria-hidden="true" className="size-4" />
-            </Link>
+            {content?.heading ? (
+              <h2 className="mt-4 text-4xl font-black leading-tight tracking-normal text-foreground sm:text-5xl">
+                {content.heading}
+              </h2>
+            ) : null}
+            {content?.description ? (
+              <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
+                {content.description}
+              </p>
+            ) : null}
+            {content?.ctaLabel && content.ctaHref ? (
+              <Link
+                className="mt-7 inline-flex items-center gap-2 font-heading text-sm font-bold text-brand-trust hover:text-brand-action-hover hover:underline"
+                href={content.ctaHref}
+              >
+                {content.ctaLabel}
+                <ArrowRight aria-hidden="true" className="size-4" />
+              </Link>
+            ) : null}
           </div>
 
           <div className="grid gap-0 overflow-hidden rounded-lg border border-border bg-card lg:order-1">
@@ -58,7 +67,7 @@ export function HighlightsGrid({ services }: HighlightsGridProps) {
 
               return (
                 <Link
-                  className="grid gap-4 border-b border-border p-6 transition-colors last:border-b-0 hover:bg-muted/55 sm:grid-cols-[3.5rem_1fr_auto] sm:items-center"
+                  className="grid gap-4 border-b border-border px-6 py-8 transition-colors last:border-b-0 hover:bg-muted/55 sm:grid-cols-[3.5rem_1fr_auto] sm:items-center"
                   href={service.href}
                   key={service.title}
                 >

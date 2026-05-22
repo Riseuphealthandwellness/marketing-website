@@ -1,33 +1,45 @@
 import {
+  AlarmClock,
+  Brain,
+  Calendar,
   CircleDollarSign,
   Clock3,
+  HeartPulse,
   MapPinned,
+  MapPin,
+  Phone,
+  Pill,
   ShieldCheck,
+  Stethoscope,
+  Users,
 } from "lucide-react";
 import Image from "next/image";
+import type { ElementType } from "react";
 
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
+import type { CareModelBlock } from "@/lib/cms/types";
 
-const carePromises = [
-  {
-    title: "Less handoff, more follow-through",
-    body: "People are not left to retell their story at every step. The work is organized around continuity, warm communication, and practical support.",
-    icon: Clock3,
-  },
-  {
-    title: "Care that respects privacy",
-    body: "The public site keeps sensitive clinical details out of general web channels and points people toward approved intake or direct staff communication.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Built for real-world barriers",
-    body: "Transportation, timing, paperwork, and trust all affect access. The experience is designed around the friction people actually face.",
-    icon: CircleDollarSign,
-  },
-];
+const iconMap: Record<string, ElementType> = {
+  "alarm-clock": AlarmClock,
+  "clock": Clock3,
+  "shield": ShieldCheck,
+  "dollar": CircleDollarSign,
+  "heart": HeartPulse,
+  "users": Users,
+  "phone": Phone,
+  "calendar": Calendar,
+  "map-pin": MapPin,
+  "stethoscope": Stethoscope,
+  "pill": Pill,
+  "brain": Brain,
+};
 
-export function CareModelSection() {
+type CareModelSectionProps = CareModelBlock;
+
+export function CareModelSection({ eyebrow, heading, description, items }: CareModelSectionProps) {
+  if (!items?.length) return null;
+
   return (
     <Section className="overflow-hidden bg-surface py-20 text-brand-coal sm:py-24">
       <Container className="relative grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
@@ -36,9 +48,11 @@ export function CareModelSection() {
           <div className="h-full border-l border-brand-warm-accent/14 bg-brand-warm-white" />
         </div>
         <div className="relative">
-          <p className="font-heading text-sm font-black uppercase text-brand-warm-accent">
-            What makes Rise Up different
-          </p>
+          {eyebrow ? (
+            <p className="font-heading text-sm font-black uppercase text-brand-warm-accent">
+              {eyebrow}
+            </p>
+          ) : null}
           <Image
             alt="Clinician reviewing a healthcare record"
             className="mt-6 h-auto w-full object-contain"
@@ -47,22 +61,26 @@ export function CareModelSection() {
             src="/images/illustrations/Asset%2033.png"
             width={1424}
           />
-          <h2 className="mt-4 max-w-3xl text-4xl font-black leading-tight tracking-normal sm:text-5xl">
-            Built for the moments when getting care feels hardest.
-          </h2>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-brand-coal/74">
-            A healthcare website should do more than list services. It should
-            lower confusion, protect privacy, and help people feel oriented
-            before they ever pick up the phone.
-          </p>
+          {heading ? (
+            <h2 className="mt-4 max-w-3xl text-4xl font-black leading-tight tracking-normal sm:text-5xl">
+              {heading}
+            </h2>
+          ) : null}
+          {description ? (
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-brand-coal/74">
+              {description}
+            </p>
+          ) : null}
         </div>
 
-        <div className="relative space-y-6">
-          {carePromises.map((item) => {
-            const Icon = item.icon;
-
+        <div className="relative divide-y divide-border overflow-hidden rounded-xl border border-border bg-white shadow-[var(--shadow-soft)]">
+          {items.map((item) => {
+            const Icon = iconMap[item.iconName] ?? ShieldCheck;
             return (
-              <div className="grid gap-4 border-t border-brand-warm-accent/22 pt-6 sm:grid-cols-[4rem_1fr]" key={item.title}>
+              <div
+                key={item.title}
+                className="grid gap-4 p-5 sm:grid-cols-[4rem_1fr]"
+              >
                 <div className="flex size-14 items-center justify-center rounded-md bg-brand-trust text-brand-soft-accent">
                   <Icon aria-hidden="true" className="size-7" />
                 </div>

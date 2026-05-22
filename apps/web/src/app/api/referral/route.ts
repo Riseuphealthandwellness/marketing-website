@@ -99,7 +99,7 @@ function buildEmailBody(input: {
     "Reason for referral",
     input.reasonForReferral,
     "",
-    "Safety note: The online form does not collect Social Security numbers or document uploads. Referral partners should send labs, radiology reports, progress notes, and other clinical documents through the approved secure channel.",
+    "Safety note: The online form collects only the last 4 digits of SSNs and does not accept document uploads. Supporting records should be sent separately through the appropriate secure channel.",
   ].join("\n");
 }
 
@@ -202,7 +202,7 @@ export async function POST(request: Request) {
 
   if (includesBlockedSensitiveDetails(Object.values(input).join(" "))) {
     return Response.json(
-      { error: "Please do not include Social Security numbers in the online form." },
+      { error: "Please do not include full Social Security numbers in the online form." },
       { status: 422 },
     );
   }

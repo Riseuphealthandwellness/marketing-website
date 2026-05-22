@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 
 import "@/app/globals.css";
 
+import { AnnouncementBannerServer } from "@/components/site/announcement-banner-server";
 import { ImageDragGuard } from "@/components/site/image-drag-guard";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
@@ -54,6 +55,7 @@ export default function RootLayout({
         <ImageDragGuard />
         <RouteScrollManager />
         <SkipLink />
+        <AnnouncementBannerServer />
         <SiteHeader />
         <main id="main-content">{children}</main>
         <SiteFooter />

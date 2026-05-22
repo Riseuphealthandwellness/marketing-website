@@ -34,6 +34,24 @@ export const ctaButton = defineType({
       initialValue: 'primary',
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: 'icon',
+      title: 'Icon',
+      type: 'string',
+      description: 'Optional icon shown next to the button label where supported.',
+      options: {
+        layout: 'dropdown',
+        list: [
+          {title: 'Automatic', value: 'auto'},
+          {title: 'None', value: 'none'},
+          {title: 'Phone', value: 'phone'},
+          {title: 'Mail', value: 'mail'},
+          {title: 'Arrow', value: 'arrow'},
+          {title: 'External link', value: 'external'},
+        ],
+      },
+      initialValue: 'auto',
+    }),
   ],
   preview: {
     select: {

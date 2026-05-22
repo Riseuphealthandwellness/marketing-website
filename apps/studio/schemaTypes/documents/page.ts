@@ -23,8 +23,15 @@ export const page = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      description: 'The URL path for this page, e.g. "about" → /about',
-      options: {source: 'title'},
+      description: 'URL path for this page. Use a plain slug for top-level pages (e.g. "faq" → /faq) or a prefixed path to nest under an existing section (e.g. "care/what-to-expect" → /care/what-to-expect).',
+      options: {
+        source: 'title',
+        slugify: (input: string) =>
+          input
+            .toLowerCase()
+            .replace(/[^a-z0-9/]+/g, '-')
+            .replace(/^-+|-+$/g, ''),
+      },
       validation: (rule) => rule.required(),
       group: 'content',
     }),
@@ -64,7 +71,7 @@ export const page = defineType({
       title: 'Page blocks',
       type: 'array',
       description: 'Build the page body by adding and reordering blocks.',
-      of: [{type: 'pageSection'}, {type: 'ctaBlock'}],
+      of: [{type: 'pageSection'}, {type: 'ctaBlock'}, {type: 'careModelBlock'}, {type: 'conditionsBlock'}, {type: 'faqBlock'}, {type: 'servicesBlock'}, {type: 'programsBlock'}],
       group: 'content',
     }),
     defineField({

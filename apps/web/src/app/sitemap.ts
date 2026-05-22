@@ -8,6 +8,7 @@ const routes = [
   "",
   "/care",
   "/care/primary-care",
+  "/care/weight-loss-mgmt",
   "/care/services",
   "/care/programs",
   "/about",
@@ -17,6 +18,8 @@ const routes = [
   "/referrals",
   "/contact",
   "/careers",
+  "/team",
+  "/locations",
   "/privacy-policy",
   "/terms-of-service",
 ];

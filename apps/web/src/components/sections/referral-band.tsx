@@ -19,8 +19,12 @@ function usableHref(href?: string) {
 }
 
 export function ReferralBand({ cta, accessLinks }: ReferralBandProps) {
-  const primaryHref = usableHref(cta?.primaryHref) || usableHref(accessLinks?.referral) || "/referrals";
-  const secondaryHref = cta?.secondaryHref || "/contact";
+  if (!cta) return null;
+
+  const primaryHref = usableHref(cta.primaryHref) ?? usableHref(accessLinks?.referral);
+  const secondaryHref = usableHref(cta.secondaryHref);
+  if (!primaryHref) return null;
+
   const referralIsExternal = isExternalUrl(primaryHref);
 
   return (
@@ -32,16 +36,19 @@ export function ReferralBand({ cta, accessLinks }: ReferralBandProps) {
           </div>
 
           <div>
-            <p className="font-heading text-sm font-black uppercase text-brand-warm-white">
-              Referral partners
-            </p>
+            {cta.eyebrow ? (
+              <p className="font-heading text-sm font-black uppercase text-brand-warm-white">
+                {cta.eyebrow}
+              </p>
+            ) : null}
             <h2 className="mt-2 max-w-3xl text-3xl font-black leading-tight tracking-normal">
-              {cta?.heading ?? "A direct route for providers, families, and community partners."}
+              {cta.heading}
             </h2>
-            <p className="mt-3 max-w-2xl text-base leading-7 text-brand-warm-white/78">
-              {cta?.description ??
-                "Use the referral path for service questions and partner coordination. Sensitive clinical details should stay in approved intake, portal, or direct staff channels."}
-            </p>
+            {cta.description ? (
+              <p className="mt-3 max-w-2xl text-base leading-7 text-brand-warm-white/78">
+                {cta.description}
+              </p>
+            ) : null}
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
@@ -52,7 +59,7 @@ export function ReferralBand({ cta, accessLinks }: ReferralBandProps) {
                 rel="noreferrer"
                 target="_blank"
               >
-                {cta?.primaryLabel ?? "Referral information"}
+                {cta.primaryLabel}
                 <ExternalLink aria-hidden="true" className="size-4" />
               </a>
             ) : (
@@ -60,16 +67,16 @@ export function ReferralBand({ cta, accessLinks }: ReferralBandProps) {
                 className="font-heading inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-warm-white px-6 py-3 text-base font-bold text-brand-trust shadow-sm transition-colors hover:bg-brand-warm-white/90 hover:text-brand-action"
                 href={primaryHref}
               >
-                {cta?.primaryLabel ?? "Referral information"}
+                {cta.primaryLabel}
                 <ArrowRight aria-hidden="true" className="size-4" />
               </Link>
             )}
-            {cta?.secondaryLabel !== "" ? (
+            {cta.secondaryLabel && secondaryHref ? (
               <Link
                 className="font-heading inline-flex min-h-12 items-center justify-center rounded-md border border-brand-warm-white/24 bg-brand-warm-white/8 px-6 py-3 text-base font-bold text-brand-warm-white transition-colors hover:bg-brand-warm-white/14"
                 href={secondaryHref}
               >
-                {cta?.secondaryLabel ?? "Contact team"}
+                {cta.secondaryLabel}
               </Link>
             ) : null}
           </div>

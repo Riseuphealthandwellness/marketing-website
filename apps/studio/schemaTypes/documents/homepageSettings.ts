@@ -6,11 +6,26 @@ export const homepageSettings = defineType({
   title: 'Homepage settings',
   type: 'document',
   icon: HomeIcon,
+  initialValue: {
+    title: 'Homepage settings',
+  },
   fields: [
+    defineField({
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+      hidden: true,
+      readOnly: true,
+    }),
     defineField({
       name: 'hero',
       title: 'Hero',
       type: 'homepageHero',
+    }),
+    defineField({
+      name: 'heroFeaturePanel',
+      title: 'Hero feature panel',
+      type: 'homepageFeaturePanel',
     }),
     defineField({
       name: 'careModelHighlights',
@@ -25,6 +40,11 @@ export const homepageSettings = defineType({
       of: [{type: 'serviceHighlight'}],
     }),
     defineField({
+      name: 'careOptions',
+      title: 'Care options intro',
+      type: 'homepageCareOptions',
+    }),
+    defineField({
       name: 'referralCta',
       title: 'Referral CTA',
       type: 'ctaBlock',
@@ -36,8 +56,11 @@ export const homepageSettings = defineType({
     }),
   ],
   preview: {
-    prepare: () => ({
-      title: 'Homepage settings',
+    select: {
+      title: 'title',
+    },
+    prepare: ({title}) => ({
+      title: title || 'Homepage settings',
       subtitle: 'Hero, homepage sections, and SEO',
     }),
   },

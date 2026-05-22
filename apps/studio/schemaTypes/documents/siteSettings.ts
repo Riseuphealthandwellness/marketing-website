@@ -12,6 +12,7 @@ export const siteSettings = defineType({
     {name: 'location', title: 'Location'},
     {name: 'access', title: 'Access links'},
     {name: 'footer', title: 'Footer'},
+    {name: 'sharedContent', title: 'Shared content'},
   ],
   fields: [
     defineField({
@@ -73,7 +74,7 @@ export const siteSettings = defineType({
       title: 'Logo image',
       type: 'image',
       group: 'identity',
-      description: 'Brand mark shown in the header and footer. Falls back to the built-in image if not set.',
+      description: 'Brand mark shown in the header and footer.',
       fields: [
         defineField({
           name: 'alt',
@@ -88,7 +89,7 @@ export const siteSettings = defineType({
       type: 'string',
       group: 'footer',
       description:
-        'Shown in the footer. Supports [year], [name], [privacy], and [terms]. Defaults to "© [year] [name]. All rights reserved. | [privacy] | [terms]" if left blank.',
+        'Shown in the footer. Supports [year], [name], [privacy], and [terms].',
     }),
     defineField({
       name: 'headerCta',
@@ -101,6 +102,19 @@ export const siteSettings = defineType({
       title: 'Access links',
       type: 'accessLinks',
       group: 'access',
+    }),
+    defineField({
+      name: 'contactBand',
+      title: 'Contact section',
+      type: 'contactBandContent',
+      group: 'sharedContent',
+    }),
+    defineField({
+      name: 'footerNotice',
+      title: 'Footer notice',
+      type: 'text',
+      rows: 3,
+      group: 'footer',
     }),
   ],
   preview: {

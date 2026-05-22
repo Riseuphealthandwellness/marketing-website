@@ -64,7 +64,7 @@ function MegaMenuItem({ item }: MegaMenuItemProps) {
               </div>
               <div className="space-y-3 px-5 pb-5">
                 {item.eyebrow ? (
-                  <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.04em] text-brand-trust">
+                  <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.04em] text-brand-warm-accent">
                     {item.eyebrow}
                   </p>
                 ) : null}
@@ -90,7 +90,7 @@ function MegaMenuItem({ item }: MegaMenuItemProps) {
             <div className="grid gap-2 sm:grid-cols-2">
               {item.groups.map((group) => (
                 <div key={group.title} className="rounded-lg p-2">
-                  <h3 className="font-heading px-2 text-[11px] font-semibold uppercase tracking-[0.04em] text-muted-foreground">
+                  <h3 className="font-heading px-2 text-[11px] font-semibold uppercase tracking-[0.04em] text-brand-warm-accent">
                     {group.title}
                   </h3>
                   <ul className="mt-2 space-y-1">

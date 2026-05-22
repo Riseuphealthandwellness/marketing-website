@@ -40,6 +40,12 @@ export const announcement = defineType({
       type: 'datetime',
     }),
     defineField({
+      name: 'expiresAt',
+      title: 'Expires at',
+      type: 'datetime',
+      description: 'Banner stops showing after this date and time.',
+    }),
+    defineField({
       name: 'link',
       title: 'Optional link',
       type: 'link',

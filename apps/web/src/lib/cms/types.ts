@@ -120,6 +120,8 @@ export type SiteSettings = {
     zoom: number;
   };
   accessLinks: PatientAccessLinks;
+  contactBand?: ContactBandContent;
+  footerNotice?: string;
   headerCta?: CtaButton;
   logo?: CmsImage;
 };
@@ -136,6 +138,7 @@ export type PageSection = {
 };
 
 export type CtaBlock = {
+  eyebrow?: string;
   heading: string;
   description: string;
   primaryLabel: string;
@@ -144,15 +147,59 @@ export type CtaBlock = {
   secondaryHref?: string;
 };
 
+export type ConditionsBlock = {
+  category: string;
+  heading?: string;
+  conditions: Pick<Condition, 'slug' | 'title' | 'shortDescription'>[];
+};
+
+export type FaqBlock = {
+  category: string;
+  heading?: string;
+  faqs: Faq[];
+};
+
+export type ServicesBlock = {
+  heading?: string;
+  services: Pick<Service, 'slug' | 'title' | 'description' | 'href'>[];
+};
+
+export type ProgramsBlock = {
+  heading?: string;
+  programs: Pick<Program, 'slug' | 'title' | 'description' | 'audience' | 'href'>[];
+};
+
+export type CareModelItem = {
+  title: string;
+  body: string;
+  iconName: string;
+};
+
+export type CareModelBlock = {
+  eyebrow?: string;
+  heading?: string;
+  description?: string;
+  items: CareModelItem[];
+};
+
 export type PageBlock =
   | ({ _type: 'pageSection' } & PageSection)
-  | ({ _type: 'ctaBlock' } & CtaBlock);
+  | ({ _type: 'ctaBlock' } & CtaBlock)
+  | ({ _type: 'careModelBlock' } & CareModelBlock)
+  | ({ _type: 'conditionsBlock' } & ConditionsBlock)
+  | ({ _type: 'faqBlock' } & FaqBlock)
+  | ({ _type: 'servicesBlock' } & ServicesBlock)
+  | ({ _type: 'programsBlock' } & ProgramsBlock);
 
 export type MarketingPage = {
   title: string;
   eyebrow?: string;
   description: string;
   blocks?: PageBlock[];
+  contactForm?: ContactFormContent;
+  emptyStateText?: string;
+  newPatientAccessCards?: NewPatientAccessCard[];
+  newPatientSteps?: NewPatientStep[];
   seo?: SeoFields;
 };
 
@@ -166,6 +213,7 @@ export type CtaButton = {
   label: string;
   href: string;
   style?: 'primary' | 'secondary';
+  icon?: 'auto' | 'none' | 'phone' | 'mail' | 'arrow' | 'external';
 };
 
 export type CmsImage = {
@@ -182,7 +230,66 @@ export type CmsFile = {
 
 export type ReferralSettings = {
   downloadLabel?: string;
+  formConsentLabel?: string;
+  formDescription?: string;
+  formDocumentNote?: string;
+  formEyebrow?: string;
+  formHeading?: string;
+  missingPdfMessage?: string;
+  pdfSectionDescription?: string;
+  pdfSectionHeading?: string;
   referralPdf?: CmsFile;
+};
+
+export type ContactBandContent = {
+  eyebrow: string;
+  heading: string;
+  description: string;
+};
+
+export type ContactFormContent = {
+  eyebrow: string;
+  heading: string;
+  description: string;
+  note?: string;
+  topics: string[];
+};
+
+export type NewPatientStep = {
+  iconName: 'phone' | 'clipboard' | 'calendar-check';
+  title: string;
+  body: string;
+  ctaType: 'none' | 'phone' | 'intake' | 'custom';
+  ctaLabel?: string;
+  ctaHref?: string;
+};
+
+export type NewPatientAccessCard = {
+  linkType: 'scheduling' | 'portal' | 'referral' | 'custom';
+  title: string;
+  description: string;
+  ctaLabel: string;
+  href?: string;
+};
+
+export type HomepageFeaturePanelItem = {
+  iconName: 'phone' | 'heart-pulse' | 'map-pin';
+  text: string;
+};
+
+export type HomepageFeaturePanel = {
+  eyebrow: string;
+  items: HomepageFeaturePanelItem[];
+  ctaLabel?: string;
+  ctaHref?: string;
+};
+
+export type HomepageCareOptions = {
+  eyebrow: string;
+  heading: string;
+  description: string;
+  ctaLabel?: string;
+  ctaHref?: string;
 };
 
 export type BrandTextColor =
@@ -210,6 +317,29 @@ export type PortableHeading = {
   }>;
 }[];
 
+export type Condition = {
+  slug: string;
+  title: string;
+  category: string;
+  shortDescription: string;
+  body?: unknown[];
+  seo?: SeoFields;
+};
+
+export type Faq = {
+  question: string;
+  answer: string;
+};
+
+export type Announcement = {
+  title?: string;
+  message?: string;
+  link?: {
+    label?: string;
+    href?: string;
+  };
+};
+
 export type HomepageContent = {
   hero?: {
     eyebrow?: string;
@@ -219,7 +349,9 @@ export type HomepageContent = {
     backgroundImage?: CmsImage;
     featureImage?: CmsImage;
   };
+  careOptions?: HomepageCareOptions;
   careModelHighlights?: string[];
+  heroFeaturePanel?: HomepageFeaturePanel;
   serviceHighlights?: ServiceHighlight[];
   referralCta?: CtaBlock;
   seo?: SeoFields;
