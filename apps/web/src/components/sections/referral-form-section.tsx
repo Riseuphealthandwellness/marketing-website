@@ -182,7 +182,7 @@ export function ReferralFormSection({ settings, siteSettings }: ReferralFormSect
                   target="_blank"
                 >
                   <Download aria-hidden="true" className="size-3.5" />
-                  {settings.downloadLabel ?? "Download PDF"}
+                  {settings?.downloadLabel ?? "Download PDF"}
                 </a>
               </div>
             </div>
