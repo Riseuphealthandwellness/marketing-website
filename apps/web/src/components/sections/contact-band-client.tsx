@@ -101,7 +101,7 @@ export function ContactBandClient({ phone, email, address, mapSrc, mapSrcLarge }
             >
               <X aria-hidden="true" className="size-5" />
             </button>
-            <img alt="Map of our location" className="h-auto w-full" src={mapSrcLarge} />
+            <img alt="Map of our location" className="h-auto w-full" src={mapSrcLarge!} />
           </div>
         </div>
       ) : null}
