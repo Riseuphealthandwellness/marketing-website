@@ -5,7 +5,7 @@ import { ContactBand } from "@/components/sections/contact-band";
 import { HighlightsGrid } from "@/components/sections/highlights-grid";
 import { HomeHero } from "@/components/sections/home-hero";
 import { ReferralBand } from "@/components/sections/referral-band";
-import { getHomepageContent, getSiteSettings } from "@/lib/cms/content-source";
+import { getCareModelBlock, getHomepageContent, getSiteSettings } from "@/lib/cms/content-source";
 import { JsonLd, organizationJsonLd } from "@/lib/seo/json-ld";
 import { createPageMetadata } from "@/lib/seo/metadata";
 
@@ -21,18 +21,19 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [homepage, settings] = await Promise.all([
+  const [homepage, settings, careModel] = await Promise.all([
     getHomepageContent(),
     getSiteSettings(),
+    getCareModelBlock(),
   ]);
 
   return (
     <>
       {settings ? <JsonLd data={organizationJsonLd(settings)} /> : null}
-      <HomeHero {...homepage?.hero} accessLinks={settings?.accessLinks} />
-      <CareModelSection />
+      <HomeHero {...homepage?.hero} featurePanel={homepage?.heroFeaturePanel} />
+      {careModel ? <CareModelSection {...careModel} /> : null}
       <ReferralBand cta={homepage?.referralCta} accessLinks={settings?.accessLinks} />
-      <HighlightsGrid services={homepage?.serviceHighlights} />
+      <HighlightsGrid content={homepage?.careOptions} services={homepage?.serviceHighlights} />
       <ContactBand />
     </>
   );

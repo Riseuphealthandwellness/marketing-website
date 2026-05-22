@@ -1,69 +1,80 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CalendarCheck, ClipboardList, ExternalLink, PhoneCall } from "lucide-react";
+import { notFound } from "next/navigation";
 
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
+import { PageBlocks } from "@/components/sections/page-blocks";
 import { PageHero } from "@/components/sections/page-hero";
 import { Button } from "@/components/ui/button";
-import { getSiteSettings } from "@/lib/cms/content-source";
+import { getMarketingPage, getSiteSettings } from "@/lib/cms/content-source";
+import type { NewPatientAccessCard, NewPatientStep, PatientAccessLinks, SiteSettings } from "@/lib/cms/types";
 import { isExternalUrl } from "@/lib/integrations/patient-access";
-import { createPageMetadata } from "@/lib/seo/metadata";
+import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
-  return createPageMetadata({
-    title: "New Patients",
-    description: "Starting care at RiseUp Health & Wellness. Learn how to schedule, what to bring, and what to expect.",
-    path: "/new-patients",
-    site: settings ?? undefined,
-  });
+export const generateMetadata = () => metadataForPage("new-patients");
+
+const stepIcons = {
+  phone: PhoneCall,
+  clipboard: ClipboardList,
+  "calendar-check": CalendarCheck,
+};
+
+function resolveStepCta(
+  step: NewPatientStep,
+  settings: SiteSettings | null,
+  access: PatientAccessLinks | undefined,
+) {
+  if (step.ctaType === "phone" && settings?.phone) {
+    return {
+      label: (step.ctaLabel ?? "").replace("[phone]", settings.phone),
+      href: `tel:${settings.phone.replace(/[^\d+]/g, "")}`,
+    };
+  }
+
+  if (step.ctaType === "intake" && access?.intake) {
+    return { label: step.ctaLabel, href: access.intake };
+  }
+
+  if (step.ctaType === "custom" && step.ctaHref) {
+    return { label: step.ctaLabel, href: step.ctaHref };
+  }
+
+  return null;
+}
+
+function resolveAccessCardHref(card: NewPatientAccessCard, access: PatientAccessLinks | undefined) {
+  if (card.linkType === "scheduling") return access?.scheduling;
+  if (card.linkType === "portal") return access?.portal;
+  if (card.linkType === "referral") return access?.referral || "/referrals";
+  return card.href;
 }
 
 export default async function NewPatientsPage() {
-  const settings = await getSiteSettings();
-  const access = settings?.accessLinks;
+  const [settings, page] = await Promise.all([getSiteSettings(), getMarketingPage("new-patients")]);
+  if (!page) notFound();
 
-  const steps = [
-    {
-      icon: PhoneCall,
-      title: "Call or reach out",
-      body: "Start by calling our office or using the scheduling link below. Our staff will help you find the right appointment type and answer any questions before your first visit.",
-      cta: settings?.phone
-        ? { label: `Call ${settings.phone}`, href: `tel:${(settings.phone).replace(/[^\d+]/g, "")}` }
-        : null,
-    },
-    {
-      icon: ClipboardList,
-      title: "Complete intake paperwork",
-      body: "We'll send intake forms ahead of your appointment. Completing them in advance shortens your wait and helps your care team prepare before you arrive.",
-      cta: access?.intake
-        ? { label: "Start intake forms", href: access.intake }
-        : null,
-    },
-    {
-      icon: CalendarCheck,
-      title: "Attend your first appointment",
-      body: "Bring a photo ID, insurance card, and a list of current medications. Plan to arrive 10–15 minutes early. Your provider will review your history and discuss next steps together with you.",
-      cta: null,
-    },
-  ];
+  const access = settings?.accessLinks;
+  const steps = page?.newPatientSteps ?? [];
+  const accessCards = page?.newPatientAccessCards ?? [];
 
   return (
     <>
       <PageHero
-        eyebrow="New patients"
-        title="Starting care is simpler than it sounds"
-        description="Whether you're coming in for primary care, behavioral health, or addiction medicine — we'll walk you through every step."
+        eyebrow={page?.eyebrow}
+        title={page.title}
+        description={page?.description}
       />
+      {page?.blocks && page.blocks.length > 0 ? <PageBlocks blocks={page.blocks} /> : null}
 
-      {/* Steps */}
+      {steps.length > 0 ? (
       <Section>
         <Container>
           <div className="grid gap-8 lg:grid-cols-3">
             {steps.map((step, i) => {
-              const Icon = step.icon;
+              const Icon = stepIcons[step.iconName];
+              const cta = resolveStepCta(step, settings, access);
               return (
                 <div key={step.title} className="flex flex-col">
                   <div className="mb-4 flex items-center gap-3">
@@ -76,14 +87,14 @@ export default async function NewPatientsPage() {
                     {step.title}
                   </h2>
                   <p className="mt-3 text-base leading-7 text-muted-foreground flex-1">{step.body}</p>
-                  {step.cta ? (
+                  {cta?.href && cta.label ? (
                     <a
-                      href={step.cta.href}
+                      href={cta.href}
                       className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-action hover:underline"
-                      {...(isExternalUrl(step.cta.href) ? { target: "_blank", rel: "noreferrer" } : {})}
+                      {...(isExternalUrl(cta.href) ? { target: "_blank", rel: "noreferrer" } : {})}
                     >
-                      {step.cta.label}
-                      {isExternalUrl(step.cta.href)
+                      {cta.label}
+                      {isExternalUrl(cta.href)
                         ? <ExternalLink className="size-3.5" aria-hidden="true" />
                         : <ArrowRight className="size-3.5" aria-hidden="true" />}
                     </a>
@@ -94,70 +105,40 @@ export default async function NewPatientsPage() {
           </div>
         </Container>
       </Section>
+      ) : null}
 
-      {/* Quick access */}
-      {(access?.scheduling || access?.portal) ? (
+      {accessCards.length > 0 ? (
         <Section tone="muted">
           <Container>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {access.scheduling ? (
-                <div className="rounded-lg border border-border bg-background p-6">
-                  <h3 className="font-heading text-lg font-black tracking-normal text-foreground">
-                    Schedule online
-                  </h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Book a new patient appointment at a time that works for you.
-                  </p>
-                  <Button asChild size="sm" className="mt-4">
-                    <a
-                      href={access.scheduling}
-                      {...(isExternalUrl(access.scheduling) ? { target: "_blank", rel: "noreferrer" } : {})}
-                    >
-                      Schedule now
-                      {isExternalUrl(access.scheduling)
-                        ? <ExternalLink className="size-3.5" aria-hidden="true" />
-                        : <ArrowRight className="size-3.5" aria-hidden="true" />}
-                    </a>
-                  </Button>
-                </div>
-              ) : null}
+              {accessCards.map((card) => {
+                const href = resolveAccessCardHref(card, access);
+                if (!href) return null;
 
-              {access.portal ? (
-                <div className="rounded-lg border border-border bg-background p-6">
+                return (
+                <div className="rounded-lg border border-border bg-white p-6" key={`${card.linkType}-${card.title}`}>
                   <h3 className="font-heading text-lg font-black tracking-normal text-foreground">
-                    Patient portal
+                    {card.title}
                   </h3>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Access records, messages, and results through the secure patient portal.
+                    {card.description}
                   </p>
                   <Button asChild size="sm" variant="outline" className="mt-4">
-                    <a
-                      href={access.portal}
-                      {...(isExternalUrl(access.portal) ? { target: "_blank", rel: "noreferrer" } : {})}
-                    >
-                      Open portal
-                      {isExternalUrl(access.portal)
-                        ? <ExternalLink className="size-3.5" aria-hidden="true" />
-                        : <ArrowRight className="size-3.5" aria-hidden="true" />}
-                    </a>
+                    {isExternalUrl(href) ? (
+                      <a href={href} rel="noreferrer" target="_blank">
+                        {card.ctaLabel}
+                        <ExternalLink className="size-3.5" aria-hidden="true" />
+                      </a>
+                    ) : (
+                      <Link href={href}>
+                        {card.ctaLabel}
+                        <ArrowRight className="size-3.5" aria-hidden="true" />
+                      </Link>
+                    )}
                   </Button>
                 </div>
-              ) : null}
-
-              <div className="rounded-lg border border-border bg-background p-6">
-                <h3 className="font-heading text-lg font-black tracking-normal text-foreground">
-                  Referral partners
-                </h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Referring a patient? Use our referral pathway for coordination and service questions.
-                </p>
-                <Button asChild size="sm" variant="outline" className="mt-4">
-                  <Link href="/referrals">
-                    Make a referral
-                    <ArrowRight className="size-3.5" aria-hidden="true" />
-                  </Link>
-                </Button>
-              </div>
+                );
+              })}
             </div>
           </Container>
         </Section>

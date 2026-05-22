@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { PortableText } from "@portabletext/react";
 
+import { PortableTextContent } from "@/components/cms/portable-text-content";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
@@ -48,9 +48,7 @@ export default async function ProgramPage({ params }: Props) {
               </p>
             ) : null}
             {program.body && (program.body as unknown[]).length > 0 ? (
-              <div className="prose prose-lg max-w-3xl text-foreground prose-headings:font-heading prose-headings:font-black prose-headings:tracking-normal prose-a:text-brand-action prose-strong:text-foreground">
-                <PortableText value={program.body as Parameters<typeof PortableText>[0]["value"]} />
-              </div>
+              <PortableTextContent className="max-w-3xl" value={program.body} />
             ) : null}
           </Container>
         </Section>

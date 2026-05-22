@@ -1,45 +1,40 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { Clock, MapPin, Phone } from "lucide-react";
+import { notFound } from "next/navigation";
 
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
+import { PageBlocks } from "@/components/sections/page-blocks";
 import { PageHero } from "@/components/sections/page-hero";
-import { getLocations, getSiteSettings } from "@/lib/cms/content-source";
-import { createPageMetadata } from "@/lib/seo/metadata";
+import { getLocations, getMarketingPage } from "@/lib/cms/content-source";
+import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
-  return createPageMetadata({
-    title: "Locations",
-    description: "Find a RiseUp Health & Wellness location near you.",
-    path: "/locations",
-    site: settings ?? undefined,
-  });
-}
+export const generateMetadata = () => metadataForPage("locations");
 
 export default async function LocationsPage() {
-  const locations = await getLocations();
+  const [locations, page] = await Promise.all([getLocations(), getMarketingPage("locations")]);
+  if (!page) notFound();
 
   return (
     <>
       <PageHero
-        eyebrow="Where to find us"
-        title="Our Locations"
-        description="We serve patients across West Virginia from convenient community locations."
+        eyebrow={page?.eyebrow}
+        title={page.title}
+        description={page?.description}
       />
+      {page?.blocks && page.blocks.length > 0 ? <PageBlocks blocks={page.blocks} /> : null}
 
       <Section>
         <Container>
           {locations.length === 0 ? (
-            <p className="text-muted-foreground">Location information coming soon.</p>
+            page?.emptyStateText ? <p className="text-muted-foreground">{page.emptyStateText}</p> : null
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {locations.map((loc) => (
                 <Link
                   key={loc.slug}
                   href={`/locations/${loc.slug}`}
-                  className="group flex flex-col rounded-lg border border-border bg-background p-6 shadow-sm transition-shadow hover:shadow-md"
+                  className="group flex flex-col rounded-lg border border-border bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
                 >
                   <div className="mb-4 flex items-start gap-3">
                     <MapPin className="mt-0.5 size-5 shrink-0 text-brand-warm-accent" aria-hidden="true" />

@@ -1,5 +1,4 @@
-import { PortableText } from "@portabletext/react";
-
+import { PortableTextContent } from "@/components/cms/portable-text-content";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import type { PageSection } from "@/lib/cms/types";
@@ -18,9 +17,7 @@ export function SimplePageContent({ sections }: SimplePageContentProps) {
               <h2 className="text-2xl font-semibold tracking-normal text-foreground">
                 {section.heading}
               </h2>
-              <div className="prose prose-slate max-w-none text-base leading-8 text-muted-foreground">
-                <PortableText value={section.body as Parameters<typeof PortableText>[0]['value']} />
-              </div>
+              <PortableTextContent value={section.body} />
             </section>
           ))}
         </div>

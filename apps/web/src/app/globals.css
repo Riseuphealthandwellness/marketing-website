@@ -91,7 +91,7 @@
   --background: var(--brand-warm-white);
   --foreground: var(--brand-coal);
 
-  --card: #fffdfa;
+  --card: #ffffff;
   --card-foreground: var(--foreground);
   --popover: #fffdfa;
   --popover-foreground: var(--foreground);

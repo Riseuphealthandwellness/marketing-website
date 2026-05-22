@@ -6,7 +6,7 @@ import { LegalPageBody } from "@/components/sections/legal-page-body";
 import { getLegalPage, getMarketingPage } from "@/lib/cms/content-source";
 
 type MarketingPageProps =
-  | { legalPageId: "legalPage.privacy" | "legalPage.terms"; slug?: never }
+  | { legalPageId: "legal-page-privacy" | "legal-page-terms"; slug?: never }
   | { slug: string; legalPageId?: never };
 
 export async function MarketingPage({ legalPageId, slug }: MarketingPageProps) {
@@ -17,7 +17,7 @@ export async function MarketingPage({ legalPageId, slug }: MarketingPageProps) {
     return (
       <>
         <PageHero title={page.title} />
-        <LegalPageBody body={page.body} />
+        <LegalPageBody body={page.body} title={page.title} />
       </>
     );
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { ArrowRight, ExternalLink, Mail, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -22,11 +22,37 @@ type SiteHeaderClientProps = {
   mainNav: SiteNavItem[];
 };
 
+function resolveHeaderCtaIcon(cta: CtaButton) {
+  const configuredIcon = cta.icon ?? "auto";
+
+  if (configuredIcon === "none") return "none";
+  if (configuredIcon !== "auto") return configuredIcon;
+
+  const label = cta.label.toLowerCase();
+  const href = cta.href.toLowerCase();
+
+  if (label.includes("contact") || href.includes("contact")) return "phone";
+  if (isExternalUrl(cta.href)) return "external";
+
+  return "none";
+}
+
+function HeaderCtaIcon({ cta }: { cta: CtaButton }) {
+  const icon = resolveHeaderCtaIcon(cta);
+  const className = "size-3.5";
+
+  if (icon === "phone") return <Phone aria-hidden="true" className={className} />;
+  if (icon === "mail") return <Mail aria-hidden="true" className={className} />;
+  if (icon === "arrow") return <ArrowRight aria-hidden="true" className={className} />;
+  if (icon === "external") return <ExternalLink aria-hidden="true" className={className} />;
+
+  return null;
+}
+
 export function SiteHeaderClient({
   siteName,
   tagline,
   headerCta,
-  accessLinks,
   logo,
   mainNav,
 }: SiteHeaderClientProps) {
@@ -61,7 +87,9 @@ export function SiteHeaderClient({
           </span>
           {siteName ? (
             <span className="font-logo flex flex-col leading-none text-brand-trust dark:text-brand-warm-white">
-              <span className="text-[1.55rem] sm:text-[1.9rem]">{siteName.toUpperCase()}</span>
+              <span className="text-[1.55rem] [-webkit-text-stroke:1px_currentColor] sm:text-[1.9rem]">
+                {siteName.toUpperCase()}
+              </span>
               {tagline ? (
                 <span className="mt-0.5 whitespace-pre-line text-[9px] uppercase leading-none text-brand-warm-accent sm:text-[11px]">
                   {tagline}
@@ -88,9 +116,7 @@ export function SiteHeaderClient({
                   target={isExternalUrl(headerCta.href) ? "_blank" : undefined}
                 >
                   {headerCta.label}
-                  {isExternalUrl(headerCta.href) ? (
-                    <ExternalLink aria-hidden="true" className="size-3.5" />
-                  ) : null}
+                  <HeaderCtaIcon cta={headerCta} />
                 </a>
               </Button>
             </div>

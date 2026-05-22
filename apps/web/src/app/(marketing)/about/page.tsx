@@ -1,72 +1,30 @@
-import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
+import { PageBlocks } from "@/components/sections/page-blocks";
 import { PageHero } from "@/components/sections/page-hero";
-import { getProviders, getSiteSettings } from "@/lib/cms/content-source";
-import { createPageMetadata } from "@/lib/seo/metadata";
+import { TeamMemberPortrait } from "@/components/team/team-member-portrait";
+import { getMarketingPage, getProviders } from "@/lib/cms/content-source";
+import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
-  return createPageMetadata({
-    title: "About",
-    description: "RiseUp Health & Wellness is an integrated primary care and behavioral health practice serving West Virginia.",
-    path: "/about",
-    site: settings ?? undefined,
-  });
-}
+export const generateMetadata = () => metadataForPage("about");
 
 export default async function AboutPage() {
-  const providers = await getProviders();
+  const [providers, page] = await Promise.all([getProviders(), getMarketingPage("about")]);
+  if (!page) notFound();
 
   return (
     <>
       <PageHero
-        eyebrow="About us"
-        title="Whole-person care, rooted in community"
-        description="RiseUp Health & Wellness brings primary care, addiction medicine, and behavioral health together under one roof — so patients get the coordinated support they actually need."
+        eyebrow={page?.eyebrow}
+        title={page.title}
+        description={page?.description}
       />
+      {page?.blocks && page.blocks.length > 0 ? <PageBlocks blocks={page.blocks} /> : null}
 
-      {/* Mission */}
-      <Section>
-        <Container>
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
-            <div>
-              <p className="font-heading text-sm font-black uppercase tracking-widest text-brand-warm-accent">
-                Our mission
-              </p>
-              <h2 className="mt-3 text-3xl font-black leading-tight tracking-normal text-foreground sm:text-4xl">
-                Treatment that meets people where they are
-              </h2>
-              <p className="mt-5 text-lg leading-8 text-muted-foreground">
-                We believe recovery and wellness are inseparable. By combining medication-assisted treatment, primary care, and mental health services, we remove the barriers that force patients to choose between the care they need.
-              </p>
-              <p className="mt-4 text-lg leading-8 text-muted-foreground">
-                Our team works together across disciplines — sharing records, coordinating appointments, and treating every patient as a whole person rather than a collection of separate diagnoses.
-              </p>
-            </div>
-            <div>
-              <p className="font-heading text-sm font-black uppercase tracking-widest text-brand-warm-accent">
-                Our approach
-              </p>
-              <h2 className="mt-3 text-3xl font-black leading-tight tracking-normal text-foreground sm:text-4xl">
-                Integrated, not just co-located
-              </h2>
-              <p className="mt-5 text-lg leading-8 text-muted-foreground">
-                Many clinics say they offer integrated care but keep services siloed. At RiseUp, our providers actively collaborate — behavioral health clinicians and primary care physicians share charts, attend joint case reviews, and communicate daily.
-              </p>
-              <p className="mt-4 text-lg leading-8 text-muted-foreground">
-                That coordination means fewer handoffs, less repeated paperwork, and a care team that already knows your history when you walk through the door.
-              </p>
-            </div>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Team preview */}
       {providers.length > 0 ? (
         <Section tone="muted">
           <Container>
@@ -92,26 +50,20 @@ export default async function AboutPage() {
                 <Link
                   key={provider.slug}
                   href={`/team/${provider.slug}`}
-                  className="group flex flex-col items-center rounded-lg bg-background p-5 text-center shadow-sm transition-shadow hover:shadow-md"
+                  className="group flex flex-col items-center rounded-lg bg-white p-5 text-center text-brand-coal shadow-sm transition-shadow hover:shadow-md"
                 >
-                  {provider.image?.url ? (
-                    <div className="relative mb-4 size-24 overflow-hidden rounded-full bg-muted">
-                      <Image
-                        src={provider.image.url}
-                        alt={provider.image.alt ?? provider.name}
-                        fill
-                        className="object-cover object-top"
-                        sizes="96px"
-                      />
-                    </div>
-                  ) : (
-                    <div className="mb-4 size-24 rounded-full bg-muted" />
-                  )}
-                  <h3 className="font-heading font-black tracking-normal text-foreground group-hover:text-brand-action">
+                  <TeamMemberPortrait
+                    image={provider.image}
+                    name={provider.name}
+                    toneKey={provider.slug}
+                    size="sm"
+                    className="mb-4 transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <h3 className="font-heading font-black tracking-normal text-brand-coal">
                     {provider.name}
                   </h3>
                   {provider.credentials ? (
-                    <p className="text-xs text-muted-foreground">{provider.credentials}</p>
+                    <p className="text-xs text-brand-trust/78">{provider.credentials}</p>
                   ) : null}
                   <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-brand-warm-accent">
                     {provider.role}

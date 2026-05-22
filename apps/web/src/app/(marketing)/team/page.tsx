@@ -1,70 +1,60 @@
-import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
+import { PageBlocks } from "@/components/sections/page-blocks";
 import { PageHero } from "@/components/sections/page-hero";
+import { TeamMemberPortrait } from "@/components/team/team-member-portrait";
 import { Badge } from "@/components/ui/badge";
-import { getProviders, getSiteSettings } from "@/lib/cms/content-source";
-import { createPageMetadata } from "@/lib/seo/metadata";
+import { getMarketingPage, getProviders } from "@/lib/cms/content-source";
+import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
-  return createPageMetadata({
-    title: "Our Team",
-    description: "Meet the providers and staff behind RiseUp Health & Wellness.",
-    path: "/team",
-    site: settings ?? undefined,
-  });
-}
+export const generateMetadata = () => metadataForPage("team");
 
 export default async function TeamPage() {
-  const providers = await getProviders();
+  const [teamMembers, page] = await Promise.all([getProviders(), getMarketingPage("team")]);
+  if (!page) notFound();
 
   return (
     <>
       <PageHero
-        eyebrow="People"
-        title="Our Team"
-        description="Clinicians and staff committed to integrated, compassionate care."
+        eyebrow={page?.eyebrow}
+        title={page.title}
+        description={page?.description}
       />
+      {page?.blocks && page.blocks.length > 0 ? <PageBlocks blocks={page.blocks} /> : null}
 
       <Section>
         <Container>
-          {providers.length === 0 ? (
-            <p className="text-muted-foreground">Team profiles coming soon.</p>
+          {teamMembers.length === 0 ? (
+            page?.emptyStateText ? <p className="text-muted-foreground">{page.emptyStateText}</p> : null
           ) : (
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {providers.map((provider) => (
+              {teamMembers.map((provider) => (
                 <Link
                   key={provider.slug}
                   href={`/team/${provider.slug}`}
-                  className="group flex flex-col overflow-hidden rounded-lg border border-border bg-background shadow-sm transition-shadow hover:shadow-md"
+                  className="group flex flex-col rounded-lg border border-border bg-white p-5 text-brand-coal shadow-sm transition-shadow hover:shadow-md"
                 >
-                  {provider.image?.url ? (
-                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
-                      <Image
-                        src={provider.image.url}
-                        alt={provider.image.alt ?? provider.name}
-                        fill
-                        className="object-cover object-top transition-transform duration-300 group-hover:scale-105"
-                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      />
-                    </div>
-                  ) : (
-                    <div className="aspect-[4/3] w-full bg-muted" />
-                  )}
-                  <div className="flex flex-1 flex-col p-5">
+                  <div className="flex justify-center pb-5 pt-3">
+                    <TeamMemberPortrait
+                      image={provider.image}
+                      name={provider.name}
+                      toneKey={provider.slug}
+                      className="transition-transform duration-300 group-hover:scale-[1.03]"
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col">
                     {provider.department ? (
                       <Badge className="mb-3 w-fit border-brand-trust/20 bg-brand-trust/10 text-brand-trust">
                         {provider.department}
                       </Badge>
                     ) : null}
-                    <h2 className="font-heading text-lg font-black tracking-normal text-foreground group-hover:text-brand-action">
+                    <h2 className="font-heading text-lg font-black tracking-normal text-brand-coal">
                       {provider.name}
                       {provider.credentials ? (
-                        <span className="ml-1.5 font-sans text-sm font-normal text-muted-foreground">
+                        <span className="ml-1.5 font-sans text-sm font-normal text-brand-trust/78">
                           {provider.credentials}
                         </span>
                       ) : null}
@@ -73,7 +63,7 @@ export default async function TeamPage() {
                       {provider.role}
                     </p>
                     {provider.shortBio || provider.bio ? (
-                      <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
+                      <p className="mt-3 line-clamp-3 text-sm text-brand-trust/82">
                         {provider.shortBio ?? provider.bio}
                       </p>
                     ) : null}
@@ -81,7 +71,7 @@ export default async function TeamPage() {
                       <div className="mt-4 flex flex-wrap gap-2">
                         {provider.specialties.slice(0, 3).map((specialty) => (
                           <span
-                            className="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground"
+                            className="rounded-full bg-brand-warm-white px-2.5 py-1 text-xs font-semibold text-brand-trust"
                             key={specialty}
                           >
                             {specialty}

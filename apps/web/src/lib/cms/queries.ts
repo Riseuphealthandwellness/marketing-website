@@ -80,6 +80,8 @@ export const cmsQueries = {
       "zoom": coalesce(locationZoom, 13)
     },
     accessLinks,
+    contactBand,
+    footerNotice,
     headerCta,
     "logo": logo ${imageProjection}
   }`,
@@ -110,11 +112,7 @@ export const cmsQueries = {
     }
   }`,
 
-  homepage: `select(
-    defined(*[_type == "homepageSettings" && _id == "homepageSettings"][0].hero) => *[_type == "homepageSettings" && _id == "homepageSettings"][0],
-    defined(*[_type == "pageSettings" && _id == "pageSettings"][0].homepage.hero) => *[_type == "pageSettings" && _id == "pageSettings"][0].homepage,
-    *[_type == "homepage"][0]
-  ){
+  homepage: `*[_type == "homepageSettings" && _id == "homepageSettings"][0]{
     hero{
       eyebrow,
       heading[]{
@@ -130,15 +128,17 @@ export const cmsQueries = {
       "backgroundImage": backgroundImage ${imageProjection},
       "featureImage": featureImage ${imageProjection}
     },
+    heroFeaturePanel,
     careModelHighlights,
     serviceHighlights,
+    careOptions,
     referralCta,
     seo
   }`,
 
   pageBySlug: `select(
-    defined(*[_type == "landingPageSettings" && _id == "landingPageSettings"][0].landingPages[slug == $slug][0].title) => *[_type == "landingPageSettings" && _id == "landingPageSettings"][0].landingPages[slug == $slug][0],
-    defined(*[_type == "pageSettings" && _id == "pageSettings"][0].landingPages[slug == $slug][0].title) => *[_type == "pageSettings" && _id == "pageSettings"][0].landingPages[slug == $slug][0],
+    $slug == "referrals" && defined(*[_type == "referralPageSettings" && _id == "referralPageSettings"][0].title) => *[_type == "referralPageSettings" && _id == "referralPageSettings"][0],
+    defined(*[_type == "landingPageSettings" && slug == $slug][0].title) => *[_type == "landingPageSettings" && slug == $slug][0],
     *[_type == "page" && slug.current == $slug && status == "published"][0]
   ){
     title,
@@ -148,11 +148,47 @@ export const cmsQueries = {
       _type,
       _type == "pageSection" => { heading, body },
       _type == "ctaBlock" => {
-        heading, description,
+        eyebrow, heading, description,
         primaryLabel, primaryHref,
         secondaryLabel, secondaryHref
+      },
+      _type == "conditionsBlock" => {
+        heading,
+        category,
+        "conditions": *[_type == "condition" && category == ^.category] | order(title asc){
+          "slug": slug.current, title, shortDescription
+        }
+      },
+      _type == "faqBlock" => {
+        heading,
+        category,
+        "faqs": *[_type == "faq" && category == ^.category] | order(orderRank asc, question asc){
+          question, answer
+        }
+      },
+      _type == "servicesBlock" => {
+        heading,
+        "services": *[_type == "service"] | order(title asc){
+          "slug": slug.current, title, description, href
+        }
+      },
+      _type == "programsBlock" => {
+        heading,
+        "programs": *[_type == "program"] | order(title asc){
+          "slug": slug.current, title, description, audience, href
+        }
+      },
+      _type == "careModelBlock" => {
+        eyebrow,
+        heading,
+        description,
+        items[]{ title, body, iconName }
       }
     },
+    contactForm,
+    newPatientSteps,
+    newPatientAccessCards,
+    emptyStateText,
     seo
   }`,
 
@@ -162,13 +198,35 @@ export const cmsQueries = {
 
   legalPageById: `*[_type == "legalPage" && _id == $id][0]{ title, body, seo }`,
 
-  referralSettings: `select(
-    defined(*[_type == "referralPageSettings" && _id == "referralPageSettings"][0].referralPdf) => *[_type == "referralPageSettings" && _id == "referralPageSettings"][0],
-    defined(*[_type == "pageSettings" && _id == "pageSettings"][0].referrals.referralPdf) => *[_type == "pageSettings" && _id == "pageSettings"][0].referrals,
-    *[_type == "referralSettings" && _id == "referralSettings"][0]
-  ){
+  referralSettings: `*[_type == "referralPageSettings" && _id == "referralPageSettings"][0]{
     downloadLabel,
+    pdfSectionHeading,
+    pdfSectionDescription,
+    formEyebrow,
+    formHeading,
+    formDescription,
+    formDocumentNote,
+    formConsentLabel,
+    missingPdfMessage,
     "referralPdf": referralPdf ${fileProjection}
+  }`,
+
+  conditionsByCategory: `*[_type == "condition" && category == $category] | order(title asc){ "slug": slug.current, title, shortDescription }`,
+
+  conditionBySlug: `*[_type == "condition" && slug.current == $slug][0]{ "slug": slug.current, title, category, shortDescription, body, seo }`,
+
+  allConditionSlugs: `*[_type == "condition" && defined(slug.current)]{ "slug": slug.current, category }`,
+
+  careModelBlock: `*[_type == "landingPageSettings" && slug == "care"][0].blocks[_type == "careModelBlock"][0]{
+    eyebrow, heading, description, items[]{ title, body, iconName }
+  }`,
+
+  faqsByCategory: `*[_type == "faq" && category == $category] | order(orderRank asc, question asc){ question, answer }`,
+
+  announcement: `*[_type == "announcement" && status == "published" && (!defined(expiresAt) || expiresAt > now())] | order(publishedAt desc)[0]{
+    title,
+    message,
+    "link": link{ label, href }
   }`,
 
   services: `*[_type == "service"] | order(title asc) ${serviceProjection}`,

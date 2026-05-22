@@ -1,16 +1,16 @@
 import { getLegalPage, getMarketingPage, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
 
-export async function metadataForPage(slug: string) {
+export async function metadataForPage(slug: string, path = `/${slug}`) {
   const [page, settings] = await Promise.all([
     getMarketingPage(slug),
     getSiteSettings(),
   ]);
 
   return createPageMetadata({
-    title: page?.title ?? slug,
+    title: page?.title ?? "",
     description: page?.description ?? "",
-    path: `/${slug}`,
+    path,
     seo: page?.seo,
     site: settings ?? undefined,
   });
@@ -18,7 +18,7 @@ export async function metadataForPage(slug: string) {
 
 export async function metadataForLegalPage(
   path: string,
-  id: "legalPage.privacy" | "legalPage.terms",
+  id: "legal-page-privacy" | "legal-page-terms",
 ) {
   const [page, settings] = await Promise.all([
     getLegalPage(id),

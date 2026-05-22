@@ -6,19 +6,15 @@ import { useRef, useState } from "react";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { Button } from "@/components/ui/button";
-
-const topics = [
-  "General question",
-  "New patient access",
-  "Referral question",
-  "Billing or insurance",
-  "Careers",
-  "Other",
-];
+import type { ContactFormContent } from "@/lib/cms/types";
 
 type FormState = {
   error?: string;
   ok?: boolean;
+};
+
+type ContactFormSectionProps = {
+  content?: ContactFormContent;
 };
 
 function cleanText(value: FormDataEntryValue | null, maxLength: number) {
@@ -44,10 +40,13 @@ function includesLikelySensitiveDetails(value: string) {
   );
 }
 
-export function ContactFormSection() {
+export function ContactFormSection({ content }: ContactFormSectionProps) {
   const startedAtRef = useRef<number | null>(null);
   const [state, setState] = useState<FormState>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const topics = content?.topics ?? [];
+
+  if (!content) return null;
 
   function markStarted() {
     startedAtRef.current ??= Date.now();
@@ -158,20 +157,19 @@ export function ContactFormSection() {
       <Container className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
         <div className="max-w-3xl">
           <p className="font-heading text-sm font-black uppercase text-brand-warm-accent">
-            Contact form
+            {content.eyebrow}
           </p>
           <h2 className="mt-3 text-3xl font-black leading-tight tracking-normal text-foreground sm:text-4xl">
-            Send a non-urgent message.
+            {content.heading}
           </h2>
           <p className="mt-5 text-lg leading-8 text-muted-foreground">
-            Please do not include medical details, symptoms, medication questions,
-            insurance identifiers, Social Security numbers, or urgent concerns.
+            {content.description}
           </p>
-          <p className="mt-4 text-base leading-7 text-muted-foreground">
-            For emergencies, call 911. For active care questions, appointment changes,
-            or private clinical information, use the approved patient channel or call
-            the office.
-          </p>
+          {content.note ? (
+            <p className="mt-4 text-base leading-7 text-muted-foreground">
+              {content.note}
+            </p>
+          ) : null}
         </div>
 
         <form
@@ -280,8 +278,8 @@ export function ContactFormSection() {
               type="checkbox"
             />
             <span>
-              I understand this form is for non-urgent contact only and I have not
-              included protected health information or clinical details.
+              I understand this is a general contact form and have not included
+              personal medical or insurance information.
             </span>
           </label>
 

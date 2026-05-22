@@ -19,7 +19,7 @@ env:
   CLOUD_RUN_SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_NAME || secrets.CLOUD_RUN_SERVICE_NAME || 'riseup-marketing-web' }}
   RUNTIME_SERVICE_ACCOUNT_ID: ${{ vars.RUNTIME_SERVICE_ACCOUNT_ID || secrets.RUNTIME_SERVICE_ACCOUNT_ID || 'riseup-web-runtime' }}
   CONTACT_TO_EMAIL: ${{ vars.CONTACT_TO_EMAIL || 'contact@riseupwv.com' }}
-  REFERRAL_TO_EMAIL: ${{ vars.REFERRAL_TO_EMAIL || 'contact@riseupwv.com' }}
+  REFERRAL_TO_EMAIL: ${{ vars.REFERRAL_TO_EMAIL || 'referrals@riseupwv.com' }}
   CONTACT_FROM_EMAIL: ${{ vars.CONTACT_FROM_EMAIL || 'Rise Up Website <contact@riseupwv.com>' }}
   IMAGE_NAME: marketing-website
 

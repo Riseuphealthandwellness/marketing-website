@@ -60,7 +60,6 @@ export const provider = defineType({
       options: {
         list: [
           'Primary care',
-          'Behavioral health',
           'Treatment services',
           'Care coordination',
           'Administration',

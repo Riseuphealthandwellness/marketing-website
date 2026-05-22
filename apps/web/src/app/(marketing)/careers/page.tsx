@@ -5,11 +5,6 @@ export const generateMetadata = () => metadataForPage("careers");
 
 export default function CareersPage() {
   return (
-    <StaticMarketingPage
-      description="Explore opportunities to join a team focused on integrated, community-rooted care."
-      eyebrow="Careers"
-      slug="careers"
-      title="Work with Rise Up"
-    />
+    <StaticMarketingPage slug="careers" />
   );
 }

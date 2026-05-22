@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
+import { TeamMemberPortrait } from "@/components/team/team-member-portrait";
 import { Badge } from "@/components/ui/badge";
 import { getAllProviderSlugs, getProviderBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
@@ -38,26 +38,17 @@ export default async function ProviderPage({ params }: Props) {
     <>
       <section className="border-b border-border bg-background py-14 sm:py-20">
         <Container>
-          <div className="grid gap-10 lg:grid-cols-[280px_1fr] lg:gap-14">
-            {/* Photo */}
-            <div className="flex justify-start lg:block">
-              {provider.image?.url ? (
-                <div className="relative size-52 overflow-hidden rounded-xl bg-muted lg:aspect-[3/4] lg:h-auto lg:w-full">
-                  <Image
-                    src={provider.image.url}
-                    alt={provider.image.alt ?? provider.name}
-                    fill
-                    className="object-cover object-top"
-                    sizes="(min-width: 1024px) 280px, 208px"
-                    priority
-                  />
-                </div>
-              ) : (
-                <div className="size-52 rounded-xl bg-muted lg:aspect-[3/4] lg:h-auto lg:w-full" />
-              )}
+          <div className="grid gap-10 lg:grid-cols-[320px_1fr] lg:gap-14">
+            <div className="flex justify-center lg:justify-start">
+              <TeamMemberPortrait
+                image={provider.image}
+                name={provider.name}
+                toneKey={provider.slug}
+                size="lg"
+                priority
+              />
             </div>
 
-            {/* Bio */}
             <div className="flex flex-col justify-center">
               <div className="flex flex-wrap items-center gap-3">
                 <p className="font-heading text-sm font-black uppercase tracking-widest text-brand-warm-accent">

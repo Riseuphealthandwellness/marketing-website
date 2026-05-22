@@ -1,7 +1,12 @@
-import { PortableText } from "@portabletext/react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
+import { PortableTextContent } from "@/components/cms/portable-text-content";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
+import { CareModelSection } from "@/components/sections/care-model-section";
+import { ConditionList } from "@/components/sections/condition-list";
+import { FaqSection } from "@/components/sections/faq-section";
 import type { PageBlock } from "@/lib/cms/types";
 
 type PageBlocksProps = {
@@ -17,12 +22,10 @@ export function PageBlocks({ blocks }: PageBlocksProps) {
             <Section key={index}>
               <Container>
                 <div className="max-w-4xl space-y-4">
-                  <h2 className="text-2xl font-semibold tracking-normal text-foreground">
+                  <h2 className="font-heading text-2xl font-black tracking-normal text-foreground">
                     {block.heading}
                   </h2>
-                  <div className="prose prose-slate max-w-none leading-8 text-muted-foreground">
-                    <PortableText value={block.body as Parameters<typeof PortableText>[0]['value']} />
-                  </div>
+                  <PortableTextContent value={block.body} />
                 </div>
               </Container>
             </Section>
@@ -35,7 +38,7 @@ export function PageBlocks({ blocks }: PageBlocksProps) {
               <Container>
                 <div className="max-w-4xl space-y-5">
                   <div>
-                    <h2 className="text-2xl font-semibold tracking-normal text-foreground">
+                    <h2 className="font-heading text-2xl font-black tracking-normal text-foreground">
                       {block.heading}
                     </h2>
                     <p className="mt-3 text-base leading-8 text-muted-foreground">
@@ -58,6 +61,118 @@ export function PageBlocks({ blocks }: PageBlocksProps) {
                       </a>
                     ) : null}
                   </div>
+                </div>
+              </Container>
+            </Section>
+          );
+        }
+
+        if (block._type === "careModelBlock") {
+          return (
+            <CareModelSection
+              key={index}
+              eyebrow={block.eyebrow}
+              heading={block.heading}
+              description={block.description}
+              items={block.items}
+            />
+          );
+        }
+
+        if (block._type === "conditionsBlock") {
+          return (
+            <ConditionList
+              key={index}
+              conditions={block.conditions}
+              serviceSlug={block.category}
+              heading={block.heading}
+            />
+          );
+        }
+
+        if (block._type === "faqBlock") {
+          return (
+            <FaqSection
+              key={index}
+              faqs={block.faqs}
+              heading={block.heading}
+            />
+          );
+        }
+
+        if (block._type === "servicesBlock") {
+          if (!block.services.length) return null;
+          return (
+            <Section key={index}>
+              <Container>
+                {block.heading ? (
+                  <h2 className="mb-6 font-heading text-3xl font-black tracking-normal text-foreground sm:text-4xl">
+                    {block.heading}
+                  </h2>
+                ) : null}
+                <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+                  {block.services.map((service) => (
+                    <Link
+                      key={service.slug}
+                      href={service.href ?? `/care/${service.slug}`}
+                      className="group flex items-center justify-between gap-5 border-b border-border p-5 transition-colors last:border-b-0 hover:bg-muted/50"
+                    >
+                      <div>
+                        <span className="block font-heading text-base font-black tracking-normal text-foreground group-hover:text-brand-action">
+                          {service.title}
+                        </span>
+                        <span className="mt-0.5 block text-sm leading-6 text-muted-foreground">
+                          {service.description}
+                        </span>
+                      </div>
+                      <ArrowRight
+                        aria-hidden="true"
+                        className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-brand-action"
+                      />
+                    </Link>
+                  ))}
+                </div>
+              </Container>
+            </Section>
+          );
+        }
+
+        if (block._type === "programsBlock") {
+          if (!block.programs.length) return null;
+          return (
+            <Section key={index}>
+              <Container>
+                {block.heading ? (
+                  <h2 className="mb-6 font-heading text-3xl font-black tracking-normal text-foreground sm:text-4xl">
+                    {block.heading}
+                  </h2>
+                ) : null}
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {block.programs.map((program) => (
+                    <Link
+                      key={program.slug}
+                      href={program.href ?? `/programs/${program.slug}`}
+                      className="group flex flex-col justify-between rounded-xl border border-border bg-card p-6 transition-colors hover:border-brand-action/30 hover:bg-muted/40"
+                    >
+                      <div>
+                        {program.audience ? (
+                          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            {program.audience}
+                          </p>
+                        ) : null}
+                        <h3 className="font-heading text-lg font-black tracking-normal text-foreground group-hover:text-brand-action">
+                          {program.title}
+                        </h3>
+                        <p className="mt-2 text-sm leading-6 text-muted-foreground line-clamp-3">
+                          {program.description}
+                        </p>
+                      </div>
+                      <span className="mt-5 flex items-center gap-1.5 text-sm font-semibold text-brand-action">
+                        Learn more
+                        <ArrowRight className="size-3.5" aria-hidden="true" />
+                      </span>
+                    </Link>
+                  ))}
                 </div>
               </Container>
             </Section>

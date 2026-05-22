@@ -8,6 +8,11 @@ export const ctaBlock = defineType({
   icon: LaunchIcon,
   fields: [
     defineField({
+      name: 'eyebrow',
+      title: 'Eyebrow',
+      type: 'string',
+    }),
+    defineField({
       name: 'heading',
       title: 'Heading',
       type: 'string',

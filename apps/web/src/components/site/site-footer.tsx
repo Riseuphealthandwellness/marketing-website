@@ -8,9 +8,9 @@ import { getFooterNav, getSiteSettings } from "@/lib/cms/content-source";
 const copyrightTokenPattern = /(\[year\]|\[name\]|\[privacy\]|\[terms\])/g;
 
 function renderCopyrightText(template: string | undefined, name: string | undefined) {
-  const text =
-    template?.trim() ||
-    "© [year] [name]. All rights reserved. | [privacy] | [terms]";
+  const text = template?.trim();
+  if (!text) return null;
+
   const year = String(new Date().getFullYear());
 
   return text.split(copyrightTokenPattern).map((part, index) => {
@@ -101,10 +101,11 @@ export async function SiteFooter() {
               </div>
             ) : null}
 
-            <p className="max-w-md text-sm leading-6 text-brand-warm-white/68">
-              This website is for general information and non-urgent access.
-              For emergencies, call 911 or go to the nearest emergency department.
-            </p>
+            {settings?.footerNotice ? (
+              <p className="max-w-md text-sm leading-6 text-brand-warm-white/68">
+                {settings.footerNotice}
+              </p>
+            ) : null}
           </div>
 
           {footerNav.length > 0 ? (
