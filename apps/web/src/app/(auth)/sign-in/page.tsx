@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 
 import { auth, signIn } from "@/auth";
@@ -29,16 +30,19 @@ export default async function SignInPage({
     <div className="min-h-screen bg-brand-warm-white flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <a
-            href="/"
-            className="inline-block text-brand-coal no-underline"
-            style={{ fontFamily: "var(--font-logo)" }}
-          >
-            <span className="text-3xl font-normal tracking-wide">RiseUp</span>
+        <div className="flex flex-col items-center mb-8">
+          <a href="/" className="inline-block">
+            <Image
+              src="/images/brand/riseup-logo-dark-nobg.png"
+              alt="RiseUp"
+              width={160}
+              height={48}
+              priority
+              className="h-10 w-auto"
+            />
           </a>
           <p
-            className="mt-1 text-xs font-semibold uppercase tracking-widest text-brand-deep-slate"
+            className="mt-2 text-xs font-semibold uppercase tracking-widest text-brand-deep-slate"
             style={{ fontFamily: "var(--font-sans)" }}
           >
             Studio
@@ -48,7 +52,7 @@ export default async function SignInPage({
         {/* Card */}
         <div className="bg-card rounded-xl border border-border shadow-soft px-8 py-10">
           <h1
-            className="text-xl font-bold text-foreground text-center mb-2"
+            className="text-xl font-bold text-foreground text-center mb-1"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Welcome back
@@ -68,26 +72,19 @@ export default async function SignInPage({
             </button>
           </form>
 
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
-            </div>
-          </div>
-
-          <p className="text-xs text-center text-muted-foreground leading-relaxed">
+          <p className="mt-6 text-xs text-center text-muted-foreground leading-relaxed">
             Access is restricted to authorized team members.
             <br />
             Contact your administrator if you need access.
           </p>
         </div>
 
-        {/* Footer link */}
         <p className="mt-6 text-center text-xs text-muted-foreground">
           <a
             href="/"
             className="hover:text-brand-action transition-colors underline underline-offset-2"
           >
-            ← Back to riseupwv.org
+            ← Back to riseupwv.com
           </a>
         </p>
       </div>

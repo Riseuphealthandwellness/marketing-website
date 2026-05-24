@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { redirect } from "next/navigation";
 
 import { auth, signOut } from "@/auth";
@@ -25,15 +26,16 @@ export default async function StudioLayout({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 items-center justify-between gap-4">
             {/* Logo */}
-            <a
-              href="/studio"
-              className="flex items-center gap-2.5 no-underline"
-              style={{ fontFamily: "var(--font-logo)" }}
-            >
-              <span className="text-xl font-normal text-brand-coal leading-none">
-                RiseUp
-              </span>
-              <span className="rounded bg-brand-action px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-warm-white leading-none"
+            <a href="/studio" className="flex items-center gap-2.5 no-underline">
+              <Image
+                src="/images/brand/riseup-logo-dark-nobg.png"
+                alt="RiseUp"
+                width={96}
+                height={28}
+                className="h-7 w-auto"
+              />
+              <span
+                className="rounded bg-brand-action px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-warm-white leading-none"
                 style={{ fontFamily: "var(--font-sans)" }}
               >
                 Studio

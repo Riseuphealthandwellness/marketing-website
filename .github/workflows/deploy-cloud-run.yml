@@ -24,6 +24,8 @@ env:
   # Comma-separated list of allowed Google sign-in domains (e.g. riseupwv.org).
   # Leave unset in GitHub Actions variables to allow any Google account.
   AUTH_ALLOWED_DOMAINS: ${{ vars.AUTH_ALLOWED_DOMAINS || '' }}
+  SANITY_STUDIO_URL: ${{ vars.SANITY_STUDIO_URL || '' }}
+  AUTH_URL: ${{ vars.AUTH_URL || 'https://riseupwv.com' }}
   IMAGE_NAME: marketing-website
 
 jobs:
@@ -235,7 +237,7 @@ jobs:
             --region="${GCP_REGION}" \
             --image="${{ steps.image.outputs.sha_tag }}" \
             --service-account="${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
-            --set-env-vars="CONTACT_TO_EMAIL=${CONTACT_TO_EMAIL},REFERRAL_TO_EMAIL=${REFERRAL_TO_EMAIL},CONTACT_FROM_EMAIL=${CONTACT_FROM_EMAIL},AUTH_TRUST_HOST=true,AUTH_ALLOWED_DOMAINS=${AUTH_ALLOWED_DOMAINS}" \
+            --set-env-vars="CONTACT_TO_EMAIL=${CONTACT_TO_EMAIL},REFERRAL_TO_EMAIL=${REFERRAL_TO_EMAIL},CONTACT_FROM_EMAIL=${CONTACT_FROM_EMAIL},AUTH_TRUST_HOST=true,AUTH_URL=${AUTH_URL},AUTH_ALLOWED_DOMAINS=${AUTH_ALLOWED_DOMAINS},SANITY_STUDIO_URL=${SANITY_STUDIO_URL}" \
             --set-secrets="SANITY_REVALIDATE_SECRET=SANITY_REVALIDATE_SECRET:latest,RESEND_API_KEY=RESEND_API_KEY:latest,MAPBOX_ACCESS_TOKEN=MAPBOX_ACCESS_TOKEN:latest,AUTH_SECRET=AUTH_SECRET:latest,AUTH_GOOGLE_ID=AUTH_GOOGLE_ID:latest,AUTH_GOOGLE_SECRET=AUTH_GOOGLE_SECRET:latest" \
             --port=3000 \
             --no-invoker-iam-check \
