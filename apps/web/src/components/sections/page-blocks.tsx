@@ -22,7 +22,7 @@ export function PageBlocks({ blocks }: PageBlocksProps) {
             <Section key={index}>
               <Container>
                 <div className="max-w-4xl space-y-4">
-                  <h2 className="font-heading text-2xl font-black tracking-normal text-foreground">
+                  <h2 className="font-heading text-3xl font-black tracking-normal text-foreground sm:text-4xl">
                     {block.heading}
                   </h2>
                   <PortableTextContent value={block.body} />
@@ -38,7 +38,7 @@ export function PageBlocks({ blocks }: PageBlocksProps) {
               <Container>
                 <div className="max-w-4xl space-y-5">
                   <div>
-                    <h2 className="font-heading text-2xl font-black tracking-normal text-foreground">
+                    <h2 className="font-heading text-3xl font-black tracking-normal text-foreground sm:text-4xl">
                       {block.heading}
                     </h2>
                     <p className="mt-3 text-base leading-8 text-muted-foreground">

@@ -24,7 +24,7 @@ const siteUrl = process.env.SANITY_STUDIO_SITE_URL ?? 'http://localhost:3000'
 
 export default defineConfig({
   name: 'default',
-  title: 'RiseUp Marketing Website',
+  title: 'Content',
   icon: StudioIcon,
 
   projectId: 'k23sgnrq',
