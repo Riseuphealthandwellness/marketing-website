@@ -2,12 +2,8 @@ import type { Metadata, Viewport } from "next";
 
 import "@/app/globals.css";
 
-import { AnnouncementBannerServer } from "@/components/site/announcement-banner-server";
 import { ImageDragGuard } from "@/components/site/image-drag-guard";
-import { SiteFooter } from "@/components/site/site-footer";
-import { SiteHeader } from "@/components/site/site-header";
 import { RouteScrollManager } from "@/components/site/route-scroll-manager";
-import { SkipLink } from "@/components/site/skip-link";
 import { absoluteUrl } from "@/lib/seo/metadata";
 import { getSiteSettings } from "@/lib/cms/content-source";
 
@@ -54,11 +50,7 @@ export default function RootLayout({
       <body>
         <ImageDragGuard />
         <RouteScrollManager />
-        <SkipLink />
-        <AnnouncementBannerServer />
-        <SiteHeader />
-        <main id="main-content">{children}</main>
-        <SiteFooter />
+        {children}
       </body>
     </html>
   );
