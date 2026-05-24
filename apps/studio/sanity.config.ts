@@ -18,6 +18,10 @@ const hiddenCreateSchemaTypes = new Set([
   'siteSettings',
 ])
 
+// SANITY_STUDIO_SITE_URL is inlined at build time (SANITY_STUDIO_* prefix required).
+// Defaults to localhost for local development.
+const siteUrl = process.env.SANITY_STUDIO_SITE_URL ?? 'http://localhost:3000'
+
 export default defineConfig({
   name: 'default',
   title: 'RiseUp Marketing Website',
@@ -25,6 +29,16 @@ export default defineConfig({
 
   projectId: 'k23sgnrq',
   dataset: 'production',
+
+  auth: {
+    providers: [
+      {
+        name: 'google',
+        title: 'Sign in with Google',
+        url: `${siteUrl}/api/auth/sanity-login`,
+      },
+    ],
+  },
 
   releases: {
     enabled: false,

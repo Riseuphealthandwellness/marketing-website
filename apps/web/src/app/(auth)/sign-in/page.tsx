@@ -3,6 +3,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 
 import { auth, signIn } from "@/auth";
+import { AutoGoogleSignIn } from "./auto-google-sign-in";
 
 export const metadata: Metadata = {
   title: "Sign In | RiseUp Studio",
@@ -12,17 +13,22 @@ export const metadata: Metadata = {
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ callbackUrl?: string }>;
+  searchParams: Promise<{ callbackUrl?: string; provider?: string }>;
 }) {
   const session = await auth();
+  const { callbackUrl, provider } = await searchParams;
+
   if (session?.user) {
-    const { callbackUrl } = await searchParams;
     redirect(callbackUrl ?? "/studio");
+  }
+
+  // Auto-trigger Google OAuth — skips the manual click when coming from Studio or /studio
+  if (provider === "google") {
+    return <AutoGoogleSignIn callbackUrl={callbackUrl ?? "/studio"} />;
   }
 
   async function handleGoogleSignIn() {
     "use server";
-    const { callbackUrl } = await searchParams;
     await signIn("google", { redirectTo: callbackUrl ?? "/studio" });
   }
 
