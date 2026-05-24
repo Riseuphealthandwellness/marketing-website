@@ -2,7 +2,8 @@ const imageProjection = `{
   "url": asset->url,
   "alt": alt,
   "width": asset->metadata.dimensions.width,
-  "height": asset->metadata.dimensions.height
+  "height": asset->metadata.dimensions.height,
+  "lqip": asset->metadata.lqip
 }`;
 
 const fileProjection = `{

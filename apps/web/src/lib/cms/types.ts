@@ -223,6 +223,7 @@ export type CmsImage = {
   alt?: string;
   width?: number;
   height?: number;
+  lqip?: string;
 };
 
 export type CmsFile = {

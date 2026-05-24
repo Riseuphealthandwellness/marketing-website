@@ -9,6 +9,7 @@ import {
 import { Container } from "@/components/layout/container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { sanityImageUrl } from "@/lib/cms/image";
 import type { CmsImage, CtaButton, HomepageFeaturePanel } from "@/lib/cms/types";
 import { isExternalUrl } from "@/lib/integrations/patient-access";
 
@@ -89,7 +90,9 @@ export function HomeHero({
           fill
           priority
           sizes="100vw"
-          src={backgroundImage.url}
+          src={sanityImageUrl(backgroundImage.url, { width: 1800, quality: 80, fit: "crop" })}
+          placeholder={backgroundImage.lqip ? "blur" : "empty"}
+          blurDataURL={backgroundImage.lqip}
         />
       ) : null}
       <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(247_243_238_/_0.26)_0%,rgb(247_243_238_/_0.08)_48%,rgb(247_243_238_/_0)_100%)] lg:bg-[linear-gradient(90deg,rgb(247_243_238_/_0.34)_0%,rgb(247_243_238_/_0.16)_38%,rgb(247_243_238_/_0.04)_68%,rgb(247_243_238_/_0)_100%)]" />
@@ -127,8 +130,10 @@ export function HomeHero({
                 className="h-auto w-full object-contain"
                 height={featureImage.height ?? 779}
                 sizes="(min-width: 1024px) 34vw, 100vw"
-                src={featureImage.url}
+                src={sanityImageUrl(featureImage.url, { width: 900, quality: 85 })}
                 width={featureImage.width ?? 1338}
+                placeholder={featureImage.lqip ? "blur" : "empty"}
+                blurDataURL={featureImage.lqip}
               />
             ) : null}
 

@@ -55,7 +55,6 @@ export default async function AboutPage() {
                   <TeamMemberPortrait
                     image={provider.image}
                     name={provider.name}
-                    toneKey={provider.slug}
                     size="sm"
                     className="mb-4 transition-transform duration-300 group-hover:scale-105"
                   />

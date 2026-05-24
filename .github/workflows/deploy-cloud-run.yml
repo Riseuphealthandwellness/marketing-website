@@ -21,6 +21,9 @@ env:
   CONTACT_TO_EMAIL: ${{ vars.CONTACT_TO_EMAIL || 'contact@riseupwv.com' }}
   REFERRAL_TO_EMAIL: ${{ vars.REFERRAL_TO_EMAIL || 'referrals@riseupwv.com' }}
   CONTACT_FROM_EMAIL: ${{ vars.CONTACT_FROM_EMAIL || 'Rise Up Website <contact@riseupwv.com>' }}
+  # Comma-separated list of allowed Google sign-in domains (e.g. riseupwv.org).
+  # Leave unset in GitHub Actions variables to allow any Google account.
+  AUTH_ALLOWED_DOMAINS: ${{ vars.AUTH_ALLOWED_DOMAINS || '' }}
   IMAGE_NAME: marketing-website
 
 jobs:
@@ -121,6 +124,87 @@ jobs:
             --role="roles/secretmanager.secretAccessor" \
             --quiet
 
+      - name: Seed AUTH_SECRET in Secret Manager
+        env:
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${AUTH_SECRET}" ]; then
+            echo "::error::Missing required GitHub Actions secret: AUTH_SECRET"
+            exit 1
+          fi
+
+          if ! gcloud secrets describe AUTH_SECRET --project="${GCP_PROJECT_ID}" >/dev/null 2>&1; then
+            gcloud secrets create AUTH_SECRET \
+              --project="${GCP_PROJECT_ID}" \
+              --replication-policy=automatic
+          fi
+
+          printf '%s' "${AUTH_SECRET}" | gcloud secrets versions add AUTH_SECRET \
+            --project="${GCP_PROJECT_ID}" \
+            --data-file=-
+
+          gcloud secrets add-iam-policy-binding AUTH_SECRET \
+            --project="${GCP_PROJECT_ID}" \
+            --member="serviceAccount:${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
+            --role="roles/secretmanager.secretAccessor" \
+            --quiet
+
+      - name: Seed AUTH_GOOGLE_ID in Secret Manager
+        env:
+          AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${AUTH_GOOGLE_ID}" ]; then
+            echo "::error::Missing required GitHub Actions secret: AUTH_GOOGLE_ID"
+            exit 1
+          fi
+
+          if ! gcloud secrets describe AUTH_GOOGLE_ID --project="${GCP_PROJECT_ID}" >/dev/null 2>&1; then
+            gcloud secrets create AUTH_GOOGLE_ID \
+              --project="${GCP_PROJECT_ID}" \
+              --replication-policy=automatic
+          fi
+
+          printf '%s' "${AUTH_GOOGLE_ID}" | gcloud secrets versions add AUTH_GOOGLE_ID \
+            --project="${GCP_PROJECT_ID}" \
+            --data-file=-
+
+          gcloud secrets add-iam-policy-binding AUTH_GOOGLE_ID \
+            --project="${GCP_PROJECT_ID}" \
+            --member="serviceAccount:${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
+            --role="roles/secretmanager.secretAccessor" \
+            --quiet
+
+      - name: Seed AUTH_GOOGLE_SECRET in Secret Manager
+        env:
+          AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${AUTH_GOOGLE_SECRET}" ]; then
+            echo "::error::Missing required GitHub Actions secret: AUTH_GOOGLE_SECRET"
+            exit 1
+          fi
+
+          if ! gcloud secrets describe AUTH_GOOGLE_SECRET --project="${GCP_PROJECT_ID}" >/dev/null 2>&1; then
+            gcloud secrets create AUTH_GOOGLE_SECRET \
+              --project="${GCP_PROJECT_ID}" \
+              --replication-policy=automatic
+          fi
+
+          printf '%s' "${AUTH_GOOGLE_SECRET}" | gcloud secrets versions add AUTH_GOOGLE_SECRET \
+            --project="${GCP_PROJECT_ID}" \
+            --data-file=-
+
+          gcloud secrets add-iam-policy-binding AUTH_GOOGLE_SECRET \
+            --project="${GCP_PROJECT_ID}" \
+            --member="serviceAccount:${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
+            --role="roles/secretmanager.secretAccessor" \
+            --quiet
+
       - name: Set image tags
         id: image
         run: |
@@ -151,8 +235,8 @@ jobs:
             --region="${GCP_REGION}" \
             --image="${{ steps.image.outputs.sha_tag }}" \
             --service-account="${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
-            --set-env-vars="CONTACT_TO_EMAIL=${CONTACT_TO_EMAIL},REFERRAL_TO_EMAIL=${REFERRAL_TO_EMAIL},CONTACT_FROM_EMAIL=${CONTACT_FROM_EMAIL}" \
-            --set-secrets="SANITY_REVALIDATE_SECRET=SANITY_REVALIDATE_SECRET:latest,RESEND_API_KEY=RESEND_API_KEY:latest,MAPBOX_ACCESS_TOKEN=MAPBOX_ACCESS_TOKEN:latest" \
+            --set-env-vars="CONTACT_TO_EMAIL=${CONTACT_TO_EMAIL},REFERRAL_TO_EMAIL=${REFERRAL_TO_EMAIL},CONTACT_FROM_EMAIL=${CONTACT_FROM_EMAIL},AUTH_TRUST_HOST=true,AUTH_ALLOWED_DOMAINS=${AUTH_ALLOWED_DOMAINS}" \
+            --set-secrets="SANITY_REVALIDATE_SECRET=SANITY_REVALIDATE_SECRET:latest,RESEND_API_KEY=RESEND_API_KEY:latest,MAPBOX_ACCESS_TOKEN=MAPBOX_ACCESS_TOKEN:latest,AUTH_SECRET=AUTH_SECRET:latest,AUTH_GOOGLE_ID=AUTH_GOOGLE_ID:latest,AUTH_GOOGLE_SECRET=AUTH_GOOGLE_SECRET:latest" \
             --port=3000 \
             --no-invoker-iam-check \
             --quiet

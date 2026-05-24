@@ -43,7 +43,6 @@ export default async function ProviderPage({ params }: Props) {
               <TeamMemberPortrait
                 image={provider.image}
                 name={provider.name}
-                toneKey={provider.slug}
                 size="lg"
                 priority
               />
