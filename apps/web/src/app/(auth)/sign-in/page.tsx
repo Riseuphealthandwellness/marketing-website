@@ -3,7 +3,6 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 
 import { auth, signIn } from "@/auth";
-import { AutoGoogleSignIn } from "./auto-google-sign-in";
 
 export const metadata: Metadata = {
   title: "Sign In | RiseUp Studio",
@@ -13,18 +12,13 @@ export const metadata: Metadata = {
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ callbackUrl?: string; provider?: string }>;
+  searchParams: Promise<{ callbackUrl?: string }>;
 }) {
   const session = await auth();
-  const { callbackUrl, provider } = await searchParams;
+  const { callbackUrl } = await searchParams;
 
   if (session?.user) {
     redirect(callbackUrl ?? "/studio");
-  }
-
-  // Auto-trigger Google OAuth — skips the manual click when coming from Studio or /studio
-  if (provider === "google") {
-    return <AutoGoogleSignIn callbackUrl={callbackUrl ?? "/studio"} />;
   }
 
   async function handleGoogleSignIn() {
@@ -35,7 +29,6 @@ export default async function SignInPage({
   return (
     <div className="min-h-screen bg-brand-warm-white flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <a href="/" className="inline-block">
             <Image
@@ -55,7 +48,6 @@ export default async function SignInPage({
           </p>
         </div>
 
-        {/* Card */}
         <div className="bg-card rounded-xl border border-border shadow-soft px-8 py-10">
           <h1
             className="text-xl font-bold text-foreground text-center mb-1"
@@ -113,7 +105,7 @@ function GoogleIcon() {
         fill="#4285F4"
       />
       <path
-        d="M9 18c2.43 0 4.4673-.806 5.9564-2.1805l-2.9087-2.2581c-.8059.54-1.8368.859-3.0477.859-2.344 0-4.328-1.584-5.036-3.7104H.957v2.3318C2.4382 15.9832 5.4818 18 9 18Z"
+        d="M9 18c2.43 0 4.4673-.806 5.9564-2.1805l-2.9087-2.2581c-.8059.54-1.8368.859-3.0477.859-2.344 0-4.584-1.5636-5.036-3.7104H.957v2.3318C2.4382 15.9832 5.4818 18 9 18Z"
         fill="#34A853"
       />
       <path

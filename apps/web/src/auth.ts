@@ -18,12 +18,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     authorized({ auth: session, request: { nextUrl } }) {
       const isLoggedIn = !!session?.user;
       const isStudio = nextUrl.pathname.startsWith("/studio");
-      if (isStudio && !isLoggedIn) {
-        const signInUrl = new URL("/sign-in", nextUrl.origin);
-        signInUrl.searchParams.set("provider", "google");
-        signInUrl.searchParams.set("callbackUrl", nextUrl.pathname);
-        return Response.redirect(signInUrl);
-      }
+      if (isStudio) return isLoggedIn;
       return true;
     },
   },
