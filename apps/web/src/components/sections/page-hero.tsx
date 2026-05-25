@@ -54,7 +54,6 @@ export function PageHero({ eyebrow, title, description, breadcrumbs, backgroundI
             <nav aria-label="Breadcrumb" className="mb-5">
               <ol className="flex flex-wrap items-center gap-y-1">
                 {breadcrumbs.map((crumb, i) => {
-                  const isLast = i === breadcrumbs.length - 1;
                   return (
                     <li key={i} className="flex items-center">
                       {i > 0 ? (
@@ -63,11 +62,8 @@ export function PageHero({ eyebrow, title, description, breadcrumbs, backgroundI
                           className="mx-1.5 size-3 shrink-0 text-brand-warm-white/35"
                         />
                       ) : null}
-                      {isLast || !crumb.href ? (
-                        <span
-                          aria-current={isLast ? "page" : undefined}
-                          className="text-xs font-medium text-brand-warm-white/75 sm:text-sm"
-                        >
+                      {!crumb.href ? (
+                        <span className="text-xs font-medium text-brand-warm-white/75 sm:text-sm">
                           {crumb.label}
                         </span>
                       ) : (
