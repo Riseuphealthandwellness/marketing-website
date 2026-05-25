@@ -3,17 +3,17 @@ import { notFound } from "next/navigation";
 import { PageHero } from "@/components/sections/page-hero";
 import { PageBlocks } from "@/components/sections/page-blocks";
 import { LegalPageBody } from "@/components/sections/legal-page-body";
-import { getLegalPage, getMarketingPage } from "@/lib/cms/content-source";
+import { getMarketingPage } from "@/lib/cms/content-source";
 
-type MarketingPageProps =
-  | { legalPageId: "legal-page-privacy" | "legal-page-terms"; slug?: never }
-  | { slug: string; legalPageId?: never };
+type MarketingPageProps = {
+  slug: string;
+};
 
-export async function MarketingPage({ legalPageId, slug }: MarketingPageProps) {
-  if (legalPageId) {
-    const page = await getLegalPage(legalPageId);
-    if (!page) notFound();
+export async function MarketingPage({ slug }: MarketingPageProps) {
+  const page = await getMarketingPage(slug);
+  if (!page) notFound();
 
+  if (page.body) {
     return (
       <>
         <PageHero title={page.title} />
@@ -21,9 +21,6 @@ export async function MarketingPage({ legalPageId, slug }: MarketingPageProps) {
       </>
     );
   }
-
-  const page = await getMarketingPage(slug);
-  if (!page) notFound();
 
   return (
     <>

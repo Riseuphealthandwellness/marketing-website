@@ -1,9 +1,9 @@
 import { MarketingPage } from "@/app/(marketing)/_components/marketing-page";
-import { metadataForLegalPage } from "@/app/(marketing)/_lib/page-helpers";
+import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
 
 export const generateMetadata = () =>
-  metadataForLegalPage("/terms-of-service", "legal-page-terms");
+  metadataForPage("terms-of-service", "/terms-of-service");
 
 export default function TermsOfServicePage() {
-  return <MarketingPage legalPageId="legal-page-terms" />;
+  return <MarketingPage slug="terms-of-service" />;
 }

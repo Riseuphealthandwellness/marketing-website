@@ -6,7 +6,6 @@ import type {
   Condition,
   Faq,
   HomepageContent,
-  LegalPageContent,
   Location,
   MarketingPage,
   Program,
@@ -64,11 +63,6 @@ export async function getAllPageSlugs(): Promise<string[]> {
   if (!isCmsConfigured) return [];
   const rows = await sanityClient.fetch<{ slug: string }[] | null>(cmsQueries.allPageSlugs, {}, sanityFetchOptions);
   return rows?.map((r) => r.slug) ?? [];
-}
-
-export async function getLegalPage(id: "legal-page-privacy" | "legal-page-terms"): Promise<LegalPageContent | null> {
-  if (!isCmsConfigured) return null;
-  return sanityClient.fetch<LegalPageContent | null>(cmsQueries.legalPageById, { id }, sanityFetchOptions);
 }
 
 export async function getHomepageContent(): Promise<HomepageContent | null> {

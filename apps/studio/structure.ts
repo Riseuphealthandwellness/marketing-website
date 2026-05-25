@@ -7,159 +7,264 @@ import {
   HelpCircleIcon,
   HomeIcon,
   LaunchIcon,
+  PinIcon,
   ListIcon,
   StackIcon,
   UsersIcon,
 } from '@sanity/icons'
+import type {ComponentType} from 'react'
 import type {StructureResolver} from 'sanity/structure'
-import {landingPageSettingPages} from './schemaTypes/documents/landingPageSettings'
 import {navigationSingletons} from './schemaTypes/documents/navigation'
+import {websiteManagedPages} from './schemaTypes/documents/websitePage'
 
-const pageSettingGroups = [
-  {
-    title: 'Patient access',
-    icon: LaunchIcon,
-    items: [
-      {
-        title: 'Referrals',
-        icon: LaunchIcon,
-        child: (S: Parameters<StructureResolver>[0]) =>
-          S.document()
-            .schemaType('referralPageSettings')
-            .documentId('referralPageSettings')
-            .title('Referral page settings'),
-      },
-      ...landingPageSettingPages.filter((page) => page.group === 'patientAccess'),
-    ],
-  },
-  {
-    title: 'Care pages',
-    icon: HeartIcon,
-    items: landingPageSettingPages.filter((page) => page.group === 'care'),
-  },
-  {
-    title: 'Organization pages',
-    icon: UsersIcon,
-    items: landingPageSettingPages.filter((page) => page.group === 'organization'),
-  },
-] as const
+type StructureBuilder = Parameters<StructureResolver>[0]
 
-function pageSettingsListItem(S: Parameters<StructureResolver>[0], page: (typeof landingPageSettingPages)[number]) {
+function landingPage(key: (typeof websiteManagedPages)[number]['key']) {
+  const page = websiteManagedPages.find((item) => item.key === key)
+
+  if (!page) {
+    throw new Error(`Missing website page settings for "${key}"`)
+  }
+
+  return page
+}
+
+function singletonListItem(
+  S: StructureBuilder,
+  {
+    title,
+    icon,
+    schemaType,
+    documentId,
+  }: {
+    title: string
+    icon: ComponentType
+    schemaType: string
+    documentId: string
+  },
+) {
+  return S.listItem()
+    .title(title)
+    .icon(icon)
+    .child(S.document().schemaType(schemaType).documentId(documentId).title(title))
+}
+
+function pageSettingsListItem(S: Parameters<StructureResolver>[0], page: (typeof websiteManagedPages)[number]) {
   return S.listItem()
     .title(page.title)
     .icon(DocumentsIcon)
     .child(
       S.document()
-        .schemaType('landingPageSettings')
+        .schemaType('websitePage')
         .documentId(page.id)
-        .initialValueTemplate(`landing-page-settings-${page.slug}`)
+        .initialValueTemplate(page.id)
         .title(`${page.title} page settings`),
+    )
+}
+
+function pageBundleListItem(
+  S: StructureBuilder,
+  page: (typeof websiteManagedPages)[number],
+  items: ReturnType<StructureBuilder['listItem']>[],
+) {
+  return S.listItem()
+    .title(page.title)
+    .icon(DocumentsIcon)
+    .child(
+      S.list()
+        .title(`${page.title} content`)
+        .items([pageSettingsListItem(S, page).title(`${page.title} page settings`), S.divider(), ...items]),
     )
 }
 
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title('Marketing website')
+    .title('Website Content Management')
     .items([
       S.listItem()
-        .title('Care library')
-        .icon(HeartIcon)
-        .child(
-          S.list()
-            .title('Care library')
-            .items([
-              S.documentTypeListItem('service').title('Services').icon(HeartIcon),
-              S.documentTypeListItem('condition').title('Conditions').icon(HeartIcon),
-              S.documentTypeListItem('program').title('Programs').icon(StackIcon),
-              S.documentTypeListItem('faq').title('FAQs').icon(HelpCircleIcon),
-            ]),
-        ),
-
-      S.divider(),
-
-      S.listItem()
-        .title('Operations')
-        .icon(BellIcon)
-        .child(
-          S.list()
-            .title('Operations')
-            .items([
-              S.documentTypeListItem('provider').title('Team members').icon(UsersIcon),
-              S.documentTypeListItem('announcement').title('Announcements').icon(BellIcon),
-            ]),
-        ),
-
-      S.divider(),
-
-      S.listItem()
-        .title('Page builder')
-        .icon(DocumentsIcon)
-        .child(S.documentTypeList('page').title('Page builder')),
-
-      S.listItem()
-        .title('Page settings')
+        .title('Pages')
         .icon(DocumentsIcon)
         .child(
           S.list()
-            .title('Page settings')
+            .title('Pages')
             .items([
+              singletonListItem(S, {
+                title: 'Homepage',
+                icon: HomeIcon,
+                schemaType: 'websitePage',
+                documentId: 'website-page-home',
+              }),
+              S.divider(),
               S.listItem()
-                .title('Homepage')
-                .icon(HomeIcon)
-                .child(
-                  S.document()
-                    .schemaType('homepageSettings')
-                    .documentId('homepageSettings')
-                    .title('Homepage settings'),
-                ),
-              S.listItem()
-                .title('Patient access')
+                .title('Patient access pages')
                 .icon(LaunchIcon)
                 .child(
                   S.list()
-                    .title('Patient access')
-                    .items(
-                      pageSettingGroups[0].items.map((item) => {
-                        if ('child' in item) {
-                          return S.listItem()
-                            .title(item.title)
-                            .icon(item.icon)
-                            .child(item.child(S))
-                        }
-
-                        return pageSettingsListItem(S, item)
-                      }),
-                    ),
+                    .title('Patient access pages')
+                    .items([
+                      pageSettingsListItem(S, landingPage('contact')),
+                      pageSettingsListItem(S, landingPage('referrals')),
+                      pageSettingsListItem(S, landingPage('new-patients')),
+                      pageSettingsListItem(S, landingPage('insurance-payment')),
+                      pageSettingsListItem(S, landingPage('patient-resources')),
+                    ]),
                 ),
-              ...pageSettingGroups.slice(1).map((group) =>
-                S.listItem()
-                  .title(group.title)
-                  .icon(group.icon)
-                  .child(
-                    S.list()
-                      .title(group.title)
-                      .items(group.items.map((page) => pageSettingsListItem(S, page))),
-                  ),
-              ),
+              S.listItem()
+                .title('Care pages')
+                .icon(HeartIcon)
+                .child(
+                  S.list()
+                    .title('Care pages')
+                    .items([
+                      pageBundleListItem(S, landingPage('care'), [
+                        S.documentTypeListItem('service').title('Services shown on care pages').icon(HeartIcon),
+                        S.documentTypeListItem('program').title('Programs shown on care pages').icon(StackIcon),
+                        S.documentTypeListItem('faq').title('Care FAQs').icon(HelpCircleIcon),
+                      ]),
+                      pageBundleListItem(S, landingPage('services'), [
+                        S.documentTypeListItem('service').title('Service entries').icon(HeartIcon),
+                      ]),
+                      pageBundleListItem(S, landingPage('programs'), [
+                        S.documentTypeListItem('program').title('Program entries').icon(StackIcon),
+                      ]),
+                      pageBundleListItem(S, landingPage('primary-care'), [
+                        S.documentTypeListItem('condition')
+                          .title('Primary care conditions')
+                          .icon(HeartIcon)
+                          .child(
+                            S.documentTypeList('condition')
+                              .title('Primary care conditions')
+                              .filter('_type == "condition" && category == $category')
+                              .params({category: 'primary-care'}),
+                          ),
+                      ]),
+                      pageBundleListItem(S, landingPage('addiction-medicine'), [
+                        S.documentTypeListItem('condition')
+                          .title('Addiction medicine conditions')
+                          .icon(HeartIcon)
+                          .child(
+                            S.documentTypeList('condition')
+                              .title('Addiction medicine conditions')
+                              .filter('_type == "condition" && category == $category')
+                              .params({category: 'addiction-medicine'}),
+                          ),
+                      ]),
+                      pageBundleListItem(S, landingPage('weight-loss-mgmt'), [
+                        S.documentTypeListItem('condition')
+                          .title('Weight loss conditions')
+                          .icon(HeartIcon)
+                          .child(
+                            S.documentTypeList('condition')
+                              .title('Weight loss conditions')
+                              .filter('_type == "condition" && category == $category')
+                              .params({category: 'weight-loss-mgmt'}),
+                          ),
+                      ]),
+                    ]),
+                ),
+              S.listItem()
+                .title('Organization pages')
+                .icon(UsersIcon)
+                .child(
+                  S.list()
+                    .title('Organization pages')
+                    .items([
+                      pageBundleListItem(S, landingPage('about'), [
+                        S.documentTypeListItem('provider').title('Team members featured across people pages').icon(UsersIcon),
+                      ]),
+                      pageBundleListItem(S, landingPage('team'), [
+                        S.documentTypeListItem('provider').title('Team member entries').icon(UsersIcon),
+                      ]),
+                      pageBundleListItem(S, landingPage('locations'), [
+                        S.documentTypeListItem('location').title('Location entries').icon(PinIcon),
+                      ]),
+                      pageSettingsListItem(S, landingPage('careers')),
+                    ]),
+                ),
+              S.divider(),
+              S.documentTypeListItem('websitePage')
+                .title('Custom pages')
+                .icon(DocumentTextIcon)
+                .child(
+                  S.documentTypeList('websitePage')
+                    .title('Custom pages')
+                    .filter('_type == "websitePage" && pageType == "custom"'),
+                ),
+              S.listItem()
+                .title('Legal pages')
+                .icon(DocumentTextIcon)
+                .child(
+                  S.list()
+                    .title('Legal pages')
+                    .items([
+                      singletonListItem(S, {
+                        title: 'Privacy policy',
+                        icon: DocumentTextIcon,
+                        schemaType: 'websitePage',
+                        documentId: 'website-page-privacy-policy',
+                      }),
+                      singletonListItem(S, {
+                        title: 'Terms of service',
+                        icon: DocumentTextIcon,
+                        schemaType: 'websitePage',
+                        documentId: 'website-page-terms-of-service',
+                      }),
+                    ]),
+                ),
             ]),
         ),
 
+      S.divider(),
+
       S.listItem()
-        .title('Site settings')
+        .title('Content libraries')
+        .icon(HeartIcon)
+        .child(
+          S.list()
+            .title('Content libraries')
+            .items([
+              S.listItem()
+                .title('Care library')
+                .icon(HeartIcon)
+                .child(
+                  S.list()
+                    .title('Care library')
+                    .items([
+                      S.documentTypeListItem('service').title('Services').icon(HeartIcon),
+                      S.documentTypeListItem('condition').title('Conditions').icon(HeartIcon),
+                      S.documentTypeListItem('program').title('Programs').icon(StackIcon),
+                      S.documentTypeListItem('faq').title('FAQs').icon(HelpCircleIcon),
+                    ]),
+                ),
+              S.listItem()
+                .title('Organization directory')
+                .icon(UsersIcon)
+                .child(
+                  S.list()
+                    .title('Organization directory')
+                    .items([
+                      S.documentTypeListItem('provider').title('Team members').icon(UsersIcon),
+                      S.documentTypeListItem('location').title('Locations').icon(PinIcon),
+                    ]),
+                ),
+            ]),
+        ),
+
+      S.divider(),
+
+      S.listItem()
+        .title('Site administration')
         .icon(CogIcon)
         .child(
           S.list()
-            .title('Site settings')
+            .title('Site administration')
             .items([
-              S.listItem()
-                .title('Organization profile')
-                .icon(CogIcon)
-                .child(
-                  S.document()
-                    .schemaType('siteSettings')
-                    .documentId('siteSettings')
-                    .title('Organization profile'),
-                ),
+              singletonListItem(S, {
+                title: 'Organization profile',
+                icon: CogIcon,
+                schemaType: 'siteSettings',
+                documentId: 'siteSettings',
+              }),
               S.listItem()
                 .title('Navigation menus')
                 .icon(ListIcon)
@@ -181,33 +286,7 @@ export const structure: StructureResolver = (S) =>
                       ),
                     ),
                 ),
-              S.listItem()
-                .title('Legal pages')
-                .icon(DocumentTextIcon)
-                .child(
-                  S.list()
-                    .title('Legal pages')
-                    .items([
-                      S.listItem()
-                        .title('Privacy policy')
-                        .icon(DocumentTextIcon)
-                        .child(
-                          S.document()
-                            .schemaType('legalPage')
-                            .documentId('legal-page-privacy')
-                            .title('Privacy policy'),
-                        ),
-                      S.listItem()
-                        .title('Terms of service')
-                        .icon(DocumentTextIcon)
-                        .child(
-                          S.document()
-                            .schemaType('legalPage')
-                            .documentId('legal-page-terms')
-                            .title('Terms of service'),
-                        ),
-                    ]),
-                ),
+              S.documentTypeListItem('announcement').title('Announcements').icon(BellIcon),
             ]),
         ),
     ])

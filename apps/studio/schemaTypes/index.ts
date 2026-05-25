@@ -1,17 +1,13 @@
 import {announcement} from './documents/announcement'
 import {condition} from './documents/condition'
 import {faq} from './documents/faq'
-import {homepageSettings} from './documents/homepageSettings'
-import {landingPageSettings} from './documents/landingPageSettings'
 import {location} from './documents/location'
-import {legalPage} from './documents/legalPage'
 import {navigation} from './documents/navigation'
-import {page} from './documents/page'
 import {program} from './documents/program'
 import {provider} from './documents/provider'
-import {referralPageSettings} from './documents/referralPageSettings'
 import {service} from './documents/service'
 import {siteSettings} from './documents/siteSettings'
+import {websitePage} from './documents/websitePage'
 import {accessLinks} from './objects/accessLinks'
 import {ctaButton} from './objects/ctaButton'
 import {ctaBlock} from './objects/ctaBlock'
@@ -20,7 +16,6 @@ import {contactFormContent} from './objects/contactFormContent'
 import {homepageHero} from './objects/homepageHero'
 import {homepageCareOptions} from './objects/homepageCareOptions'
 import {homepageFeaturePanel, homepageFeaturePanelItem} from './objects/homepageFeaturePanel'
-import {landingPageSetting} from './objects/landingPageSetting'
 import {link} from './objects/link'
 import {navLink} from './objects/navLink'
 import {navMegaMenu} from './objects/navMegaMenu'
@@ -41,15 +36,11 @@ import {textColor} from './objects/textColor'
 export const schemaTypes = [
   siteSettings,
   navigation,
-  homepageSettings,
-  landingPageSettings,
-  referralPageSettings,
-  page,
+  websitePage,
   service,
   program,
   provider,
   location,
-  legalPage,
   condition,
   faq,
   announcement,
@@ -60,7 +51,6 @@ export const schemaTypes = [
   homepageCareOptions,
   homepageFeaturePanel,
   homepageFeaturePanelItem,
-  landingPageSetting,
   link,
   navLink,
   navMegaMenu,

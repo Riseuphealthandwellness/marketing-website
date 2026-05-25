@@ -66,6 +66,48 @@ const locationProjection = `{
   }
 }`;
 
+const pageBlocksProjection = `blocks[]{
+  _type,
+  _type == "pageSection" => { heading, body },
+  _type == "ctaBlock" => {
+    eyebrow, heading, description,
+    primaryLabel, primaryHref,
+    secondaryLabel, secondaryHref
+  },
+  _type == "conditionsBlock" => {
+    heading,
+    category,
+    "conditions": *[_type == "condition" && category == ^.category] | order(title asc){
+      "slug": slug.current, title, shortDescription
+    }
+  },
+  _type == "faqBlock" => {
+    heading,
+    category,
+    "faqs": *[_type == "faq" && category == ^.category] | order(orderRank asc, question asc){
+      question, answer
+    }
+  },
+  _type == "servicesBlock" => {
+    heading,
+    "services": *[_type == "service"] | order(title asc){
+      "slug": slug.current, title, description, href
+    }
+  },
+  _type == "programsBlock" => {
+    heading,
+    "programs": *[_type == "program"] | order(title asc){
+      "slug": slug.current, title, description, audience, href
+    }
+  },
+  _type == "careModelBlock" => {
+    eyebrow,
+    heading,
+    description,
+    items[]{ title, body, iconName }
+  }
+}`;
+
 export const cmsQueries = {
   siteSettings: `*[_type == "siteSettings"][0]{
     name,
@@ -115,7 +157,7 @@ export const cmsQueries = {
     }
   }`,
 
-  homepage: `*[_type == "homepageSettings" && _id == "homepageSettings"][0]{
+  homepage: `*[_type == "websitePage" && key == "home" && status == "published"][0]{
     hero{
       eyebrow,
       heading[]{
@@ -139,55 +181,12 @@ export const cmsQueries = {
     seo
   }`,
 
-  pageBySlug: `select(
-    $slug == "referrals" && defined(*[_type == "referralPageSettings" && _id == "referralPageSettings"][0].title) => *[_type == "referralPageSettings" && _id == "referralPageSettings"][0],
-    defined(*[_type == "landingPageSettings" && slug == $slug][0].title) => *[_type == "landingPageSettings" && slug == $slug][0],
-    *[_type == "page" && slug.current == $slug && status == "published"][0]
-  ){
+  pageBySlug: `*[_type == "websitePage" && key == $slug && status == "published"][0]{
     title,
     eyebrow,
     description,
-    blocks[]{
-      _type,
-      _type == "pageSection" => { heading, body },
-      _type == "ctaBlock" => {
-        eyebrow, heading, description,
-        primaryLabel, primaryHref,
-        secondaryLabel, secondaryHref
-      },
-      _type == "conditionsBlock" => {
-        heading,
-        category,
-        "conditions": *[_type == "condition" && category == ^.category] | order(title asc){
-          "slug": slug.current, title, shortDescription
-        }
-      },
-      _type == "faqBlock" => {
-        heading,
-        category,
-        "faqs": *[_type == "faq" && category == ^.category] | order(orderRank asc, question asc){
-          question, answer
-        }
-      },
-      _type == "servicesBlock" => {
-        heading,
-        "services": *[_type == "service"] | order(title asc){
-          "slug": slug.current, title, description, href
-        }
-      },
-      _type == "programsBlock" => {
-        heading,
-        "programs": *[_type == "program"] | order(title asc){
-          "slug": slug.current, title, description, audience, href
-        }
-      },
-      _type == "careModelBlock" => {
-        eyebrow,
-        heading,
-        description,
-        items[]{ title, body, iconName }
-      }
-    },
+    body,
+    ${pageBlocksProjection},
     contactForm,
     newPatientSteps,
     newPatientAccessCards,
@@ -195,13 +194,11 @@ export const cmsQueries = {
     seo
   }`,
 
-  allPageSlugs: `*[_type == "page" && status == "published" && defined(slug.current)]{
-    "slug": slug.current
+  allPageSlugs: `*[_type == "websitePage" && pageType == "custom" && status == "published" && defined(key)]{
+    "slug": key
   }`,
 
-  legalPageById: `*[_type == "legalPage" && _id == $id][0]{ title, body, seo }`,
-
-  referralSettings: `*[_type == "referralPageSettings" && _id == "referralPageSettings"][0]{
+  referralSettings: `*[_type == "websitePage" && key == "referrals" && status == "published"][0]{
     downloadLabel,
     pdfSectionHeading,
     pdfSectionDescription,
@@ -220,7 +217,7 @@ export const cmsQueries = {
 
   allConditionSlugs: `*[_type == "condition" && defined(slug.current)]{ "slug": slug.current, category }`,
 
-  careModelBlock: `*[_type == "landingPageSettings" && slug == "care"][0].blocks[_type == "careModelBlock"][0]{
+  careModelBlock: `*[_type == "websitePage" && key == "care" && status == "published"][0].blocks[_type == "careModelBlock"][0]{
     eyebrow, heading, description, items[]{ title, body, iconName }
   }`,
 

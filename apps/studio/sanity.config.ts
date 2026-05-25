@@ -1,26 +1,21 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {schemaTypes} from './schemaTypes'
-import {landingPageSettingPages} from './schemaTypes/documents/landingPageSettings'
 import {navigationSingletons} from './schemaTypes/documents/navigation'
+import {websiteManagedPages} from './schemaTypes/documents/websitePage'
 import {structure} from './structure'
 import {StudioIcon} from './studioIcon'
 
 const hiddenCreateSchemaTypes = new Set([
   'homepage',
-  'homepageSettings',
-  'landingPageSettings',
-  'legalPage',
   'navigation',
-  'pageSettings',
-  'referralPageSettings',
-  'referralSettings',
+  'websitePage',
   'siteSettings',
 ])
 
 export default defineConfig({
   name: 'default',
-  title: 'Content',
+  title: 'Rise Up Health & Wellness',
   icon: StudioIcon,
 
   projectId: 'k23sgnrq',
@@ -40,17 +35,56 @@ export default defineConfig({
     types: schemaTypes,
     templates: (prev) => [
       ...prev.filter((template) => !hiddenCreateSchemaTypes.has(template.schemaType)),
-      ...landingPageSettingPages.map((page) => ({
-        id: `landing-page-settings-${page.slug}`,
-        title: `${page.title} page settings`,
-        schemaType: 'landingPageSettings',
+      {
+        id: 'website-page-home',
+        title: 'Homepage',
+        schemaType: 'websitePage',
         value: {
-          slug: page.slug,
+          key: 'home',
+          path: '/',
+          pageType: 'home',
+          status: 'published',
+          title: 'Homepage',
+        },
+      },
+      ...websiteManagedPages.map((page) => ({
+        id: page.id,
+        title: `${page.title} page settings`,
+        schemaType: 'websitePage',
+        value: {
+          key: page.key,
+          path: page.path,
+          pageType: 'landing',
+          status: 'published',
           title: page.pageTitle,
           eyebrow: page.eyebrow,
           description: page.description,
         },
       })),
+      {
+        id: 'website-page-privacy-policy',
+        title: 'Privacy policy',
+        schemaType: 'websitePage',
+        value: {
+          key: 'privacy-policy',
+          path: '/privacy-policy',
+          pageType: 'legal',
+          status: 'published',
+          title: 'Privacy Policy',
+        },
+      },
+      {
+        id: 'website-page-terms-of-service',
+        title: 'Terms of service',
+        schemaType: 'websitePage',
+        value: {
+          key: 'terms-of-service',
+          path: '/terms-of-service',
+          pageType: 'legal',
+          status: 'published',
+          title: 'Terms of Service',
+        },
+      },
       ...navigationSingletons.map((nav) => ({
         id: `navigation-${nav.key}`,
         title: nav.title,

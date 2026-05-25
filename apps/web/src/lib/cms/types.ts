@@ -196,18 +196,13 @@ export type PageBlock =
 export type MarketingPage = {
   title: string;
   eyebrow?: string;
-  description: string;
+  description?: string;
+  body?: unknown[];
   blocks?: PageBlock[];
   contactForm?: ContactFormContent;
   emptyStateText?: string;
   newPatientAccessCards?: NewPatientAccessCard[];
   newPatientSteps?: NewPatientStep[];
-  seo?: SeoFields;
-};
-
-export type LegalPageContent = {
-  title: string;
-  body?: unknown[];
   seo?: SeoFields;
 };
 
