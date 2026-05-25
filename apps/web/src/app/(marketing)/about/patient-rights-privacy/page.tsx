@@ -2,7 +2,7 @@ import { StaticMarketingPage } from "@/app/(marketing)/_components/static-market
 import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
 
 export const generateMetadata = () =>
-  metadataForPage("patient-rights-privacy", "/patient-rights-privacy");
+  metadataForPage("patient-rights-privacy", "/about/patient-rights-privacy");
 
 export default function PatientRightsPrivacyPage() {
   return <StaticMarketingPage slug="patient-rights-privacy" />;

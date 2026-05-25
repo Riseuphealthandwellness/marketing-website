@@ -17,7 +17,7 @@ export async function MarketingPage({ slug }: MarketingPageProps) {
   const page = await getMarketingPage(slug);
   if (!page) notFound();
 
-  const breadcrumbs = page.path ? buildBreadcrumbs(page.path, page.title) : undefined;
+  const breadcrumbs = page.path ? buildBreadcrumbs(page.path) : undefined;
 
   if (page.body) {
     return (

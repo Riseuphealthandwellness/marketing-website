@@ -51,7 +51,7 @@ export default async function ServicePage({ params }: Props) {
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs(`/care/${slug}`, service.title)}
+        breadcrumbs={buildBreadcrumbs(`/care/${slug}`)}
         eyebrow="Care"
         title={service.title}
         description={service.description}

@@ -112,8 +112,6 @@ export const structure: StructureResolver = (S) =>
                       pageSettingsListItem(S, landingPage('new-patients')),
                       pageSettingsListItem(S, landingPage('insurance-payment')),
                       pageSettingsListItem(S, landingPage('patient-resources')),
-                      pageSettingsListItem(S, landingPage('patient-rights-privacy')),
-                      pageSettingsListItem(S, landingPage('medical-record-request')),
                     ]),
                 ),
               S.listItem()
@@ -183,24 +181,9 @@ export const structure: StructureResolver = (S) =>
                         S.documentTypeListItem('location').title('Location entries').icon(PinIcon),
                       ]),
                       pageSettingsListItem(S, landingPage('careers')),
-                    ]),
-                ),
-              S.divider(),
-              S.documentTypeListItem('websitePage')
-                .title('Custom pages')
-                .icon(DocumentTextIcon)
-                .child(
-                  S.documentTypeList('websitePage')
-                    .title('Custom pages')
-                    .filter('_type == "websitePage" && pageType == "custom"'),
-                ),
-              S.listItem()
-                .title('Legal pages')
-                .icon(DocumentTextIcon)
-                .child(
-                  S.list()
-                    .title('Legal pages')
-                    .items([
+                      S.divider(),
+                      pageSettingsListItem(S, landingPage('patient-rights-privacy')),
+                      pageSettingsListItem(S, landingPage('medical-record-request')),
                       singletonListItem(S, {
                         title: 'Notice of privacy practices',
                         icon: DocumentTextIcon,
@@ -220,6 +203,15 @@ export const structure: StructureResolver = (S) =>
                         documentId: 'website-page-terms-of-service',
                       }),
                     ]),
+                ),
+              S.divider(),
+              S.documentTypeListItem('websitePage')
+                .title('Custom pages')
+                .icon(DocumentTextIcon)
+                .child(
+                  S.documentTypeList('websitePage')
+                    .title('Custom pages')
+                    .filter('_type == "websitePage" && pageType == "custom"'),
                 ),
             ]),
         ),

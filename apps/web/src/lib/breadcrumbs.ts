@@ -4,11 +4,30 @@ export type BreadcrumbItem = {
 };
 
 const SEGMENT_LABELS: Record<string, string> = {
-  care: "Care",
-  programs: "Programs",
+  // Top-level pages
+  about: "About",
+  contact: "Contact",
+  careers: "Careers",
   locations: "Locations",
-  services: "Services",
+  programs: "Programs",
+  referrals: "Referrals",
   team: "Team",
+  // Patient access
+  "insurance-payment": "Insurance & Payment",
+  "medical-record-request": "Medical Record Request",
+  "new-patients": "New Patients",
+  "patient-resources": "Patient Resources",
+  "patient-rights-privacy": "Patient Rights & Privacy",
+  // Care
+  care: "Care",
+  services: "Services",
+  "addiction-medicine": "Addiction Medicine",
+  "primary-care": "Primary Care",
+  "weight-loss-mgmt": "Weight Loss Management",
+  // Legal
+  "notice-privacy-practices": "Notice of Privacy Practices",
+  "privacy-policy": "Privacy Policy",
+  "terms-of-service": "Terms of Service",
 };
 
 function formatLabel(segment: string): string {
@@ -21,12 +40,16 @@ function formatLabel(segment: string): string {
   );
 }
 
-export function buildBreadcrumbs(path: string, pageTitle: string): BreadcrumbItem[] {
+/**
+ * Builds a breadcrumb trail for all ancestor pages, excluding the current page.
+ * The eyebrow/title on the page itself already indicates where you are.
+ * Returns only "Home" for top-level pages — PageHero hides the nav when length <= 1.
+ */
+export function buildBreadcrumbs(path: string): BreadcrumbItem[] {
   const segments = path.replace(/^\//, "").split("/").filter(Boolean);
   const crumbs: BreadcrumbItem[] = [{ label: "Home", href: "/" }];
 
-  if (segments.length === 0) return crumbs;
-
+  // All segments except the last become linked ancestor crumbs
   for (let i = 0; i < segments.length - 1; i++) {
     crumbs.push({
       label: formatLabel(segments[i]!),
@@ -34,6 +57,5 @@ export function buildBreadcrumbs(path: string, pageTitle: string): BreadcrumbIte
     });
   }
 
-  crumbs.push({ label: pageTitle });
   return crumbs;
 }

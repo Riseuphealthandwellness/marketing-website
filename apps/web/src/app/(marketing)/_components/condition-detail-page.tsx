@@ -42,7 +42,7 @@ export async function ConditionDetailPage({ slug, serviceSlug, serviceLabel }: P
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs(`/care/${serviceSlug}/${slug}`, condition.title)}
+        breadcrumbs={buildBreadcrumbs(`/care/${serviceSlug}/${slug}`)}
         eyebrow={serviceLabel}
         title={condition.title}
         description={condition.shortDescription}

@@ -16,7 +16,7 @@ export async function StaticMarketingPage({ slug }: StaticMarketingPageProps) {
   const page = await getMarketingPage(slug);
   if (!page) notFound();
 
-  const breadcrumbs = page.path ? buildBreadcrumbs(page.path, page.title) : undefined;
+  const breadcrumbs = page.path ? buildBreadcrumbs(page.path) : undefined;
   const hasSidebar = (page.sidebar?.length ?? 0) > 0;
 
   if (hasSidebar) {

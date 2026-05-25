@@ -44,7 +44,7 @@ export default async function LocationPage({ params }: Props) {
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs(`/locations/${slug}`, location.name)}
+        breadcrumbs={buildBreadcrumbs(`/locations/${slug}`)}
         eyebrow="Location"
         title={location.name}
         description={location.address}

@@ -55,7 +55,7 @@ export default defineConfig({
         schemaType: 'websitePage',
         value: {
           key: 'notice-privacy-practices',
-          path: '/notice-privacy-practices',
+          path: '/about/notice-privacy-practices',
           pageType: 'legal',
           status: 'published',
           title: 'Notice of Privacy Practices',
@@ -67,7 +67,7 @@ export default defineConfig({
         schemaType: 'websitePage',
         value: {
           key: 'privacy-policy',
-          path: '/privacy-policy',
+          path: '/about/privacy-policy',
           pageType: 'legal',
           status: 'published',
           title: 'Privacy Policy',
@@ -79,7 +79,7 @@ export default defineConfig({
         schemaType: 'websitePage',
         value: {
           key: 'terms-of-service',
-          path: '/terms-of-service',
+          path: '/about/terms-of-service',
           pageType: 'legal',
           status: 'published',
           title: 'Terms of Service',

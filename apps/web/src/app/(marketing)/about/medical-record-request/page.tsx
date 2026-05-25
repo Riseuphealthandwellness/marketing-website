@@ -9,7 +9,7 @@ import { Section } from "@/components/layout/section";
 import { getMarketingPage } from "@/lib/cms/content-source";
 
 export const generateMetadata = () =>
-  metadataForPage("medical-record-request", "/medical-record-request");
+  metadataForPage("medical-record-request", "/about/medical-record-request");
 
 export default async function MedicalRecordRequestPage() {
   const page = await getMarketingPage("medical-record-request");

@@ -69,7 +69,7 @@ export const websiteManagedPages = [
   {
     id: 'website-page-patient-rights-privacy',
     key: 'patient-rights-privacy',
-    path: '/patient-rights-privacy',
+    path: '/about/patient-rights-privacy',
     group: 'patientAccess',
     title: 'Patient rights & privacy',
     pageTitle: 'Your rights and your privacy',
@@ -80,7 +80,7 @@ export const websiteManagedPages = [
   {
     id: 'website-page-medical-record-request',
     key: 'medical-record-request',
-    path: '/medical-record-request',
+    path: '/about/medical-record-request',
     group: 'patientAccess',
     title: 'Medical record request',
     pageTitle: 'Request your medical records',

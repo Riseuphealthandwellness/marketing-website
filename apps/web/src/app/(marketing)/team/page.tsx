@@ -20,7 +20,7 @@ export default async function TeamPage() {
   return (
     <>
       <PageHero
-        breadcrumbs={page.path ? buildBreadcrumbs(page.path, page.title) : undefined}
+        breadcrumbs={page.path ? buildBreadcrumbs(page.path) : undefined}
         eyebrow={page?.eyebrow}
         title={page.title}
         description={page?.description}
