@@ -10,7 +10,7 @@ export function Section({ className, tone = "default", ...props }: SectionProps)
   return (
     <section
       className={cn(
-        "py-16 sm:py-20",
+        "py-16 sm:py-20 lg:py-24",
         tone === "surface" && "bg-surface text-surface-foreground",
         tone === "muted" && "bg-muted",
         className,

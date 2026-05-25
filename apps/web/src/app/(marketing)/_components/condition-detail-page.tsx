@@ -9,6 +9,7 @@ import { ContactBand } from "@/components/sections/contact-band";
 import { PageHero } from "@/components/sections/page-hero";
 import { getConditionBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 
 type Props = {
   slug: string;
@@ -40,7 +41,12 @@ export async function ConditionDetailPage({ slug, serviceSlug, serviceLabel }: P
 
   return (
     <>
-      <PageHero eyebrow={serviceLabel} title={condition.title} description={condition.shortDescription} />
+      <PageHero
+        breadcrumbs={buildBreadcrumbs(`/care/${serviceSlug}/${slug}`, condition.title)}
+        eyebrow={serviceLabel}
+        title={condition.title}
+        description={condition.shortDescription}
+      />
 
       {condition.body && (condition.body as unknown[]).length > 0 ? (
         <Section>

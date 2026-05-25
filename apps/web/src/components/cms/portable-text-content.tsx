@@ -16,17 +16,17 @@ const portableTextComponents = {
       </p>
     ),
     h2: ({ children }) => (
-      <h2 className="pt-4 font-heading text-2xl font-black leading-tight tracking-normal text-brand-coal first:pt-0 sm:text-3xl">
+      <h2 className="pt-8 font-heading text-2xl font-black leading-tight tracking-normal text-brand-coal first:pt-0 sm:text-3xl">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="pt-3 font-heading text-xl font-black leading-snug tracking-normal text-brand-coal first:pt-0 sm:text-2xl">
+      <h3 className="pt-5 font-heading text-xl font-black leading-snug tracking-normal text-brand-coal first:pt-0 sm:text-2xl">
         {children}
       </h3>
     ),
     h4: ({ children }) => (
-      <h4 className="pt-2 font-heading text-lg font-black leading-snug tracking-normal text-brand-coal first:pt-0">
+      <h4 className="pt-3 font-heading text-lg font-black leading-snug tracking-normal text-brand-coal first:pt-0">
         {children}
       </h4>
     ),
@@ -80,7 +80,7 @@ export function PortableTextContent({ value, className }: PortableTextContentPro
   if (!value || value.length === 0) return null;
 
   return (
-    <div className={cn("space-y-5", className)}>
+    <div className={cn("space-y-6", className)}>
       <PortableText
         components={portableTextComponents}
         value={value as PortableTextBlock[]}

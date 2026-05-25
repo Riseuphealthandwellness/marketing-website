@@ -193,16 +193,28 @@ export type PageBlock =
   | ({ _type: 'servicesBlock' } & ServicesBlock)
   | ({ _type: 'programsBlock' } & ProgramsBlock);
 
+export type SidebarCard = {
+  heading: string;
+  description?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+};
+
 export type MarketingPage = {
   title: string;
+  path?: string;
+  heroImage?: CmsImage;
   eyebrow?: string;
   description?: string;
   body?: unknown[];
   blocks?: PageBlock[];
+  sidebar?: SidebarCard[];
   contactForm?: ContactFormContent;
   emptyStateText?: string;
   newPatientAccessCards?: NewPatientAccessCard[];
   newPatientSteps?: NewPatientStep[];
+  recordRequestPdf?: CmsFile;
+  recordRequestPdfLabel?: string;
   seo?: SeoFields;
 };
 

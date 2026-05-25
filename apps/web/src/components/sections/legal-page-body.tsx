@@ -1,10 +1,13 @@
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PortableTextContent } from "@/components/cms/portable-text-content";
+import { PageSidebar } from "@/components/sections/page-sidebar";
+import type { SidebarCard } from "@/lib/cms/types";
 
 type LegalPageBodyProps = {
   body?: unknown[];
   title?: string;
+  sidebar?: SidebarCard[];
 };
 
 function normalizeTitle(value: string) {
@@ -40,22 +43,38 @@ function removeDuplicateTitleBlock(body: unknown[] | undefined, title: string | 
   return body;
 }
 
-export function LegalPageBody({ body, title }: LegalPageBodyProps) {
+export function LegalPageBody({ body, title, sidebar }: LegalPageBodyProps) {
   const visibleBody = removeDuplicateTitleBlock(body, title);
+  const hasSidebar = (sidebar?.length ?? 0) > 0;
+
+  const content = (
+    <div className={hasSidebar ? undefined : "max-w-4xl"}>
+      {visibleBody && visibleBody.length > 0 ? (
+        <PortableTextContent value={visibleBody} />
+      ) : (
+        <p className="text-base leading-8 text-muted-foreground">
+          Content coming soon.
+        </p>
+      )}
+    </div>
+  );
+
+  if (hasSidebar) {
+    return (
+      <Section>
+        <Container>
+          <div className="grid gap-12 lg:grid-cols-[1fr_260px] xl:gap-16">
+            {content}
+            <PageSidebar cards={sidebar!} />
+          </div>
+        </Container>
+      </Section>
+    );
+  }
 
   return (
     <Section>
-      <Container>
-        <div className="max-w-4xl">
-          {visibleBody && visibleBody.length > 0 ? (
-            <PortableTextContent value={visibleBody} />
-          ) : (
-            <p className="text-base leading-8 text-muted-foreground">
-              Content coming soon.
-            </p>
-          )}
-        </div>
-      </Container>
+      <Container>{content}</Container>
     </Section>
   );
 }

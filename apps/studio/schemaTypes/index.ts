@@ -32,6 +32,7 @@ import {programsBlock} from './objects/programsBlock'
 import {seoFields} from './objects/seoFields'
 import {serviceHighlight} from './objects/serviceHighlight'
 import {servicesBlock} from './objects/servicesBlock'
+import {sidebarCard} from './objects/sidebarCard'
 import {textColor} from './objects/textColor'
 
 export const schemaTypes = [
@@ -66,6 +67,7 @@ export const schemaTypes = [
   pageSection,
   programsBlock,
   servicesBlock,
+  sidebarCard,
   seoFields,
   ctaButton,
   ctaBlock,

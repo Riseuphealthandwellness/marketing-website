@@ -112,6 +112,8 @@ export const structure: StructureResolver = (S) =>
                       pageSettingsListItem(S, landingPage('new-patients')),
                       pageSettingsListItem(S, landingPage('insurance-payment')),
                       pageSettingsListItem(S, landingPage('patient-resources')),
+                      pageSettingsListItem(S, landingPage('patient-rights-privacy')),
+                      pageSettingsListItem(S, landingPage('medical-record-request')),
                     ]),
                 ),
               S.listItem()
@@ -199,6 +201,12 @@ export const structure: StructureResolver = (S) =>
                   S.list()
                     .title('Legal pages')
                     .items([
+                      singletonListItem(S, {
+                        title: 'Notice of privacy practices',
+                        icon: DocumentTextIcon,
+                        schemaType: 'websitePage',
+                        documentId: 'website-page-notice-privacy-practices',
+                      }),
                       singletonListItem(S, {
                         title: 'Privacy policy',
                         icon: DocumentTextIcon,

@@ -50,6 +50,18 @@ export default defineConfig({
         },
       })),
       {
+        id: 'website-page-notice-privacy-practices',
+        title: 'Notice of privacy practices',
+        schemaType: 'websitePage',
+        value: {
+          key: 'notice-privacy-practices',
+          path: '/notice-privacy-practices',
+          pageType: 'legal',
+          status: 'published',
+          title: 'Notice of Privacy Practices',
+        },
+      },
+      {
         id: 'website-page-privacy-policy',
         title: 'Privacy policy',
         schemaType: 'websitePage',

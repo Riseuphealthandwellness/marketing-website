@@ -67,6 +67,28 @@ export const websiteManagedPages = [
       'Helpful links and guidance for patients navigating care, appointments, and support resources.',
   },
   {
+    id: 'website-page-patient-rights-privacy',
+    key: 'patient-rights-privacy',
+    path: '/patient-rights-privacy',
+    group: 'patientAccess',
+    title: 'Patient rights & privacy',
+    pageTitle: 'Your rights and your privacy',
+    eyebrow: 'Patient rights',
+    description:
+      'Information about your privacy rights, HIPAA protections, and how Rise Up Health & Wellness handles your health information.',
+  },
+  {
+    id: 'website-page-medical-record-request',
+    key: 'medical-record-request',
+    path: '/medical-record-request',
+    group: 'patientAccess',
+    title: 'Medical record request',
+    pageTitle: 'Request your medical records',
+    eyebrow: 'Medical records',
+    description:
+      'Request copies of your health records from Rise Up Health & Wellness. Records are maintained in confidence per HIPAA and West Virginia law.',
+  },
+  {
     id: 'website-page-addiction-medicine',
     key: 'addiction-medicine',
     path: '/care/addiction-medicine',
@@ -238,6 +260,24 @@ export const websitePage = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'heroImage',
+      title: 'Hero background image',
+      type: 'image',
+      description: 'Optional background image shown behind the page title. Works best with wide landscape photos. Leave blank for the default solid background.',
+      group: 'page',
+      hidden: ({document}) => document?.pageType === 'legal',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt text',
+          type: 'string',
+        }),
+      ],
+    }),
+    defineField({
       name: 'eyebrow',
       title: 'Eyebrow',
       type: 'string',
@@ -387,6 +427,24 @@ export const websitePage = defineType({
       hidden: ({document}) => document?.key !== 'referrals',
     }),
     defineField({
+      name: 'recordRequestPdf',
+      title: 'Authorization form PDF',
+      type: 'file',
+      description: 'Upload the Authorization for Release of Health Information form (PDF).',
+      options: {
+        accept: 'application/pdf',
+      },
+      group: 'pageSpecific',
+      hidden: ({document}) => document?.key !== 'medical-record-request',
+    }),
+    defineField({
+      name: 'recordRequestPdfLabel',
+      title: 'Download button label',
+      type: 'string',
+      group: 'pageSpecific',
+      hidden: ({document}) => document?.key !== 'medical-record-request',
+    }),
+    defineField({
       name: 'body',
       title: 'Legal body',
       type: 'array',
@@ -413,6 +471,14 @@ export const websitePage = defineType({
           },
         },
       ],
+    }),
+    defineField({
+      name: 'sidebar',
+      title: 'Sidebar cards',
+      type: 'array',
+      description: 'Optional cards shown in the right sidebar — e.g. "Contact us", "About us". Leave empty to show no sidebar.',
+      group: 'blocks',
+      of: [{type: 'sidebarCard'}],
     }),
     defineField({
       name: 'seo',

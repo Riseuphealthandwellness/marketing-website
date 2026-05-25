@@ -12,6 +12,7 @@ import { getMarketingPage, getSiteSettings } from "@/lib/cms/content-source";
 import type { NewPatientAccessCard, NewPatientStep, PatientAccessLinks, SiteSettings } from "@/lib/cms/types";
 import { isExternalUrl } from "@/lib/integrations/patient-access";
 import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
+import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 
 export const generateMetadata = () => metadataForPage("new-patients");
 
@@ -62,6 +63,7 @@ export default async function NewPatientsPage() {
   return (
     <>
       <PageHero
+        breadcrumbs={page.path ? buildBreadcrumbs(page.path, page.title) : undefined}
         eyebrow={page?.eyebrow}
         title={page.title}
         description={page?.description}

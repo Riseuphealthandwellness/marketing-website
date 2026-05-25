@@ -8,6 +8,7 @@ import { ContactBand } from "@/components/sections/contact-band";
 import { PageHero } from "@/components/sections/page-hero";
 import { getAllLocationSlugs, getLocationBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -42,7 +43,12 @@ export default async function LocationPage({ params }: Props) {
 
   return (
     <>
-      <PageHero eyebrow="Location" title={location.name} description={location.address} />
+      <PageHero
+        breadcrumbs={buildBreadcrumbs(`/locations/${slug}`, location.name)}
+        eyebrow="Location"
+        title={location.name}
+        description={location.address}
+      />
 
       <Section>
         <Container>

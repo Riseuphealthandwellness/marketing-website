@@ -14,7 +14,7 @@ const fileProjection = `{
 const seoProjection = `{ title, description, canonicalUrl, noIndex, ogImage }`;
 
 const serviceProjection = `{
-  "slug": slug.current,
+  slug,
   title,
   description,
   body,
@@ -90,8 +90,8 @@ const pageBlocksProjection = `blocks[]{
   },
   _type == "servicesBlock" => {
     heading,
-    "services": *[_type == "service"] | order(title asc){
-      "slug": slug.current, title, description, href
+    "services": *[_type == "websitePage" && key == "services" && status == "published"][0].services[]{
+      slug, title, description, href
     }
   },
   _type == "programsBlock" => {
@@ -157,7 +157,7 @@ export const cmsQueries = {
     }
   }`,
 
-  homepage: `*[_type == "websitePage" && key == "home" && status == "published"][0]{
+  homepage: `*[_type == "homepage"][0]{
     hero{
       eyebrow,
       heading[]{
@@ -183,14 +183,19 @@ export const cmsQueries = {
 
   pageBySlug: `*[_type == "websitePage" && key == $slug && status == "published"][0]{
     title,
+    path,
     eyebrow,
     description,
+    "heroImage": heroImage ${imageProjection},
     body,
     ${pageBlocksProjection},
+    sidebar[]{heading, description, ctaLabel, ctaHref},
     contactForm,
     newPatientSteps,
     newPatientAccessCards,
     emptyStateText,
+    "recordRequestPdf": recordRequestPdf ${fileProjection},
+    recordRequestPdfLabel,
     seo
   }`,
 
@@ -229,11 +234,11 @@ export const cmsQueries = {
     "link": link{ label, href }
   }`,
 
-  services: `*[_type == "service"] | order(title asc) ${serviceProjection}`,
+  services: `*[_type == "websitePage" && key == "services" && status == "published"][0].services[] ${serviceProjection}`,
 
-  serviceBySlug: `*[_type == "service" && slug.current == $slug][0] ${serviceProjection}`,
+  serviceBySlug: `*[_type == "websitePage" && key == "services" && status == "published"][0].services[slug == $slug][0] ${serviceProjection}`,
 
-  allServiceSlugs: `*[_type == "service" && defined(slug.current)]{ "slug": slug.current }`,
+  allServiceSlugs: `*[_type == "websitePage" && key == "services" && status == "published"][0].services[defined(slug)]{ slug }`,
 
   programs: `*[_type == "program"] | order(title asc) ${programProjection}`,
 

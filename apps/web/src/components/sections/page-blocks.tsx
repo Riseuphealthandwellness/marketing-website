@@ -11,9 +11,68 @@ import type { PageBlock } from "@/lib/cms/types";
 
 type PageBlocksProps = {
   blocks: PageBlock[];
+  compact?: boolean;
 };
 
-export function PageBlocks({ blocks }: PageBlocksProps) {
+export function PageBlocks({ blocks, compact = false }: PageBlocksProps) {
+  if (compact) {
+    return (
+      <div className="space-y-10 divide-y divide-border">
+        {blocks.map((block, index) => {
+          if (block._type === "pageSection") {
+            return (
+              <div key={index} className="space-y-4 pt-10 first:pt-0">
+                <h2 className="font-heading text-2xl font-black tracking-normal text-foreground sm:text-3xl">
+                  {block.heading}
+                </h2>
+                <PortableTextContent value={block.body} />
+              </div>
+            );
+          }
+
+          if (block._type === "ctaBlock") {
+            return (
+              <div key={index} className="space-y-4 rounded-xl bg-muted p-6 pt-10 first:pt-6">
+                <div>
+                  <h2 className="font-heading text-2xl font-black tracking-normal text-foreground sm:text-3xl">
+                    {block.heading}
+                  </h2>
+                  <p className="mt-2 text-sm leading-7 text-muted-foreground">{block.description}</p>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                    href={block.primaryHref}
+                  >
+                    {block.primaryLabel}
+                  </a>
+                  {block.secondaryLabel && block.secondaryHref ? (
+                    <a
+                      className="inline-flex h-9 items-center rounded-md border border-border px-4 text-sm font-semibold transition-colors hover:bg-muted"
+                      href={block.secondaryHref}
+                    >
+                      {block.secondaryLabel}
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+            );
+          }
+
+          if (block._type === "faqBlock") {
+            return (
+              <div key={index} className="pt-10 first:pt-0">
+                <FaqSection faqs={block.faqs} heading={block.heading} />
+              </div>
+            );
+          }
+
+          return null;
+        })}
+      </div>
+    );
+  }
+
   return (
     <>
       {blocks.map((block, index) => {

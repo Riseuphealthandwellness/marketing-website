@@ -10,6 +10,7 @@ import { ContactBand } from "@/components/sections/contact-band";
 import { PageHero } from "@/components/sections/page-hero";
 import { getAllPageSlugs, getAllServiceSlugs, getServiceBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -49,7 +50,12 @@ export default async function ServicePage({ params }: Props) {
 
   return (
     <>
-      <PageHero eyebrow="Care" title={service.title} description={service.description} />
+      <PageHero
+        breadcrumbs={buildBreadcrumbs(`/care/${slug}`, service.title)}
+        eyebrow="Care"
+        title={service.title}
+        description={service.description}
+      />
 
       {service.body && (service.body as unknown[]).length > 0 ? (
         <Section>

@@ -8,6 +8,7 @@ import { PageBlocks } from "@/components/sections/page-blocks";
 import { PageHero } from "@/components/sections/page-hero";
 import { getLocations, getMarketingPage } from "@/lib/cms/content-source";
 import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
+import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 
 export const generateMetadata = () => metadataForPage("locations");
 
@@ -18,6 +19,7 @@ export default async function LocationsPage() {
   return (
     <>
       <PageHero
+        breadcrumbs={page.path ? buildBreadcrumbs(page.path, page.title) : undefined}
         eyebrow={page?.eyebrow}
         title={page.title}
         description={page?.description}

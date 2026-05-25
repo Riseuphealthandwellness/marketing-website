@@ -9,6 +9,7 @@ import { PageHero } from "@/components/sections/page-hero";
 import { Badge } from "@/components/ui/badge";
 import { getAllProgramSlugs, getProgramBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -37,7 +38,12 @@ export default async function ProgramPage({ params }: Props) {
 
   return (
     <>
-      <PageHero eyebrow="Programs" title={program.title} description={program.description} />
+      <PageHero
+        breadcrumbs={buildBreadcrumbs(`/programs/${slug}`, program.title)}
+        eyebrow="Programs"
+        title={program.title}
+        description={program.description}
+      />
 
       {program.audience || (program.body && (program.body as unknown[]).length > 0) ? (
         <Section>

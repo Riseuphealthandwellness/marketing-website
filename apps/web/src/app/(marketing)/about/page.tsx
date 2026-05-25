@@ -9,6 +9,7 @@ import { PageHero } from "@/components/sections/page-hero";
 import { TeamMemberPortrait } from "@/components/team/team-member-portrait";
 import { getMarketingPage, getProviders } from "@/lib/cms/content-source";
 import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
+import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 
 export const generateMetadata = () => metadataForPage("about");
 
@@ -19,6 +20,7 @@ export default async function AboutPage() {
   return (
     <>
       <PageHero
+        breadcrumbs={page.path ? buildBreadcrumbs(page.path, page.title) : undefined}
         eyebrow={page?.eyebrow}
         title={page.title}
         description={page?.description}
