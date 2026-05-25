@@ -1,11 +1,11 @@
 import {announcement} from './documents/announcement'
 import {condition} from './documents/condition'
 import {faq} from './documents/faq'
+import {homepage} from './documents/homepage'
 import {location} from './documents/location'
 import {navigation} from './documents/navigation'
 import {program} from './documents/program'
 import {provider} from './documents/provider'
-import {service} from './documents/service'
 import {siteSettings} from './documents/siteSettings'
 import {websitePage} from './documents/websitePage'
 import {accessLinks} from './objects/accessLinks'
@@ -25,6 +25,7 @@ import {newPatientStep} from './objects/newPatientStep'
 import {careModelBlock} from './objects/careModelBlock'
 import {careModelItem} from './objects/careModelItem'
 import {conditionsBlock} from './objects/conditionsBlock'
+import {embeddedService} from './objects/embeddedService'
 import {faqBlock} from './objects/faqBlock'
 import {pageSection} from './objects/pageSection'
 import {programsBlock} from './objects/programsBlock'
@@ -36,8 +37,8 @@ import {textColor} from './objects/textColor'
 export const schemaTypes = [
   siteSettings,
   navigation,
+  homepage,
   websitePage,
-  service,
   program,
   provider,
   location,
@@ -60,6 +61,7 @@ export const schemaTypes = [
   careModelBlock,
   careModelItem,
   conditionsBlock,
+  embeddedService,
   faqBlock,
   pageSection,
   programsBlock,

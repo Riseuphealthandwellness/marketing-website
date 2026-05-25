@@ -35,21 +35,9 @@ export default defineConfig({
     types: schemaTypes,
     templates: (prev) => [
       ...prev.filter((template) => !hiddenCreateSchemaTypes.has(template.schemaType)),
-      {
-        id: 'website-page-home',
-        title: 'Homepage',
-        schemaType: 'websitePage',
-        value: {
-          key: 'home',
-          path: '/',
-          pageType: 'home',
-          status: 'published',
-          title: 'Homepage',
-        },
-      },
       ...websiteManagedPages.map((page) => ({
         id: page.id,
-        title: `${page.title} page settings`,
+        title: `${page.title} page`,
         schemaType: 'websitePage',
         value: {
           key: page.key,

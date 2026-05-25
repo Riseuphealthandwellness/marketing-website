@@ -1,10 +1,10 @@
 import {HeartIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
 
-export const service = defineType({
-  name: 'service',
+export const embeddedService = defineType({
+  name: 'embeddedService',
   title: 'Service',
-  type: 'document',
+  type: 'object',
   icon: HeartIcon,
   groups: [
     {name: 'content', title: 'Content', default: true},
@@ -21,8 +21,8 @@ export const service = defineType({
     defineField({
       name: 'slug',
       title: 'Slug',
-      type: 'slug',
-      options: {source: 'title'},
+      type: 'string',
+      description: 'URL segment for this service, such as primary-care.',
       validation: (rule) => rule.required(),
       group: 'content',
     }),
@@ -39,7 +39,7 @@ export const service = defineType({
       name: 'body',
       title: 'Full description',
       type: 'array',
-      description: 'Detailed content shown on the service page or expanded view.',
+      description: 'Detailed content shown on the service page.',
       of: [
         {
           type: 'block',

@@ -58,7 +58,7 @@ function pageSettingsListItem(S: Parameters<StructureResolver>[0], page: (typeof
         .schemaType('websitePage')
         .documentId(page.id)
         .initialValueTemplate(page.id)
-        .title(`${page.title} page settings`),
+        .title(`${page.title} page`),
     )
 }
 
@@ -67,13 +67,18 @@ function pageBundleListItem(
   page: (typeof websiteManagedPages)[number],
   items: ReturnType<StructureBuilder['listItem']>[],
 ) {
+  const childItems =
+    items.length > 0
+      ? [pageSettingsListItem(S, page).title(`${page.title} page`), S.divider(), ...items]
+      : [pageSettingsListItem(S, page)]
+
   return S.listItem()
     .title(page.title)
     .icon(DocumentsIcon)
     .child(
       S.list()
         .title(`${page.title} content`)
-        .items([pageSettingsListItem(S, page).title(`${page.title} page settings`), S.divider(), ...items]),
+        .items(childItems),
     )
 }
 
@@ -91,8 +96,8 @@ export const structure: StructureResolver = (S) =>
               singletonListItem(S, {
                 title: 'Homepage',
                 icon: HomeIcon,
-                schemaType: 'websitePage',
-                documentId: 'website-page-home',
+                schemaType: 'homepage',
+                documentId: 'singleton-homepage',
               }),
               S.divider(),
               S.listItem()
@@ -117,13 +122,10 @@ export const structure: StructureResolver = (S) =>
                     .title('Care pages')
                     .items([
                       pageBundleListItem(S, landingPage('care'), [
-                        S.documentTypeListItem('service').title('Services shown on care pages').icon(HeartIcon),
                         S.documentTypeListItem('program').title('Programs shown on care pages').icon(StackIcon),
                         S.documentTypeListItem('faq').title('Care FAQs').icon(HelpCircleIcon),
                       ]),
-                      pageBundleListItem(S, landingPage('services'), [
-                        S.documentTypeListItem('service').title('Service entries').icon(HeartIcon),
-                      ]),
+                      pageBundleListItem(S, landingPage('services'), []),
                       pageBundleListItem(S, landingPage('programs'), [
                         S.documentTypeListItem('program').title('Program entries').icon(StackIcon),
                       ]),
@@ -217,20 +219,19 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
 
       S.listItem()
-        .title('Content libraries')
+        .title('Components')
         .icon(HeartIcon)
         .child(
           S.list()
-            .title('Content libraries')
+            .title('Components')
             .items([
               S.listItem()
-                .title('Care library')
+                .title('Care components')
                 .icon(HeartIcon)
                 .child(
                   S.list()
-                    .title('Care library')
+                    .title('Care components')
                     .items([
-                      S.documentTypeListItem('service').title('Services').icon(HeartIcon),
                       S.documentTypeListItem('condition').title('Conditions').icon(HeartIcon),
                       S.documentTypeListItem('program').title('Programs').icon(StackIcon),
                       S.documentTypeListItem('faq').title('FAQs').icon(HelpCircleIcon),
