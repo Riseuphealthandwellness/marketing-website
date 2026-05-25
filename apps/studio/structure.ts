@@ -173,6 +173,27 @@ export const structure: StructureResolver = (S) =>
                     .items([
                       pageBundleListItem(S, landingPage('about'), [
                         S.documentTypeListItem('provider').title('Team members featured across people pages').icon(UsersIcon),
+                        S.divider(),
+                        pageSettingsListItem(S, landingPage('patient-rights-privacy')),
+                        pageSettingsListItem(S, landingPage('medical-record-request')),
+                        singletonListItem(S, {
+                          title: 'Notice of privacy practices',
+                          icon: DocumentTextIcon,
+                          schemaType: 'websitePage',
+                          documentId: 'website-page-notice-privacy-practices',
+                        }),
+                        singletonListItem(S, {
+                          title: 'Privacy policy',
+                          icon: DocumentTextIcon,
+                          schemaType: 'websitePage',
+                          documentId: 'website-page-privacy-policy',
+                        }),
+                        singletonListItem(S, {
+                          title: 'Terms of service',
+                          icon: DocumentTextIcon,
+                          schemaType: 'websitePage',
+                          documentId: 'website-page-terms-of-service',
+                        }),
                       ]),
                       pageBundleListItem(S, landingPage('team'), [
                         S.documentTypeListItem('provider').title('Team member entries').icon(UsersIcon),
@@ -181,27 +202,6 @@ export const structure: StructureResolver = (S) =>
                         S.documentTypeListItem('location').title('Location entries').icon(PinIcon),
                       ]),
                       pageSettingsListItem(S, landingPage('careers')),
-                      S.divider(),
-                      pageSettingsListItem(S, landingPage('patient-rights-privacy')),
-                      pageSettingsListItem(S, landingPage('medical-record-request')),
-                      singletonListItem(S, {
-                        title: 'Notice of privacy practices',
-                        icon: DocumentTextIcon,
-                        schemaType: 'websitePage',
-                        documentId: 'website-page-notice-privacy-practices',
-                      }),
-                      singletonListItem(S, {
-                        title: 'Privacy policy',
-                        icon: DocumentTextIcon,
-                        schemaType: 'websitePage',
-                        documentId: 'website-page-privacy-policy',
-                      }),
-                      singletonListItem(S, {
-                        title: 'Terms of service',
-                        icon: DocumentTextIcon,
-                        schemaType: 'websitePage',
-                        documentId: 'website-page-terms-of-service',
-                      }),
                     ]),
                 ),
               S.divider(),

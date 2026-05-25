@@ -467,7 +467,21 @@ export const websitePage = defineType({
               {title: 'Strong', value: 'strong'},
               {title: 'Emphasis', value: 'em'},
             ],
-            annotations: [],
+            annotations: [
+              {
+                name: 'link',
+                title: 'Link',
+                type: 'object',
+                fields: [
+                  {
+                    name: 'href',
+                    title: 'URL or path',
+                    type: 'string',
+                    description: 'Full URL (https://...) for external sites, or a path (/about) for internal pages.',
+                  },
+                ],
+              },
+            ],
           },
         },
       ],
