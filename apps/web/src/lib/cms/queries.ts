@@ -157,7 +157,7 @@ export const cmsQueries = {
     }
   }`,
 
-  homepage: `*[_type == "homepage"][0]{
+  homepage: `*[_type == "homepage" && _id == "singleton-homepage"][0]{
     hero{
       eyebrow,
       heading[]{
