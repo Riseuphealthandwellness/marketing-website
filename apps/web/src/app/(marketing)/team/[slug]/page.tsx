@@ -36,9 +36,9 @@ export default async function ProviderPage({ params }: Props) {
 
   return (
     <>
-      <section className="border-b border-border bg-background py-14 sm:py-20">
+      <section className="border-b border-border bg-background py-10 sm:py-14">
         <Container>
-          <div className="grid gap-10 lg:grid-cols-[320px_1fr] lg:gap-14">
+          <div className="grid gap-8 lg:grid-cols-[300px_1fr] lg:gap-10">
             <div className="flex justify-center lg:justify-start">
               <TeamMemberPortrait
                 image={provider.image}
@@ -50,7 +50,7 @@ export default async function ProviderPage({ params }: Props) {
 
             <div className="flex flex-col justify-center">
               <div className="flex flex-wrap items-center gap-3">
-                <p className="font-heading text-sm font-black uppercase tracking-widest text-brand-warm-accent">
+                <p className="font-heading text-sm font-black uppercase tracking-widest text-brand-action">
                   {provider.role}
                 </p>
                 {provider.department ? (
@@ -76,10 +76,10 @@ export default async function ProviderPage({ params }: Props) {
                 <p className="mt-3 text-sm font-semibold text-muted-foreground">{provider.pronouns}</p>
               ) : null}
               {provider.shortBio ? (
-                <p className="mt-6 max-w-3xl text-xl leading-8 text-foreground">{provider.shortBio}</p>
+                <p className="mt-5 max-w-3xl text-xl leading-8 text-foreground">{provider.shortBio}</p>
               ) : null}
               {provider.bio ? (
-                <p className="mt-6 max-w-3xl whitespace-pre-line text-lg leading-8 text-muted-foreground">
+                <p className="mt-5 max-w-3xl whitespace-pre-line text-lg leading-8 text-muted-foreground">
                   {provider.bio}
                 </p>
               ) : null}
@@ -91,7 +91,7 @@ export default async function ProviderPage({ params }: Props) {
       {provider.specialties?.length || provider.languages?.length || provider.locations?.length ? (
         <Section>
           <Container>
-            <div className="grid gap-8 md:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-3">
               {provider.specialties?.length ? (
                 <div>
                   <h2 className="font-heading text-lg font-black tracking-normal text-foreground">

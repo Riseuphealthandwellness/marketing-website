@@ -154,15 +154,15 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
 
   return (
     <Section className="bg-surface">
-      <Container className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+      <Container className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
         <div className="max-w-3xl">
-          <p className="font-heading text-sm font-black uppercase text-brand-warm-accent">
+          <p className="font-heading text-sm font-black uppercase text-brand-action">
             {content.eyebrow}
           </p>
           <h2 className="mt-3 text-3xl font-black leading-tight tracking-normal text-foreground sm:text-4xl">
             {content.heading}
           </h2>
-          <p className="mt-5 text-lg leading-8 text-muted-foreground">
+          <p className="mt-4 text-lg leading-7 text-muted-foreground">
             {content.description}
           </p>
           {content.note ? (
@@ -173,7 +173,7 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
         </div>
 
         <form
-          className="rounded-lg border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:p-6"
+          className="rounded-lg border border-border bg-card p-5 shadow-[var(--shadow-soft)]"
           onChangeCapture={markStarted}
           onFocusCapture={markStarted}
           onSubmit={handleSubmit}

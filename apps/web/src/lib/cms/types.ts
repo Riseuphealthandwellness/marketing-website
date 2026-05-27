@@ -124,6 +124,7 @@ export type SiteSettings = {
   accessLinks: PatientAccessLinks;
   contactBand?: ContactBandContent;
   footerNotice?: string;
+  footerDisclaimers?: { text: string }[];
   headerCta?: CtaButton;
   logo?: CmsImage;
 };
@@ -200,12 +201,68 @@ export type SidebarCard = {
   ctaHref?: string;
 };
 
+export type AboutIconName =
+  | 'badge-check'
+  | 'heart-handshake'
+  | 'map-pin'
+  | 'route'
+  | 'sparkles'
+  | 'stethoscope'
+  | 'users';
+
+export type AboutIconCard = {
+  _key?: string;
+  iconName?: AboutIconName;
+  label?: string;
+  title?: string;
+  detail?: string;
+  description?: string;
+};
+
+export type AboutContent = {
+  hero?: {
+    heading?: string;
+    primaryLabel?: string;
+    primaryHref?: string;
+    secondaryLabel?: string;
+    secondaryHref?: string;
+    imageAlt?: string;
+    panelEyebrow?: string;
+    panelDescription?: string;
+  };
+  glance?: {
+    eyebrow?: string;
+    heading?: string;
+    items?: AboutIconCard[];
+  };
+  values?: {
+    eyebrow?: string;
+    heading?: string;
+    items?: AboutIconCard[];
+  };
+  team?: {
+    eyebrow?: string;
+    heading?: string;
+    ctaLabel?: string;
+    mobileCtaLabel?: string;
+  };
+  community?: {
+    eyebrow?: string;
+    heading?: string;
+    description?: string;
+    ctaLabel?: string;
+    ctaHref?: string;
+    imageAlt?: string;
+  };
+};
+
 export type MarketingPage = {
   title: string;
   path?: string;
   heroImage?: CmsImage;
   eyebrow?: string;
   description?: string;
+  aboutContent?: AboutContent;
   body?: unknown[];
   blocks?: PageBlock[];
   sidebar?: SidebarCard[];
@@ -326,6 +383,25 @@ export type PortableHeading = {
     color?: BrandTextColor;
   }>;
 }[];
+
+export type Drug = {
+  name: string;
+  genericName?: string;
+  aliases: string[];
+  slug: string;
+  image?: CmsImage;
+  description?: string;
+  body?: unknown[];
+  learnMoreUrl?: string;
+  learnMoreLabel?: string;
+  seo?: SeoFields;
+};
+
+export type DrugReferenceMark = {
+  _key: string;
+  _type: 'drugReference';
+  drug: Pick<Drug, 'name' | 'slug' | 'description'>;
+};
 
 export type Condition = {
   slug: string;

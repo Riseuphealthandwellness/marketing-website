@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
 
   return createPageMetadata({
-    title: "Integrated treatment, recovery, and primary care",
+    title: "Integrated primary care and wellness in West Virginia",
     description: "",
     path: "/",
     site: settings ?? undefined,

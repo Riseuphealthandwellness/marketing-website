@@ -27,7 +27,7 @@ export async function ContactBand() {
 
   return (
     <Section className="bg-brand-warm-white">
-      <Container className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-stretch">
+      <Container className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-stretch">
         <div className="max-w-3xl">
           <p className="font-heading text-sm font-black uppercase text-brand-warm-accent">
             {content.eyebrow}

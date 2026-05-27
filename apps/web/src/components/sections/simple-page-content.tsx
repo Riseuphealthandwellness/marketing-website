@@ -11,7 +11,7 @@ export function SimplePageContent({ sections }: SimplePageContentProps) {
   return (
     <Section>
       <Container>
-        <div className="max-w-4xl space-y-10">
+        <div className="max-w-4xl space-y-8">
           {sections.map((section) => (
             <section className="space-y-3" key={section.heading}>
               <h2 className="text-2xl font-semibold tracking-normal text-foreground">

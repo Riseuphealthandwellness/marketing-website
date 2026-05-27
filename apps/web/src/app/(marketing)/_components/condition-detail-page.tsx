@@ -42,7 +42,7 @@ export async function ConditionDetailPage({ slug, serviceSlug, serviceLabel }: P
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs(`/care/${serviceSlug}/${slug}`)}
+        breadcrumbs={buildBreadcrumbs(`/care/${serviceSlug}`)}
         eyebrow={serviceLabel}
         title={condition.title}
         description={condition.shortDescription}
@@ -51,7 +51,7 @@ export async function ConditionDetailPage({ slug, serviceSlug, serviceLabel }: P
       {condition.body && (condition.body as unknown[]).length > 0 ? (
         <Section>
           <Container>
-            <PortableTextContent className="max-w-3xl" value={condition.body} />
+            <PortableTextContent autoLinkDrugs className="max-w-3xl" value={condition.body} />
           </Container>
         </Section>
       ) : null}

@@ -78,17 +78,6 @@ export const websiteManagedPages = [
       'Information about your privacy rights, HIPAA protections, and how Rise Up Health & Wellness handles your health information.',
   },
   {
-    id: 'website-page-medical-record-request',
-    key: 'medical-record-request',
-    path: '/about/medical-record-request',
-    group: 'patientAccess',
-    title: 'Medical record request',
-    pageTitle: 'Request your medical records',
-    eyebrow: 'Medical records',
-    description:
-      'Request copies of your health records from Rise Up Health & Wellness. Records are maintained in confidence per HIPAA and West Virginia law.',
-  },
-  {
     id: 'website-page-addiction-medicine',
     key: 'addiction-medicine',
     path: '/care/addiction-medicine',
@@ -160,6 +149,17 @@ export const websiteManagedPages = [
     eyebrow: 'About us',
     description:
       'RiseUp Health & Wellness brings primary care, addiction medicine, recovery support, and wellness care together under one roof — so patients get coordinated support.',
+  },
+  {
+    id: 'website-page-patients-rights-privacy',
+    key: 'patients-rights-privacy',
+    path: '/patients-rights-privacy',
+    group: 'patientAccess',
+    title: 'Patient rights & privacy',
+    pageTitle: 'Your Privacy is Important to Us',
+    eyebrow: 'Patient rights',
+    description:
+      'Information about your privacy rights, HIPAA protections, and how Rise Up handles your health information.',
   },
   {
     id: 'website-page-team',
@@ -282,7 +282,6 @@ export const websitePage = defineType({
       title: 'Eyebrow',
       type: 'string',
       group: 'page',
-      hidden: ({document}) => document?.pageType === 'legal',
     }),
     defineField({
       name: 'description',
@@ -330,6 +329,13 @@ export const websitePage = defineType({
       group: 'pageSpecific',
       of: [{type: 'newPatientAccessCard'}],
       hidden: ({document}) => document?.key !== 'new-patients',
+    }),
+    defineField({
+      name: 'aboutContent',
+      title: 'About page content',
+      type: 'aboutContent',
+      group: 'pageSpecific',
+      hidden: ({document}) => document?.key !== 'about',
     }),
     defineField({
       name: 'emptyStateText',
@@ -435,14 +441,14 @@ export const websitePage = defineType({
         accept: 'application/pdf',
       },
       group: 'pageSpecific',
-      hidden: ({document}) => document?.key !== 'medical-record-request',
+      hidden: ({document}) => document?.key !== 'medical-record-request-authorization',
     }),
     defineField({
       name: 'recordRequestPdfLabel',
       title: 'Download button label',
       type: 'string',
       group: 'pageSpecific',
-      hidden: ({document}) => document?.key !== 'medical-record-request',
+      hidden: ({document}) => document?.key !== 'medical-record-request-authorization',
     }),
     defineField({
       name: 'body',

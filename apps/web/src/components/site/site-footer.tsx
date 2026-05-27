@@ -133,12 +133,44 @@ export async function SiteFooter() {
           ) : null}
         </div>
 
-        <div className="mt-10 border-t border-brand-warm-white/14 pt-6 text-sm text-brand-warm-white/62">
-          <p className="flex flex-wrap gap-x-2 gap-y-1">
+      </Container>
+
+      <div className="border-t border-white/10 bg-black/40">
+        <Container className="pb-12 pt-8">
+          <div className="mb-6 flex flex-wrap items-center gap-y-2">
+            {[
+              { label: "Patient Rights & Privacy", href: "/patients-rights-privacy" },
+              { label: "Privacy Policy", href: "/patients-rights-privacy/privacy-policy" },
+              { label: "Terms of Use", href: "/patients-rights-privacy/terms-of-use" },
+              { label: "Contact Us", href: "/contact" },
+            ].map((link, i) => (
+              <span className="flex items-center" key={link.href}>
+                {i > 0 && <span aria-hidden="true" className="mx-4 text-white/20">|</span>}
+                <Link
+                  className="text-sm font-medium text-white/55 transition-colors hover:text-white/85"
+                  href={link.href}
+                >
+                  {link.label}
+                </Link>
+              </span>
+            ))}
+          </div>
+
+          {settings?.footerDisclaimers && settings.footerDisclaimers.length > 0 ? (
+            <div className="mb-6 space-y-4">
+              {settings.footerDisclaimers.map((d, i) => (
+                <p className="max-w-5xl text-sm leading-6 text-white/40" key={i}>
+                  {d.text}
+                </p>
+              ))}
+            </div>
+          ) : null}
+
+          <p className="text-sm text-white/35">
             {renderCopyrightText(settings?.copyrightText, settings?.name)}
           </p>
-        </div>
-      </Container>
+        </Container>
+      </div>
     </footer>
   );
 }

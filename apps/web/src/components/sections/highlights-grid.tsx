@@ -23,9 +23,9 @@ export function HighlightsGrid({ content, services }: HighlightsGridProps) {
   if (!content && items.length === 0) return null;
 
   return (
-    <Section className="bg-background pb-12 pt-20 sm:pb-14 sm:pt-24">
+    <Section className="bg-background pb-10 pt-14 sm:pb-12 sm:pt-16">
       <Container>
-        <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+        <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
           <div className="lg:order-2">
             {content?.eyebrow ? (
               <p className="font-heading text-sm font-black uppercase text-brand-emphasis">
@@ -41,18 +41,18 @@ export function HighlightsGrid({ content, services }: HighlightsGridProps) {
               width={1424}
             />
             {content?.heading ? (
-              <h2 className="mt-4 text-4xl font-black leading-tight tracking-normal text-foreground sm:text-5xl">
+              <h2 className="mt-3 text-4xl font-black leading-tight tracking-normal text-foreground sm:text-5xl">
                 {content.heading}
               </h2>
             ) : null}
             {content?.description ? (
-              <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
+              <p className="mt-4 max-w-xl text-lg leading-7 text-muted-foreground">
                 {content.description}
               </p>
             ) : null}
             {content?.ctaLabel && content.ctaHref ? (
               <Link
-                className="mt-7 inline-flex items-center gap-2 font-heading text-sm font-bold text-brand-trust hover:text-brand-action-hover hover:underline"
+                className="mt-6 inline-flex items-center gap-2 font-heading text-sm font-bold text-brand-trust hover:text-brand-action-hover hover:underline"
                 href={content.ctaHref}
               >
                 {content.ctaLabel}
@@ -67,7 +67,7 @@ export function HighlightsGrid({ content, services }: HighlightsGridProps) {
 
               return (
                 <Link
-                  className="grid gap-4 border-b border-border px-6 py-8 transition-colors last:border-b-0 hover:bg-muted/55 sm:grid-cols-[3.5rem_1fr_auto] sm:items-center"
+                  className="grid gap-4 border-b border-border px-5 py-6 transition-colors last:border-b-0 hover:bg-muted/55 sm:grid-cols-[3.5rem_1fr_auto] sm:items-center"
                   href={service.href}
                   key={service.title}
                 >

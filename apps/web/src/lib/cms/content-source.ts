@@ -1,9 +1,12 @@
+import { cache } from "react";
+
 import { isCmsConfigured, sanityClient } from "@/lib/cms/client";
 import { cmsQueries } from "@/lib/cms/queries";
 import type {
   Announcement,
   CareModelBlock,
   Condition,
+  Drug,
   Faq,
   HomepageContent,
   Location,
@@ -18,9 +21,10 @@ import type {
 
 export const CMS_CACHE_TAG = "sanity";
 
-const sanityFetchOptions = {
-  next: { revalidate: 300, tags: [CMS_CACHE_TAG] },
-};
+const sanityFetchOptions =
+  process.env.NODE_ENV === "development"
+    ? { cache: "no-store" as const }
+    : { next: { revalidate: 300, tags: [CMS_CACHE_TAG] } };
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {
   if (!isCmsConfigured) return null;
@@ -73,6 +77,30 @@ export async function getHomepageContent(): Promise<HomepageContent | null> {
 export async function getReferralSettings(): Promise<ReferralSettings | null> {
   if (!isCmsConfigured) return null;
   return sanityClient.fetch<ReferralSettings | null>(cmsQueries.referralSettings, {}, sanityFetchOptions);
+}
+
+// Drugs
+
+export const getAllDrugs = cache(async (): Promise<Drug[]> => {
+  if (!isCmsConfigured) return [];
+  try {
+    const rows = await sanityClient.fetch<Drug[] | null>(cmsQueries.allDrugs, {}, sanityFetchOptions);
+    return rows ?? [];
+  } catch (error) {
+    console.warn("Unable to load drug autolink data from Sanity.", error);
+    return [];
+  }
+});
+
+export async function getDrugBySlug(slug: string): Promise<Drug | null> {
+  if (!isCmsConfigured) return null;
+  return sanityClient.fetch<Drug | null>(cmsQueries.drugBySlug, { slug }, sanityFetchOptions);
+}
+
+export async function getAllDrugSlugs(): Promise<string[]> {
+  if (!isCmsConfigured) return [];
+  const rows = await sanityClient.fetch<{ slug: string }[] | null>(cmsQueries.allDrugSlugs, {}, sanityFetchOptions);
+  return rows?.map((r) => r.slug) ?? [];
 }
 
 // Conditions

@@ -44,7 +44,7 @@ export default async function LocationPage({ params }: Props) {
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs(`/locations/${slug}`)}
+        breadcrumbs={buildBreadcrumbs(`/locations`)}
         eyebrow="Location"
         title={location.name}
         description={location.address}
@@ -52,9 +52,9 @@ export default async function LocationPage({ params }: Props) {
 
       <Section>
         <Container>
-          <div className="grid gap-10 lg:grid-cols-[1fr_420px]">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px]">
             {/* Details */}
-            <div className="space-y-8">
+            <div className="space-y-6">
               {location.hours && location.hours.length > 0 ? (
                 <div>
                   <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-black tracking-normal text-foreground">

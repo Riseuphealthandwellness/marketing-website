@@ -150,10 +150,10 @@ export function ReferralFormSection({ settings, siteSettings }: ReferralFormSect
 
   return (
     <Section className="bg-surface">
-      <Container className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+      <Container className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
         <div className="max-w-3xl">
           {formEyebrow ? (
-            <p className="font-heading text-sm font-black uppercase text-brand-warm-accent">
+            <p className="font-heading text-sm font-black uppercase text-brand-action">
               {formEyebrow}
             </p>
           ) : null}
@@ -161,7 +161,7 @@ export function ReferralFormSection({ settings, siteSettings }: ReferralFormSect
             {formHeading}
           </h2>
           {formDescription ? (
-            <p className="mt-5 text-lg leading-8 text-muted-foreground">{formDescription}</p>
+            <p className="mt-4 text-lg leading-7 text-muted-foreground">{formDescription}</p>
           ) : null}
           {formDocumentNote ? (
             <p className="mt-4 text-base leading-7 text-muted-foreground">{formDocumentNote}</p>
@@ -214,7 +214,7 @@ export function ReferralFormSection({ settings, siteSettings }: ReferralFormSect
         </div>
 
         <form
-          className="rounded-lg border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:p-6"
+          className="rounded-lg border border-border bg-card p-5 shadow-[var(--shadow-soft)]"
           onChangeCapture={markStarted}
           onFocusCapture={markStarted}
           onSubmit={handleSubmit}

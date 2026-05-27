@@ -5,6 +5,7 @@ import {navigationSingletons} from './schemaTypes/documents/navigation'
 import {websiteManagedPages} from './schemaTypes/documents/websitePage'
 import {structure} from './structure'
 import {StudioIcon} from './studioIcon'
+import {publishToSitePlugin} from './plugins/publishToSite'
 
 const hiddenCreateSchemaTypes = new Set([
   'homepage',
@@ -29,7 +30,7 @@ export default defineConfig({
     enabled: false,
   },
 
-  plugins: [structureTool({structure})],
+  plugins: [structureTool({structure}), publishToSitePlugin()],
 
   schema: {
     types: schemaTypes,

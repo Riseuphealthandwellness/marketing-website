@@ -31,12 +31,12 @@ export default async function LocationsPage() {
           {locations.length === 0 ? (
             page?.emptyStateText ? <p className="text-muted-foreground">{page.emptyStateText}</p> : null
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {locations.map((loc) => (
                 <Link
                   key={loc.slug}
                   href={`/locations/${loc.slug}`}
-                  className="group flex flex-col rounded-lg border border-border bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+                  className="group flex flex-col rounded-lg border border-border bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
                 >
                   <div className="mb-4 flex items-start gap-3">
                     <MapPin className="mt-0.5 size-5 shrink-0 text-brand-warm-accent" aria-hidden="true" />

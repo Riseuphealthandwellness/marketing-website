@@ -131,6 +131,14 @@ export const siteSettings = defineType({
       rows: 3,
       group: 'footer',
     }),
+    defineField({
+      name: 'footerDisclaimers',
+      title: 'Footer disclaimers',
+      description: 'Legal and informational notices shown in small print at the bottom of every page. Each item is a separate paragraph.',
+      type: 'array',
+      group: 'footer',
+      of: [{type: 'footerDisclaimer'}],
+    }),
   ],
   preview: {
     select: {

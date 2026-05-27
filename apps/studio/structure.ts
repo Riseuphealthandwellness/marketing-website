@@ -1,4 +1,5 @@
 import {
+  TagIcon,
   BellIcon,
   CogIcon,
   DocumentTextIcon,
@@ -175,7 +176,6 @@ export const structure: StructureResolver = (S) =>
                         S.documentTypeListItem('provider').title('Team members featured across people pages').icon(UsersIcon),
                         S.divider(),
                         pageBundleListItem(S, landingPage('patient-rights-privacy'), [
-                          pageSettingsListItem(S, landingPage('medical-record-request')),
                           singletonListItem(S, {
                             title: 'Notice of privacy practices',
                             icon: DocumentTextIcon,
@@ -187,6 +187,12 @@ export const structure: StructureResolver = (S) =>
                             icon: DocumentTextIcon,
                             schemaType: 'websitePage',
                             documentId: 'website-page-privacy-policy',
+                          }),
+                          singletonListItem(S, {
+                            title: 'Medical record request & authorization',
+                            icon: DocumentTextIcon,
+                            schemaType: 'websitePage',
+                            documentId: 'website-page-medical-record-request-authorization',
                           }),
                           singletonListItem(S, {
                             title: 'Terms of service',
@@ -234,6 +240,7 @@ export const structure: StructureResolver = (S) =>
                     .title('Care components')
                     .items([
                       S.documentTypeListItem('condition').title('Conditions').icon(HeartIcon),
+                      S.documentTypeListItem('drug').title('Drugs & medications').icon(TagIcon),
                       S.documentTypeListItem('program').title('Programs').icon(StackIcon),
                       S.documentTypeListItem('faq').title('FAQs').icon(HelpCircleIcon),
                     ]),

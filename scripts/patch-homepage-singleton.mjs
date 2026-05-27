@@ -90,7 +90,7 @@ const doc = {
         _key: "fp-2",
         _type: "homepageFeaturePanelItem",
         iconName: "heart-pulse",
-        text: "Treatment support and primary care stay part of the same care conversation.",
+        text: "Your care stays coordinated across every service — no starting over each visit.",
       },
       {
         _key: "fp-3",
@@ -104,8 +104,8 @@ const doc = {
   },
 
   careModelHighlights: [
-    "Addiction medicine integrated with primary care",
-    "Recovery support that follows you long-term",
+    "Specialty services integrated with primary care",
+    "Coordinated support that follows you long-term",
     "Weight loss care rooted in overall wellness",
   ],
 
@@ -113,9 +113,9 @@ const doc = {
     {
       _key: "sh-addiction-medicine",
       _type: "serviceHighlight",
-      title: "Addiction Medicine",
+      title: "Specialty Care",
       description:
-        "Medication-assisted treatment, Suboxone, and recovery support — coordinated with your primary care team.",
+        "Coordinated specialty services connected directly to your primary care team.",
       href: "/care/addiction-medicine",
     },
     {
@@ -140,7 +140,7 @@ const doc = {
     eyebrow: "Care options",
     heading: "Choose the door that matches the need.",
     description:
-      "Some visitors arrive looking for treatment support. Others need primary care, program information, or a referral route. Each path is distinct and easy to find.",
+      "Whether someone needs primary care, program information, or a referral route — each path is distinct and easy to find.",
     ctaLabel: "View care overview",
     ctaHref: "/care",
   },

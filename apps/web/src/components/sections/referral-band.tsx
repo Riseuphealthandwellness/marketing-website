@@ -30,7 +30,7 @@ export function ReferralBand({ cta, accessLinks }: ReferralBandProps) {
   return (
     <section className="bg-surface pb-16 sm:pb-20">
       <Container>
-        <div className="grid gap-6 rounded-lg bg-[linear-gradient(135deg,var(--brand-action),var(--brand-emphasis))] p-6 text-brand-warm-white shadow-[0_22px_60px_rgb(31_28_25_/_18%)] sm:p-8 lg:grid-cols-[auto_1fr_auto] lg:items-center">
+        <div className="grid gap-5 rounded-lg bg-[linear-gradient(135deg,var(--brand-action),var(--brand-emphasis))] p-5 text-brand-warm-white shadow-[0_18px_48px_rgb(31_28_25_/_16%)] sm:p-6 lg:grid-cols-[auto_1fr_auto] lg:items-center">
           <div className="flex size-14 items-center justify-center rounded-md bg-brand-warm-white/12 text-brand-soft-accent">
             <Send aria-hidden="true" className="size-7" />
           </div>

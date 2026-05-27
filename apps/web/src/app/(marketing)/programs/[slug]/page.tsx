@@ -39,7 +39,7 @@ export default async function ProgramPage({ params }: Props) {
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs(`/programs/${slug}`)}
+        breadcrumbs={buildBreadcrumbs(`/programs`)}
         eyebrow="Programs"
         title={program.title}
         description={program.description}

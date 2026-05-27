@@ -24,7 +24,7 @@ export function PageHero({ eyebrow, title, description, breadcrumbs, backgroundI
       className={[
         "relative overflow-hidden border-b border-brand-coal/20 bg-brand-trust text-brand-warm-white",
         "before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-[linear-gradient(90deg,var(--brand-warm-accent),var(--brand-emphasis),var(--brand-soft-accent))] before:content-[''] before:z-10",
-        hasImage ? "py-16 sm:py-24 lg:py-32" : "py-9 sm:py-12",
+        hasImage ? "py-14 sm:py-16 lg:py-24" : "py-8 sm:py-10",
       ].join(" ")}
     >
       {hasImage ? (
@@ -51,7 +51,7 @@ export function PageHero({ eyebrow, title, description, breadcrumbs, backgroundI
       <Container className="relative z-[2]">
         <div className="max-w-3xl">
           {showBreadcrumbs ? (
-            <nav aria-label="Breadcrumb" className="mb-5">
+            <nav aria-label="Breadcrumb" className="mb-4">
               <ol className="flex flex-wrap items-center gap-y-1">
                 {breadcrumbs.map((crumb, i) => {
                   return (
@@ -82,22 +82,22 @@ export function PageHero({ eyebrow, title, description, breadcrumbs, backgroundI
           ) : null}
 
           {eyebrow ? (
-            <p className="flex items-center gap-3 font-heading text-xs font-black uppercase tracking-widest text-brand-emphasis sm:text-sm">
-              <span className="h-px w-8 bg-brand-emphasis" aria-hidden="true" />
+            <p className="flex items-center gap-2.5 font-heading text-xs font-black uppercase tracking-widest text-brand-emphasis sm:text-sm">
+              <span className="h-px w-7 bg-brand-emphasis" aria-hidden="true" />
               {eyebrow}
             </p>
           ) : null}
           <h1
             className={
               eyebrow
-                ? "mt-3 font-heading text-3xl font-black leading-tight tracking-normal text-brand-warm-white sm:text-4xl lg:text-[2.65rem]"
+                ? "mt-2.5 font-heading text-3xl font-black leading-tight tracking-normal text-brand-warm-white sm:text-4xl lg:text-[2.65rem]"
                 : "font-heading text-3xl font-black leading-tight tracking-normal text-brand-warm-white sm:text-4xl lg:text-[2.65rem]"
             }
           >
             {title}
           </h1>
           {description ? (
-            <p className="mt-4 max-w-2xl text-base leading-7 text-brand-warm-white/78 sm:text-lg sm:leading-8">
+            <p className="mt-3 max-w-2xl text-base leading-7 text-brand-warm-white/78 sm:text-lg sm:leading-8">
               {description}
             </p>
           ) : null}

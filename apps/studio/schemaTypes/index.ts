@@ -1,5 +1,7 @@
 import {announcement} from './documents/announcement'
 import {condition} from './documents/condition'
+import {drug} from './documents/drug'
+import {drugReferenceAnnotation} from './annotations/drugReference'
 import {faq} from './documents/faq'
 import {homepage} from './documents/homepage'
 import {location} from './documents/location'
@@ -9,6 +11,14 @@ import {provider} from './documents/provider'
 import {siteSettings} from './documents/siteSettings'
 import {websitePage} from './documents/websitePage'
 import {accessLinks} from './objects/accessLinks'
+import {
+  aboutCommunityCta,
+  aboutContent,
+  aboutHero,
+  aboutIconCard,
+  aboutIconSection,
+  aboutTeamSection,
+} from './objects/aboutContent'
 import {ctaButton} from './objects/ctaButton'
 import {ctaBlock} from './objects/ctaBlock'
 import {contactBandContent} from './objects/contactBandContent'
@@ -33,10 +43,13 @@ import {seoFields} from './objects/seoFields'
 import {serviceHighlight} from './objects/serviceHighlight'
 import {servicesBlock} from './objects/servicesBlock'
 import {sidebarCard} from './objects/sidebarCard'
+import {footerDisclaimer} from './objects/footerDisclaimer'
 import {textColor} from './objects/textColor'
 
 export const schemaTypes = [
   siteSettings,
+  drug,
+  drugReferenceAnnotation,
   navigation,
   homepage,
   websitePage,
@@ -47,6 +60,12 @@ export const schemaTypes = [
   faq,
   announcement,
   accessLinks,
+  aboutCommunityCta,
+  aboutContent,
+  aboutHero,
+  aboutIconCard,
+  aboutIconSection,
+  aboutTeamSection,
   contactBandContent,
   contactFormContent,
   homepageHero,
@@ -71,6 +90,7 @@ export const schemaTypes = [
   seoFields,
   ctaButton,
   ctaBlock,
+  footerDisclaimer,
   serviceHighlight,
   textColor,
 ]

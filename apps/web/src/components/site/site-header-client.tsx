@@ -87,11 +87,11 @@ export function SiteHeaderClient({
           </span>
           {siteName ? (
             <span className="font-logo flex flex-col leading-none text-brand-trust dark:text-brand-warm-white">
-              <span className="text-[1.55rem] [-webkit-text-stroke:1px_currentColor] sm:text-[1.9rem]">
+              <span className="text-[1.7rem] [-webkit-text-stroke:1px_currentColor] sm:text-[2.05rem]">
                 {siteName.toUpperCase()}
               </span>
               {tagline ? (
-                <span className="mt-0.5 whitespace-pre-line text-[9px] uppercase leading-none text-brand-warm-accent sm:text-[11px]">
+                <span className="mt-0.5 whitespace-pre-line text-[10px] uppercase leading-none text-brand-warm-accent sm:text-[12px]">
                   {tagline}
                 </span>
               ) : null}

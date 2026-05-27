@@ -31,27 +31,27 @@ export default async function ProgramsPage() {
       {programs.length > 0 ? (
         <Section>
           <Container>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {programs.map((program) => (
                 <Link
                   key={program.slug}
                   href={program.href ?? `/programs/${program.slug}`}
-                  className="group flex flex-col justify-between rounded-xl border border-border bg-card p-6 transition-colors hover:border-brand-action/30 hover:bg-muted/40"
+                  className="group flex flex-col justify-between rounded-lg border border-border bg-card p-5 transition-colors hover:border-brand-action/30 hover:bg-muted/40"
                 >
                   <div>
                     {program.audience ? (
-                      <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         {program.audience}
                       </p>
                     ) : null}
                     <h2 className="font-heading text-xl font-black tracking-normal text-foreground group-hover:text-brand-action">
                       {program.title}
                     </h2>
-                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
                       {program.description}
                     </p>
                   </div>
-                  <span className="mt-6 flex items-center gap-1.5 text-sm font-semibold text-brand-action">
+                  <span className="mt-5 flex items-center gap-1.5 text-sm font-semibold text-brand-action">
                     Learn more
                     <ArrowRight className="size-3.5" aria-hidden="true" />
                   </span>

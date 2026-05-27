@@ -32,14 +32,14 @@ export default async function TeamPage() {
           {teamMembers.length === 0 ? (
             page?.emptyStateText ? <p className="text-muted-foreground">{page.emptyStateText}</p> : null
           ) : (
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {teamMembers.map((provider) => (
                 <Link
                   key={provider.slug}
                   href={`/team/${provider.slug}`}
-                  className="group flex flex-col rounded-lg border border-border bg-white p-5 text-brand-coal shadow-sm transition-shadow hover:shadow-md"
+                  className="group flex flex-col rounded-lg border border-border bg-white p-4 text-brand-coal shadow-sm transition-shadow hover:shadow-md"
                 >
-                  <div className="flex justify-center pb-5 pt-3">
+                  <div className="flex justify-center pb-4 pt-2">
                     <TeamMemberPortrait
                       image={provider.image}
                       name={provider.name}

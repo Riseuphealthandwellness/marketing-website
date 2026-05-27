@@ -41,8 +41,8 @@ export function CareModelSection({ eyebrow, heading, description, items }: CareM
   if (!items?.length) return null;
 
   return (
-    <Section className="overflow-hidden bg-surface py-20 text-brand-coal sm:py-24">
-      <Container className="relative grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+    <Section className="overflow-hidden bg-surface py-14 text-brand-coal sm:py-16">
+      <Container className="relative grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
         <div className="absolute inset-y-0 right-0 hidden w-[62%] opacity-20 lg:block">
           <MapPinned aria-hidden="true" className="absolute right-8 top-8 size-24 text-brand-warm-accent/24" />
           <div className="h-full border-l border-brand-warm-accent/14 bg-brand-warm-white" />
@@ -73,7 +73,7 @@ export function CareModelSection({ eyebrow, heading, description, items }: CareM
           ) : null}
         </div>
 
-        <div className="relative divide-y divide-border overflow-hidden rounded-xl border border-border bg-white shadow-[var(--shadow-soft)]">
+        <div className="relative divide-y divide-border overflow-hidden rounded-lg border border-border bg-white shadow-[var(--shadow-soft)]">
           {items.map((item) => {
             const Icon = iconMap[item.iconName] ?? ShieldCheck;
             return (

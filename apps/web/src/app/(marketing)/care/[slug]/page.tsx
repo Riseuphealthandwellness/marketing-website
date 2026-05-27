@@ -51,7 +51,7 @@ export default async function ServicePage({ params }: Props) {
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs(`/care/${slug}`)}
+        breadcrumbs={buildBreadcrumbs(`/care`)}
         eyebrow="Care"
         title={service.title}
         description={service.description}
@@ -60,7 +60,7 @@ export default async function ServicePage({ params }: Props) {
       {service.body && (service.body as unknown[]).length > 0 ? (
         <Section>
           <Container>
-            <PortableTextContent className="max-w-3xl" value={service.body} />
+            <PortableTextContent autoLinkDrugs className="max-w-3xl" value={service.body} />
           </Container>
         </Section>
       ) : null}

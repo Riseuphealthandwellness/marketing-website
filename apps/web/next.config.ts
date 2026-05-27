@@ -44,6 +44,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/about/medical-record-request",
+        destination: "/patients-rights-privacy/medical-record-request-authorization",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

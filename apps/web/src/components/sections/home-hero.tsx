@@ -83,6 +83,10 @@ export function HomeHero({
 
   return (
     <section className="relative isolate overflow-hidden border-b border-border bg-brand-warm-white text-brand-coal">
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 z-10 h-1 bg-[linear-gradient(90deg,var(--brand-warm-accent),var(--brand-emphasis),var(--brand-soft-accent))]"
+      />
       {backgroundImage?.url ? (
         <Image
           alt={backgroundImage.alt ?? ""}
@@ -95,9 +99,16 @@ export function HomeHero({
           blurDataURL={backgroundImage.lqip}
         />
       ) : null}
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(247_243_238_/_0.26)_0%,rgb(247_243_238_/_0.08)_48%,rgb(247_243_238_/_0)_100%)] lg:bg-[linear-gradient(90deg,rgb(247_243_238_/_0.34)_0%,rgb(247_243_238_/_0.16)_38%,rgb(247_243_238_/_0.04)_68%,rgb(247_243_238_/_0)_100%)]" />
-      <Container className="relative grid gap-8 py-8 sm:py-12 lg:min-h-[610px] lg:grid-cols-[1fr_0.72fr] lg:items-end lg:py-14">
-        <div className="max-w-4xl self-center rounded-lg bg-brand-warm-white/78 p-5 shadow-[0_18px_48px_rgb(31_28_25_/_10%)] ring-1 ring-brand-warm-white/58 backdrop-blur-[1px] sm:p-7 lg:p-8 lg:pr-10">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_14%_22%,rgb(249_201_79_/_0.22),transparent_36%),radial-gradient(circle_at_86%_76%,rgb(188_65_47_/_0.13),transparent_38%),linear-gradient(180deg,rgb(247_243_238_/_0.38)_0%,rgb(247_243_238_/_0.12)_52%,rgb(247_243_238_/_0)_100%)] lg:bg-[radial-gradient(circle_at_14%_22%,rgb(249_201_79_/_0.22),transparent_36%),radial-gradient(circle_at_86%_76%,rgb(188_65_47_/_0.13),transparent_38%),linear-gradient(90deg,rgb(247_243_238_/_0.52)_0%,rgb(247_243_238_/_0.22)_40%,rgb(247_243_238_/_0.05)_68%,rgb(247_243_238_/_0)_100%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 -z-10 h-20 bg-gradient-to-t from-background/50 to-transparent"
+      />
+      <Container className="relative grid gap-8 py-10 sm:py-14 lg:min-h-[660px] lg:grid-cols-[1fr_0.72fr] lg:items-end lg:py-16">
+        <div className="max-w-4xl self-center rounded-lg border-t-2 border-t-brand-warm-accent bg-brand-warm-white/82 p-5 shadow-[0_24px_64px_rgb(31_28_25_/_14%)] ring-1 ring-brand-warm-white/62 backdrop-blur-sm sm:p-7 lg:p-8 lg:pr-10">
           {eyebrow ? (
             <Badge className="border-brand-trust/20 bg-brand-trust/10 text-brand-trust">
               {eyebrow}

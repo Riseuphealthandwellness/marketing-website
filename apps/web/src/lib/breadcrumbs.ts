@@ -14,18 +14,21 @@ const SEGMENT_LABELS: Record<string, string> = {
   team: "Team",
   // Patient access
   "insurance-payment": "Insurance & Payment",
-  "medical-record-request": "Medical Record Request",
   "new-patients": "New Patients",
   "patient-resources": "Patient Resources",
   "patient-rights-privacy": "Patient Rights & Privacy",
+  "patients-rights-privacy": "Patient Rights & Privacy",
+  "notice-privacy-practices": "Notice of Privacy Practices",
+  "medical-record-request-authorization": "Medical Record Request & Authorization",
+  "terms-of-use": "Terms of Use",
   // Care
   care: "Care",
+  medications: "Medications",
   services: "Services",
   "addiction-medicine": "Addiction Medicine",
   "primary-care": "Primary Care",
   "weight-loss-mgmt": "Weight Loss Management",
   // Legal
-  "notice-privacy-practices": "Notice of Privacy Practices",
   "privacy-policy": "Privacy Policy",
   "terms-of-service": "Terms of Service",
 };

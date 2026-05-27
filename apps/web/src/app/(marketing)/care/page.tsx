@@ -62,14 +62,14 @@ export default async function CarePage() {
               </Link>
             </div>
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            <div className="mt-7 grid gap-4 sm:grid-cols-2">
               {services.map((service, i) => {
                 const Icon = serviceIconPool[i % serviceIconPool.length]!;
                 return (
                   <Link
                     key={service.slug}
                     href={service.href ?? `/care/${service.slug}`}
-                    className="group flex items-start gap-5 rounded-xl border border-border bg-card p-6 transition-colors hover:border-brand-action/30 hover:bg-muted/40"
+                    className="group flex items-start gap-4 rounded-lg border border-border bg-card p-5 transition-colors hover:border-brand-action/30 hover:bg-muted/40"
                   >
                     <span className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-brand-warm-accent/12 text-brand-action">
                       <Icon aria-hidden="true" className="size-6" />
@@ -125,12 +125,12 @@ export default async function CarePage() {
               </Link>
             </div>
 
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {programs.map((program) => (
                 <Link
                   key={program.slug}
                   href={program.href ?? `/programs/${program.slug}`}
-                  className="group flex flex-col justify-between rounded-xl border border-border bg-card p-6 transition-colors hover:border-brand-action/30 hover:bg-muted/40"
+                  className="group flex flex-col justify-between rounded-lg border border-border bg-card p-5 transition-colors hover:border-brand-action/30 hover:bg-muted/40"
                 >
                   <div>
                     {program.audience ? (

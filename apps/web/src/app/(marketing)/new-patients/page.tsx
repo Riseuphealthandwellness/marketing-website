@@ -73,7 +73,7 @@ export default async function NewPatientsPage() {
       {steps.length > 0 ? (
       <Section>
         <Container>
-          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-3">
             {steps.map((step, i) => {
               const Icon = stepIcons[step.iconName];
               const cta = resolveStepCta(step, settings, access);
@@ -88,7 +88,7 @@ export default async function NewPatientsPage() {
                   <h2 className="font-heading text-xl font-black tracking-normal text-foreground">
                     {step.title}
                   </h2>
-                  <p className="mt-3 text-base leading-7 text-muted-foreground flex-1">{step.body}</p>
+                  <p className="mt-2 text-base leading-7 text-muted-foreground flex-1">{step.body}</p>
                   {cta?.href && cta.label ? (
                     <a
                       href={cta.href}
@@ -118,7 +118,7 @@ export default async function NewPatientsPage() {
                 if (!href) return null;
 
                 return (
-                <div className="rounded-lg border border-border bg-white p-6" key={`${card.linkType}-${card.title}`}>
+                <div className="rounded-lg border border-border bg-white p-5" key={`${card.linkType}-${card.title}`}>
                   <h3 className="font-heading text-lg font-black tracking-normal text-foreground">
                     {card.title}
                   </h3>

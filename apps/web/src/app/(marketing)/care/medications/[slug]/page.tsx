@@ -1,0 +1,118 @@
+import type { Metadata } from "next";
+import { ExternalLink } from "lucide-react";
+import { notFound } from "next/navigation";
+
+import { PortableTextContent } from "@/components/cms/portable-text-content";
+import { Container } from "@/components/layout/container";
+import { Section } from "@/components/layout/section";
+import { ContactBand } from "@/components/sections/contact-band";
+import { PageHero } from "@/components/sections/page-hero";
+import { getAllDrugSlugs, getDrugBySlug, getSiteSettings } from "@/lib/cms/content-source";
+import { createPageMetadata } from "@/lib/seo/metadata";
+import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateStaticParams() {
+  const slugs = await getAllDrugSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const [drug, settings] = await Promise.all([getDrugBySlug(slug), getSiteSettings()]);
+  if (!drug) return {};
+  return createPageMetadata({
+    title: drug.name,
+    description: drug.description ?? "",
+    path: `/care/medications/${slug}`,
+    seo: drug.seo,
+    site: settings ?? undefined,
+  });
+}
+
+export default async function DrugDetailPage({ params }: Props) {
+  const { slug } = await params;
+  const drug = await getDrugBySlug(slug);
+  if (!drug) notFound();
+
+  const subtitle = drug.genericName ? `${drug.genericName}` : undefined;
+
+  return (
+    <>
+      <PageHero
+        breadcrumbs={buildBreadcrumbs(`/care/medications`)}
+        eyebrow="Medications"
+        title={drug.name}
+        description={subtitle}
+        backgroundImage={drug.image}
+      />
+
+      <Section className="bg-white py-10 sm:py-12 lg:py-14">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-[1fr_280px] lg:gap-14">
+            {/* Body */}
+            <div>
+              {drug.description ? (
+                <p className="text-lg leading-8 text-brand-coal/80 sm:text-xl">
+                  {drug.description}
+                </p>
+              ) : null}
+
+              {drug.body && (drug.body as unknown[]).length > 0 ? (
+                <div className="mt-8">
+                  <PortableTextContent value={drug.body} />
+                </div>
+              ) : null}
+            </div>
+
+            {/* Sidebar */}
+            <aside className="space-y-4">
+              <div className="rounded-lg border border-border bg-brand-warm-white p-5 shadow-[var(--shadow-soft)]">
+                {drug.genericName ? (
+                  <div className="mb-4">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                      Generic name
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-brand-coal">
+                      {drug.genericName}
+                    </p>
+                  </div>
+                ) : null}
+
+                {drug.aliases && drug.aliases.length > 0 ? (
+                  <div className="mb-4">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                      Also known as
+                    </p>
+                    <ul className="mt-1 space-y-0.5">
+                      {drug.aliases.map((alias) => (
+                        <li className="text-sm text-brand-trust" key={alias}>
+                          {alias}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {drug.learnMoreUrl ? (
+                  <a
+                    className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-white px-4 py-3 text-sm font-semibold text-brand-trust transition-colors hover:border-brand-action/30 hover:text-brand-action"
+                    href={drug.learnMoreUrl}
+                    rel="noreferrer noopener"
+                    target="_blank"
+                  >
+                    <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
+                    {drug.learnMoreLabel ?? "Learn more"}
+                  </a>
+                ) : null}
+              </div>
+            </aside>
+          </div>
+        </Container>
+      </Section>
+
+      <ContactBand />
+    </>
+  );
+}

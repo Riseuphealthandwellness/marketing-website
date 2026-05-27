@@ -17,11 +17,11 @@ type PageBlocksProps = {
 export function PageBlocks({ blocks, compact = false }: PageBlocksProps) {
   if (compact) {
     return (
-      <div className="space-y-10 divide-y divide-border">
+      <div className="space-y-8 divide-y divide-border">
         {blocks.map((block, index) => {
           if (block._type === "pageSection") {
             return (
-              <div key={index} className="space-y-4 pt-10 first:pt-0">
+              <div key={index} className="space-y-3 pt-8 first:pt-0">
                 <h2 className="font-heading text-2xl font-black tracking-normal text-foreground sm:text-3xl">
                   {block.heading}
                 </h2>
@@ -32,7 +32,7 @@ export function PageBlocks({ blocks, compact = false }: PageBlocksProps) {
 
           if (block._type === "ctaBlock") {
             return (
-              <div key={index} className="space-y-4 rounded-xl bg-muted p-6 pt-10 first:pt-6">
+              <div key={index} className="space-y-4 rounded-lg bg-muted p-5 pt-8 first:pt-5">
                 <div>
                   <h2 className="font-heading text-2xl font-black tracking-normal text-foreground sm:text-3xl">
                     {block.heading}
@@ -61,7 +61,7 @@ export function PageBlocks({ blocks, compact = false }: PageBlocksProps) {
 
           if (block._type === "faqBlock") {
             return (
-              <div key={index} className="pt-10 first:pt-0">
+              <div key={index} className="pt-8 first:pt-0">
                 <FaqSection faqs={block.faqs} heading={block.heading} />
               </div>
             );
@@ -80,7 +80,7 @@ export function PageBlocks({ blocks, compact = false }: PageBlocksProps) {
           return (
             <Section key={index}>
               <Container>
-                <div className="max-w-4xl space-y-4">
+                <div className="max-w-4xl space-y-3">
                   <h2 className="font-heading text-3xl font-black tracking-normal text-foreground sm:text-4xl">
                     {block.heading}
                   </h2>
@@ -95,12 +95,12 @@ export function PageBlocks({ blocks, compact = false }: PageBlocksProps) {
           return (
             <Section key={index} tone="muted">
               <Container>
-                <div className="max-w-4xl space-y-5">
+                <div className="max-w-4xl space-y-4">
                   <div>
                     <h2 className="font-heading text-3xl font-black tracking-normal text-foreground sm:text-4xl">
                       {block.heading}
                     </h2>
-                    <p className="mt-3 text-base leading-8 text-muted-foreground">
+                    <p className="mt-2 text-base leading-7 text-muted-foreground">
                       {block.description}
                     </p>
                   </div>
@@ -169,12 +169,12 @@ export function PageBlocks({ blocks, compact = false }: PageBlocksProps) {
                     {block.heading}
                   </h2>
                 ) : null}
-                <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+                <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
                   {block.services.map((service) => (
                     <Link
                       key={service.slug}
                       href={service.href ?? `/care/${service.slug}`}
-                      className="group flex items-center justify-between gap-5 border-b border-border p-5 transition-colors last:border-b-0 hover:bg-muted/50"
+                      className="group flex items-center justify-between gap-4 border-b border-border p-4 transition-colors last:border-b-0 hover:bg-muted/50"
                     >
                       <div>
                         <span className="block font-heading text-base font-black tracking-normal text-foreground group-hover:text-brand-action">
@@ -206,12 +206,12 @@ export function PageBlocks({ blocks, compact = false }: PageBlocksProps) {
                     {block.heading}
                   </h2>
                 ) : null}
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {block.programs.map((program) => (
                     <Link
                       key={program.slug}
                       href={program.href ?? `/programs/${program.slug}`}
-                      className="group flex flex-col justify-between rounded-xl border border-border bg-card p-6 transition-colors hover:border-brand-action/30 hover:bg-muted/40"
+                      className="group flex flex-col justify-between rounded-lg border border-border bg-card p-5 transition-colors hover:border-brand-action/30 hover:bg-muted/40"
                     >
                       <div>
                         {program.audience ? (

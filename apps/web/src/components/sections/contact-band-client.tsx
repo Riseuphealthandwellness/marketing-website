@@ -27,7 +27,7 @@ export function ContactBandClient({ phone, email, address, mapSrc, mapSrcLarge }
     <>
       <div className="flex flex-col overflow-hidden rounded-lg bg-brand-trust text-brand-warm-white shadow-[var(--shadow-soft)]">
         <div className="grid md:grid-cols-[1fr_1fr]">
-          <div className="border-b border-brand-warm-white/16 p-6 transition-colors duration-200 hover:bg-brand-rise-red md:border-b-0 md:border-r">
+          <div className="border-b border-brand-warm-white/16 p-5 transition-colors duration-200 hover:bg-brand-rise-red md:border-b-0 md:border-r">
             <Phone aria-hidden="true" className="size-6 text-brand-soft-accent" />
             <h3 className="mt-4 font-heading text-2xl font-black tracking-normal">Call</h3>
             <a
@@ -38,7 +38,7 @@ export function ContactBandClient({ phone, email, address, mapSrc, mapSrcLarge }
             </a>
           </div>
 
-          <div className="border-b border-brand-warm-white/16 p-6 transition-colors duration-200 hover:bg-brand-rise-red md:border-b-0">
+          <div className="border-b border-brand-warm-white/16 p-5 transition-colors duration-200 hover:bg-brand-rise-red md:border-b-0">
             <Mail aria-hidden="true" className="size-6 text-brand-soft-accent" />
             <h3 className="mt-4 font-heading text-2xl font-black tracking-normal">Email</h3>
             <a
@@ -51,7 +51,7 @@ export function ContactBandClient({ phone, email, address, mapSrc, mapSrcLarge }
         </div>
 
         <div className="flex flex-1 flex-col items-stretch border-t border-brand-warm-white/16 md:flex-row">
-          <div className="w-full shrink-0 p-6 transition-colors duration-200 hover:bg-brand-rise-red md:w-[40%]">
+          <div className="w-full shrink-0 p-5 transition-colors duration-200 hover:bg-brand-rise-red md:w-[40%]">
             <MapPin aria-hidden="true" className="size-6 text-brand-soft-accent" />
             <h3 className="mt-4 font-heading text-2xl font-black tracking-normal">Location</h3>
             <p className="mt-3 text-base leading-7 text-brand-warm-white/78">{address}</p>

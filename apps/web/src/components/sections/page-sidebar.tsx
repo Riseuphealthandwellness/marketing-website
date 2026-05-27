@@ -12,27 +12,27 @@ export function PageSidebar({ cards }: PageSidebarProps) {
 
   return (
     <aside>
-      <div className="sticky top-8 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+      <div className="sticky top-8 divide-y divide-border border-y border-border">
         {cards.map((card, i) => (
           <div
             key={i}
-            className="px-6 py-5 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-border"
+            className="py-5"
           >
-            <h3 className="font-heading text-base font-black tracking-normal text-brand-action">
+            <h3 className="font-heading text-lg font-black leading-tight tracking-normal text-brand-action">
               {card.heading}
             </h3>
             {card.description ? (
-              <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+              <p className="mt-2 text-base leading-6 text-brand-trust">
                 {card.description}
               </p>
             ) : null}
             {card.ctaLabel && card.ctaHref ? (
               <Link
                 href={card.ctaHref}
-                className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-brand-action transition-colors hover:text-brand-action-hover"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-black uppercase tracking-wide text-brand-trust transition-colors hover:text-brand-action"
               >
                 {card.ctaLabel}
-                <ArrowRight className="size-3" aria-hidden="true" />
+                <ArrowRight className="size-3.5" aria-hidden="true" />
               </Link>
             ) : null}
           </div>

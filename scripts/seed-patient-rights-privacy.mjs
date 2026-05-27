@@ -50,7 +50,7 @@ const doc = {
   _id: "website-page-patient-rights-privacy",
   _type: "websitePage",
   key: "patient-rights-privacy",
-  path: "/about/patient-rights-privacy",
+  path: "/patients-rights-privacy/notice-privacy-practices",
   pageType: "landing",
   status: "published",
   title: "Your rights and your privacy",

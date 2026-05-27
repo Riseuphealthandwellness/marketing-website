@@ -66,9 +66,21 @@ const locationProjection = `{
   }
 }`;
 
+// Expands drugReference marks inside any rich body array
+const richBodyProjection = `[]{
+  ...,
+  markDefs[]{
+    ...,
+    _type == "drugReference" => {
+      ...,
+      "drug": drug->{ name, "slug": slug.current, description }
+    }
+  }
+}`;
+
 const pageBlocksProjection = `blocks[]{
   _type,
-  _type == "pageSection" => { heading, body },
+  _type == "pageSection" => { heading, "body": body ${richBodyProjection} },
   _type == "ctaBlock" => {
     eyebrow, heading, description,
     primaryLabel, primaryHref,
@@ -127,6 +139,7 @@ export const cmsQueries = {
     accessLinks,
     contactBand,
     footerNotice,
+    footerDisclaimers[]{ text },
     headerCta,
     "logo": logo ${imageProjection}
   }`,
@@ -187,6 +200,7 @@ export const cmsQueries = {
     eyebrow,
     description,
     "heroImage": heroImage ${imageProjection},
+    aboutContent,
     body,
     ${pageBlocksProjection},
     sidebar[]{heading, description, ctaLabel, ctaHref},
@@ -218,7 +232,20 @@ export const cmsQueries = {
 
   conditionsByCategory: `*[_type == "condition" && category == $category] | order(title asc){ "slug": slug.current, title, shortDescription }`,
 
-  conditionBySlug: `*[_type == "condition" && slug.current == $slug][0]{ "slug": slug.current, title, category, shortDescription, body, learnMoreUrl, learnMoreLabel, seo }`,
+  conditionBySlug: `*[_type == "condition" && slug.current == $slug][0]{ "slug": slug.current, title, category, shortDescription, "body": body ${richBodyProjection}, learnMoreUrl, learnMoreLabel, seo }`,
+
+  allDrugs: `*[_type == "drug"] | order(name asc){ name, genericName, aliases, "slug": slug.current, description, learnMoreUrl }`,
+
+  drugBySlug: `*[_type == "drug" && slug.current == $slug][0]{
+    name, genericName, aliases, "slug": slug.current,
+    "image": image { "url": asset->url, alt, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height, "lqip": asset->metadata.lqip },
+    description,
+    "body": body ${richBodyProjection},
+    learnMoreUrl, learnMoreLabel,
+    seo ${seoProjection}
+  }`,
+
+  allDrugSlugs: `*[_type == "drug" && defined(slug.current)]{ "slug": slug.current }`,
 
   allConditionSlugs: `*[_type == "condition" && defined(slug.current)]{ "slug": slug.current, category }`,
 

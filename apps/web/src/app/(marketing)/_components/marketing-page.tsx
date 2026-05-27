@@ -42,7 +42,7 @@ export async function MarketingPage({ slug }: MarketingPageProps) {
         />
         <Section>
           <Container>
-            <div className="grid gap-12 lg:grid-cols-[1fr_260px] xl:gap-16">
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-12">
               <div>
                 {page.blocks && page.blocks.length > 0 ? (
                   <PageBlocks blocks={page.blocks} compact />

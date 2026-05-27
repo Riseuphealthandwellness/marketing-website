@@ -48,7 +48,7 @@ export function LegalPageBody({ body, title, sidebar }: LegalPageBodyProps) {
   const hasSidebar = (sidebar?.length ?? 0) > 0;
 
   const content = (
-    <div className={hasSidebar ? undefined : "max-w-4xl"}>
+    <div className={hasSidebar ? "max-w-none" : "max-w-4xl"}>
       {visibleBody && visibleBody.length > 0 ? (
         <PortableTextContent value={visibleBody} />
       ) : (
@@ -61,9 +61,9 @@ export function LegalPageBody({ body, title, sidebar }: LegalPageBodyProps) {
 
   if (hasSidebar) {
     return (
-      <Section>
+      <Section className="py-10 sm:py-12 lg:py-14">
         <Container>
-          <div className="grid gap-12 lg:grid-cols-[1fr_260px] xl:gap-16">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-12">
             {content}
             <PageSidebar cards={sidebar!} />
           </div>
@@ -73,7 +73,7 @@ export function LegalPageBody({ body, title, sidebar }: LegalPageBodyProps) {
   }
 
   return (
-    <Section>
+    <Section className="py-10 sm:py-12 lg:py-14">
       <Container>{content}</Container>
     </Section>
   );
