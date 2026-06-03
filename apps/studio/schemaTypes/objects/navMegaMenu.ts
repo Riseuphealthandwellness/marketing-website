@@ -61,6 +61,12 @@ export const navMegaMenu = defineType({
       type: 'array',
       of: [{type: 'navItemGroup'}],
     }),
+    defineField({
+      name: 'autoReferenceLinks',
+      title: 'Auto reference links',
+      type: 'navMegaMenuAutoReferenceLinks',
+      description: 'Automatically add condition and treatment reference links from selected service entries.',
+    }),
   ],
   preview: {
     select: {title: 'label'},

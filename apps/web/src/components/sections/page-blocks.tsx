@@ -7,6 +7,7 @@ import { Section } from "@/components/layout/section";
 import { CareModelSection } from "@/components/sections/care-model-section";
 import { ConditionList } from "@/components/sections/condition-list";
 import { FaqSection } from "@/components/sections/faq-section";
+import { getProgramHref, getServiceHref } from "@/lib/care-routes";
 import type { PageBlock } from "@/lib/cms/types";
 
 type PageBlocksProps = {
@@ -173,7 +174,7 @@ export function PageBlocks({ blocks, compact = false }: PageBlocksProps) {
                   {block.services.map((service) => (
                     <Link
                       key={service.slug}
-                      href={service.href ?? `/care/${service.slug}`}
+                      href={getServiceHref(service)}
                       className="group flex items-center justify-between gap-4 border-b border-border p-4 transition-colors last:border-b-0 hover:bg-muted/50"
                     >
                       <div>
@@ -210,7 +211,7 @@ export function PageBlocks({ blocks, compact = false }: PageBlocksProps) {
                   {block.programs.map((program) => (
                     <Link
                       key={program.slug}
-                      href={program.href ?? `/programs/${program.slug}`}
+                      href={getProgramHref(program)}
                       className="group flex flex-col justify-between rounded-lg border border-border bg-card p-5 transition-colors hover:border-brand-action/30 hover:bg-muted/40"
                     >
                       <div>

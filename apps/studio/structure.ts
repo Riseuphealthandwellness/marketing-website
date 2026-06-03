@@ -126,42 +126,11 @@ export const structure: StructureResolver = (S) =>
                         S.documentTypeListItem('program').title('Programs shown on care pages').icon(StackIcon),
                         S.documentTypeListItem('faq').title('Care FAQs').icon(HelpCircleIcon),
                       ]),
-                      pageBundleListItem(S, landingPage('services'), []),
+                      pageBundleListItem(S, landingPage('services'), [
+                        S.documentTypeListItem('service').title('Service entries').icon(HeartIcon),
+                      ]),
                       pageBundleListItem(S, landingPage('programs'), [
                         S.documentTypeListItem('program').title('Program entries').icon(StackIcon),
-                      ]),
-                      pageBundleListItem(S, landingPage('primary-care'), [
-                        S.documentTypeListItem('condition')
-                          .title('Primary care conditions')
-                          .icon(HeartIcon)
-                          .child(
-                            S.documentTypeList('condition')
-                              .title('Primary care conditions')
-                              .filter('_type == "condition" && category == $category')
-                              .params({category: 'primary-care'}),
-                          ),
-                      ]),
-                      pageBundleListItem(S, landingPage('addiction-medicine'), [
-                        S.documentTypeListItem('condition')
-                          .title('Addiction medicine conditions')
-                          .icon(HeartIcon)
-                          .child(
-                            S.documentTypeList('condition')
-                              .title('Addiction medicine conditions')
-                              .filter('_type == "condition" && category == $category')
-                              .params({category: 'addiction-medicine'}),
-                          ),
-                      ]),
-                      pageBundleListItem(S, landingPage('weight-loss-mgmt'), [
-                        S.documentTypeListItem('condition')
-                          .title('Weight loss conditions')
-                          .icon(HeartIcon)
-                          .child(
-                            S.documentTypeList('condition')
-                              .title('Weight loss conditions')
-                              .filter('_type == "condition" && category == $category')
-                              .params({category: 'weight-loss-mgmt'}),
-                          ),
                       ]),
                     ]),
                 ),
@@ -172,35 +141,37 @@ export const structure: StructureResolver = (S) =>
                   S.list()
                     .title('Organization pages')
                     .items([
-                      pageBundleListItem(S, landingPage('about'), [
-                        S.documentTypeListItem('provider').title('Team members featured across people pages').icon(UsersIcon),
-                        S.divider(),
-                        pageBundleListItem(S, landingPage('patient-rights-privacy'), [
-                          singletonListItem(S, {
-                            title: 'Notice of privacy practices',
-                            icon: DocumentTextIcon,
-                            schemaType: 'websitePage',
-                            documentId: 'website-page-notice-privacy-practices',
-                          }),
-                          singletonListItem(S, {
-                            title: 'Privacy policy',
-                            icon: DocumentTextIcon,
-                            schemaType: 'websitePage',
-                            documentId: 'website-page-privacy-policy',
-                          }),
-                          singletonListItem(S, {
-                            title: 'Medical record request & authorization',
-                            icon: DocumentTextIcon,
-                            schemaType: 'websitePage',
-                            documentId: 'website-page-medical-record-request-authorization',
-                          }),
-                          singletonListItem(S, {
-                            title: 'Terms of service',
-                            icon: DocumentTextIcon,
-                            schemaType: 'websitePage',
-                            documentId: 'website-page-terms-of-service',
-                          }),
-                        ]),
+                      singletonListItem(S, {
+                        title: 'About',
+                        icon: DocumentsIcon,
+                        schemaType: 'websitePage',
+                        documentId: 'website-page-about',
+                      }),
+                      pageBundleListItem(S, landingPage('patient-rights-privacy'), [
+                        singletonListItem(S, {
+                          title: 'Notice of privacy practices',
+                          icon: DocumentTextIcon,
+                          schemaType: 'websitePage',
+                          documentId: 'website-page-notice-privacy-practices',
+                        }),
+                        singletonListItem(S, {
+                          title: 'Privacy policy',
+                          icon: DocumentTextIcon,
+                          schemaType: 'websitePage',
+                          documentId: 'website-page-privacy-policy',
+                        }),
+                        singletonListItem(S, {
+                          title: 'Medical record request & authorization',
+                          icon: DocumentTextIcon,
+                          schemaType: 'websitePage',
+                          documentId: 'website-page-medical-record-request-authorization',
+                        }),
+                        singletonListItem(S, {
+                          title: 'Terms of service',
+                          icon: DocumentTextIcon,
+                          schemaType: 'websitePage',
+                          documentId: 'website-page-terms-of-service',
+                        }),
                       ]),
                       pageBundleListItem(S, landingPage('team'), [
                         S.documentTypeListItem('provider').title('Team member entries').icon(UsersIcon),
@@ -226,6 +197,61 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
 
       S.listItem()
+        .title('Reference pages')
+        .icon(DocumentTextIcon)
+        .child(
+          S.list()
+            .title('Reference pages')
+            .items([
+              S.listItem()
+                .title('Conditions')
+                .icon(HeartIcon)
+                .child(
+                  S.list()
+                    .title('Conditions')
+                    .items([
+                      S.documentTypeListItem('condition').title('All conditions').icon(HeartIcon),
+                      S.documentTypeListItem('condition')
+                        .title('Primary care conditions')
+                        .id('reference-primary-care-conditions')
+                        .icon(HeartIcon)
+                        .child(
+                          S.documentTypeList('condition')
+                            .title('Primary care conditions')
+                            .filter('_type == "condition" && category == $category')
+                            .params({category: 'primary-care'}),
+                        ),
+                      S.documentTypeListItem('condition')
+                        .title('Addiction medicine conditions')
+                        .id('reference-addiction-medicine-conditions')
+                        .icon(HeartIcon)
+                        .child(
+                          S.documentTypeList('condition')
+                            .title('Addiction medicine conditions')
+                            .filter('_type == "condition" && category == $category')
+                            .params({category: 'addiction-medicine'}),
+                        ),
+                      S.documentTypeListItem('condition')
+                        .title('Weight loss conditions')
+                        .id('reference-weight-loss-conditions')
+                        .icon(HeartIcon)
+                        .child(
+                          S.documentTypeList('condition')
+                            .title('Weight loss conditions')
+                            .filter('_type == "condition" && category == $category')
+                            .params({category: 'weight-loss-mgmt'}),
+                        ),
+                    ]),
+                ),
+              S.documentTypeListItem('drug')
+                .title('Treatments & medications')
+                .icon(TagIcon),
+            ]),
+        ),
+
+      S.divider(),
+
+      S.listItem()
         .title('Components')
         .icon(HeartIcon)
         .child(
@@ -239,8 +265,6 @@ export const structure: StructureResolver = (S) =>
                   S.list()
                     .title('Care components')
                     .items([
-                      S.documentTypeListItem('condition').title('Conditions').icon(HeartIcon),
-                      S.documentTypeListItem('drug').title('Drugs & medications').icon(TagIcon),
                       S.documentTypeListItem('program').title('Programs').icon(StackIcon),
                       S.documentTypeListItem('faq').title('FAQs').icon(HelpCircleIcon),
                     ]),

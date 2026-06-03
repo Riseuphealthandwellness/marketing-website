@@ -23,6 +23,45 @@ type MegaMenuItemProps = {
 
 function MegaMenuItem({ item }: MegaMenuItemProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const groups = item.groups ?? [];
+  const servicesGroup = groups.find((group) => group.title === "Services");
+  const programsGroup = groups.find((group) => group.title === "Programs");
+  const rightGroups = groups.filter((group) => !["Services", "Programs"].includes(group.title));
+  const conditionsGroup = rightGroups.find((group) => group.title === "Conditions");
+  const treatmentsGroup = rightGroups.find((group) => group.title === "Treatments");
+  const patientResourcesGroup = rightGroups.find((group) => group.title === "Patient resources");
+  const remainingRightGroups = rightGroups.filter(
+    (group) => !["Conditions", "Treatments", "Patient resources"].includes(group.title),
+  );
+
+  const renderGroup = (group: NonNullable<SiteNavMegaMenu["groups"]>[number]) => (
+    <div key={group.title} className="rounded-lg px-0.5 py-1">
+      <h3 className="font-heading px-1 text-[10px] font-semibold uppercase tracking-[0.04em] text-brand-warm-accent">
+        {group.title}
+      </h3>
+      <ul className="mt-0.5">
+        {group.links.map((link) => (
+          <li key={link.href}>
+            <Link
+              className="group flex items-start gap-1.5 rounded-md px-1 py-1 transition-colors hover:bg-muted/70"
+              href={link.href}
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block text-[12.5px] font-semibold leading-[1.05rem] text-foreground">
+                  {link.label}
+                </span>
+              </span>
+              <ChevronRight
+                aria-hidden="true"
+                className="mt-px size-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 
   return (
     <DropdownMenu modal={false} onOpenChange={setIsOpen} open={isOpen}>
@@ -43,19 +82,15 @@ function MegaMenuItem({ item }: MegaMenuItemProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="w-[min(58rem,calc(100vw-3rem))] p-3"
+        className="w-[min(60rem,calc(100vw-3rem))] p-3"
       >
         <div className="grid gap-3 md:grid-cols-[minmax(0,0.68fr)_minmax(0,1.42fr)]">
-          <Link
-            className="flex min-h-full flex-col justify-between overflow-hidden rounded-lg bg-muted/55 transition-colors hover:bg-muted/80"
-            href={item.ctaHref}
-            onClick={() => setIsOpen(false)}
-          >
+          <div className="flex min-h-full flex-col overflow-hidden rounded-lg border border-border/60 bg-muted/55 shadow-sm">
             <div className="space-y-4">
               <div className="overflow-hidden border-b border-border/70">
                 <Image
                   alt={item.image.alt ?? ""}
-                  className="aspect-[16/9] w-full object-cover"
+                  className="aspect-[16/8.5] w-full object-cover"
                   height={item.image.height ?? 768}
                   priority
                   src={item.image.url}
@@ -80,47 +115,28 @@ function MegaMenuItem({ item }: MegaMenuItemProps) {
                 </div>
               </div>
             </div>
-            <span className="mt-6 inline-flex items-center gap-2 px-5 pb-5 text-sm font-semibold text-foreground">
-              {item.ctaLabel}
-              <ChevronRight aria-hidden="true" className="size-4 text-muted-foreground" />
-            </span>
-          </Link>
+            <Link
+              className="mt-auto flex items-center justify-between gap-2 border-t border-border/70 px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted/80 hover:text-brand-action"
+              href={item.ctaHref}
+              onClick={() => setIsOpen(false)}
+            >
+              <span>{item.ctaLabel}</span>
+              <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+            </Link>
+          </div>
 
-          {item.groups && item.groups.length > 0 ? (
-            <div className="grid gap-2 sm:grid-cols-2">
-              {item.groups.map((group) => (
-                <div key={group.title} className="rounded-lg p-2">
-                  <h3 className="font-heading px-2 text-[11px] font-semibold uppercase tracking-[0.04em] text-brand-warm-accent">
-                    {group.title}
-                  </h3>
-                  <ul className="mt-2 space-y-1">
-                    {group.links.map((link) => (
-                      <li key={link.href}>
-                        <Link
-                          className="group flex items-start gap-3 rounded-md px-2 py-2.5 transition-colors hover:bg-muted/70"
-                          href={link.href}
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <span className="min-w-0 flex-1">
-                            <span className="block text-[15px] font-semibold leading-5 text-foreground">
-                              {link.label}
-                            </span>
-                            {link.description ? (
-                              <span className="mt-1 block text-sm leading-5 text-muted-foreground">
-                                {link.description}
-                              </span>
-                            ) : null}
-                          </span>
-                          <ChevronRight
-                            aria-hidden="true"
-                            className="mt-0.5 size-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
-                          />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+          {groups.length > 0 ? (
+            <div className="grid gap-1 sm:grid-cols-2">
+              <div>
+                {servicesGroup ? renderGroup(servicesGroup) : null}
+                {conditionsGroup ? renderGroup(conditionsGroup) : null}
+              </div>
+              <div>
+                {programsGroup ? renderGroup(programsGroup) : null}
+                {treatmentsGroup ? renderGroup(treatmentsGroup) : null}
+                {patientResourcesGroup ? renderGroup(patientResourcesGroup) : null}
+                {remainingRightGroups.map(renderGroup)}
+              </div>
             </div>
           ) : null}
         </div>

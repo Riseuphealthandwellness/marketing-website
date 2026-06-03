@@ -1,5 +1,6 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
+import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
 import {schemaTypes} from './schemaTypes'
 import {navigationSingletons} from './schemaTypes/documents/navigation'
 import {websiteManagedPages} from './schemaTypes/documents/websitePage'
@@ -30,7 +31,7 @@ export default defineConfig({
     enabled: false,
   },
 
-  plugins: [structureTool({structure}), publishToSitePlugin()],
+  plugins: [structureTool({structure}), unsplashImageAsset(), publishToSitePlugin()],
 
   schema: {
     types: schemaTypes,

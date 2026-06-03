@@ -6,6 +6,7 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PageHero } from "@/components/sections/page-hero";
 import { getMarketingPage } from "@/lib/cms/content-source";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 export const metadata = {
   title: "Patient Rights & Privacy",
@@ -40,10 +41,11 @@ export default async function PatientsRightsPrivacyPage() {
   const description =
     page?.description ??
     "Rise Up is committed to protecting our patients’ privacy. We make all reasonable efforts to comply with applicable federal and state privacy regulations, including the Health Insurance Portability and Accountability Act (HIPAA)/HITECH ACT.";
+  const breadcrumbs = resolveBreadcrumbs(page?.path, page?.breadcrumbs);
 
   return (
     <>
-      <PageHero eyebrow={eyebrow} title={title} />
+      <PageHero breadcrumbs={breadcrumbs} eyebrow={eyebrow} title={title} />
 
       <Section className="bg-white py-10 sm:py-12 lg:py-14">
         <Container>
