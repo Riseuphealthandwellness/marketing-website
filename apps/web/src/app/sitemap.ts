@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { getSiteSettings } from "@/lib/cms/content-source";
+import { getAllProgramSlugs, getServices, getSiteSettings } from "@/lib/cms/content-source";
 
 export const dynamic = "force-dynamic";
 
@@ -25,10 +25,26 @@ const routes = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const settings = await getSiteSettings();
+  const [settings, services, programSlugs] = await Promise.all([
+    getSiteSettings(),
+    getServices(),
+    getAllProgramSlugs(),
+  ]);
   const now = new Date();
+  const dynamicRoutes = [
+    ...services.map((service) => `/care/services/${service.slug}`),
+    ...services.flatMap((service) => [
+      ...(service.conditions?.map(
+        (condition) => `/care/services/${service.slug}/conditions/${condition.slug}`,
+      ) ?? []),
+      ...(service.medications?.map(
+        (medication) => `/care/services/${service.slug}/treatments/${medication.slug}`,
+      ) ?? []),
+    ]),
+    ...programSlugs.map((slug) => `/care/programs/${slug}`),
+  ];
 
-  return routes.map((route) => ({
+  return [...routes, ...dynamicRoutes].map((route) => ({
     url: new URL(route || "/", settings?.url ?? "https://localhost:3000").toString(),
     lastModified: now,
     changeFrequency: route ? "monthly" : "weekly",

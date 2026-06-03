@@ -1,5 +1,6 @@
 import { cache } from "react";
 
+import { getConditionHref, getTreatmentHref } from "@/lib/care-routes";
 import { isCmsConfigured, sanityClient } from "@/lib/cms/client";
 import { cmsQueries } from "@/lib/cms/queries";
 import type {
@@ -11,11 +12,13 @@ import type {
   HomepageContent,
   Location,
   MarketingPage,
+  NavItemGroup,
   Program,
   Provider,
   ReferralSettings,
   Service,
   SiteNavItem,
+  SiteNavMegaMenu,
   SiteSettings,
 } from "@/lib/cms/types";
 
@@ -38,7 +41,53 @@ export async function getNavigation(slug: string): Promise<SiteNavItem[]> {
     { id: `navigation-${slug}` },
     sanityFetchOptions,
   );
-  return doc?.items ?? [];
+  const items = doc?.items ?? [];
+  if (!items.some((item) => item._type === "navMegaMenu" && item.autoReferenceLinks?.enabled)) {
+    return items;
+  }
+
+  const services = await sanityClient.fetch<Service[] | null>(
+    cmsQueries.navigationReferenceServices,
+    {},
+    sanityFetchOptions,
+  );
+
+  return items.map((item) =>
+    item._type === "navMegaMenu"
+      ? withReferenceLinkGroups(item, services ?? [])
+      : item,
+  );
+}
+
+function withReferenceLinkGroups(item: SiteNavMegaMenu, services: Service[]): SiteNavMegaMenu {
+  if (!item.autoReferenceLinks?.enabled) return item;
+
+  const excluded = new Set(item.autoReferenceLinks.excludeServices?.map((service) => service._id) ?? []);
+  const referenceGroups = services
+    .filter((service) => !excluded.has(service._id))
+    .map((service): NavItemGroup | null => {
+      const conditionLinks =
+        service.conditions?.map((condition) => ({
+          label: condition.title,
+          href: getConditionHref(condition, { serviceSlug: service.slug }),
+          description: condition.shortDescription,
+        })) ?? [];
+      const medicationLinks =
+        service.medications?.map((medication) => ({
+          label: medication.name,
+          href: getTreatmentHref(medication, { serviceSlug: service.slug }),
+          description: medication.description,
+        })) ?? [];
+      const links = [...conditionLinks, ...medicationLinks];
+
+      return links.length > 0 ? { title: service.title, links } : null;
+    })
+    .filter((group): group is NavItemGroup => group !== null);
+
+  return {
+    ...item,
+    groups: [...(item.groups ?? []), ...referenceGroups],
+  };
 }
 
 export async function getFooterNav(): Promise<{ title: string; links: { label: string; href: string }[] }[]> {
@@ -63,10 +112,21 @@ export async function getMarketingPage(slug: string): Promise<MarketingPage | nu
   return sanityClient.fetch<MarketingPage | null>(cmsQueries.pageBySlug, { slug }, sanityFetchOptions);
 }
 
+export async function getMarketingPageByPath(path: string): Promise<MarketingPage | null> {
+  if (!isCmsConfigured) return null;
+  return sanityClient.fetch<MarketingPage | null>(cmsQueries.pageByPath, { path }, sanityFetchOptions);
+}
+
 export async function getAllPageSlugs(): Promise<string[]> {
   if (!isCmsConfigured) return [];
   const rows = await sanityClient.fetch<{ slug: string }[] | null>(cmsQueries.allPageSlugs, {}, sanityFetchOptions);
   return rows?.map((r) => r.slug) ?? [];
+}
+
+export async function getAllPagePaths(): Promise<string[]> {
+  if (!isCmsConfigured) return [];
+  const rows = await sanityClient.fetch<{ path: string }[] | null>(cmsQueries.allPagePaths, {}, sanityFetchOptions);
+  return rows?.map((r) => r.path).filter(Boolean) ?? [];
 }
 
 export async function getHomepageContent(): Promise<HomepageContent | null> {

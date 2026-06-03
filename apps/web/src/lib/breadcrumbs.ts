@@ -3,6 +3,13 @@ export type BreadcrumbItem = {
   href?: string;
 };
 
+export type BreadcrumbConfig =
+  | boolean
+  | {
+      enabled?: boolean;
+      items?: BreadcrumbItem[];
+    };
+
 const SEGMENT_LABELS: Record<string, string> = {
   // Top-level pages
   about: "About",
@@ -61,4 +68,20 @@ export function buildBreadcrumbs(path: string): BreadcrumbItem[] {
   }
 
   return crumbs;
+}
+
+export function resolveBreadcrumbs(
+  path: string | undefined,
+  breadcrumbs?: BreadcrumbConfig | null,
+): BreadcrumbItem[] | undefined {
+  if (breadcrumbs === false) return undefined;
+  if (breadcrumbs && typeof breadcrumbs === "object" && breadcrumbs.enabled === false) {
+    return undefined;
+  }
+
+  if (breadcrumbs && typeof breadcrumbs === "object" && breadcrumbs.items?.length) {
+    return breadcrumbs.items;
+  }
+
+  return path ? buildBreadcrumbs(path) : undefined;
 }

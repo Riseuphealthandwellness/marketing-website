@@ -7,7 +7,7 @@ import { LegalPageBody } from "@/components/sections/legal-page-body";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { getMarketingPage } from "@/lib/cms/content-source";
-import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 type StaticMarketingPageProps = {
   slug: string;
@@ -18,7 +18,7 @@ export async function StaticMarketingPage({ slug, path }: StaticMarketingPagePro
   const page = await getMarketingPage(slug);
   if (!page) notFound();
 
-  const breadcrumbs = buildBreadcrumbs(path ?? page.path ?? "");
+  const breadcrumbs = resolveBreadcrumbs(path ?? page.path, page.breadcrumbs);
   const hasSidebar = (page.sidebar?.length ?? 0) > 0;
 
   if (page.body) {

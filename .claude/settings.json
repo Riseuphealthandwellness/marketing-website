@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find ~ -name \"session.json\" -path \"*/sanity/*\" 2>/dev/null | head -3; find ~ -name \".sanity*\" -maxdepth 3 2>/dev/null | head -5)",
+      "Read(//Users/evankohout/**)",
+      "Bash(SANITY_WRITE_TOKEN=skBEN0NsD9TbTk0MC5iwUHiExtoON7RHBJwGFSwfoolK7bZQ6mi50SVBXXTVQA0XNa2l4WMy9OMKVTZ8o node scripts/patch-about-hero.mjs)",
+      "WebFetch(domain:unsplash.com)",
+      "Bash(curl -L -o apps/web/public/images/content/about-mountains.jpg \"https://images.unsplash.com/photo-QIeI3bFSyrw?w=1920&q=85&fit=crop&crop=entropy\")",
+      "Bash(curl -L -o apps/web/public/images/content/about-mountains.jpg \"https://images.unsplash.com/photo-1634662626305-44f7f243eb09?w=1920&q=85&auto=format&fit=crop\")",
+      "Bash(curl -L -o apps/web/public/images/content/about-community.jpg \"https://images.unsplash.com/photo-1778230123972-07eafe417fc4?w=1920&q=85&auto=format&fit=crop\")",
+      "Bash(curl -L -o /tmp/preview1.jpg \"https://images.unsplash.com/photo-1758691462321-9b6c98c40f7e?w=800&q=80&auto=format&fit=crop\")",
+      "Bash(curl -L -o /tmp/preview2.jpg \"https://images.unsplash.com/photo-1758691462477-976f771224d8?w=800&q=80&auto=format&fit=crop\")"
+    ]
+  }
+}

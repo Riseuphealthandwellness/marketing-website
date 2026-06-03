@@ -8,6 +8,7 @@ import {location} from './documents/location'
 import {navigation} from './documents/navigation'
 import {program} from './documents/program'
 import {provider} from './documents/provider'
+import {service} from './documents/service'
 import {siteSettings} from './documents/siteSettings'
 import {websitePage} from './documents/websitePage'
 import {accessLinks} from './objects/accessLinks'
@@ -41,10 +42,14 @@ import {pageSection} from './objects/pageSection'
 import {programsBlock} from './objects/programsBlock'
 import {seoFields} from './objects/seoFields'
 import {serviceHighlight} from './objects/serviceHighlight'
+import {servicesPageContent} from './objects/servicesPageContent'
 import {servicesBlock} from './objects/servicesBlock'
 import {sidebarCard} from './objects/sidebarCard'
 import {footerDisclaimer} from './objects/footerDisclaimer'
 import {textColor} from './objects/textColor'
+import { navMegaMenuAutoReferenceLinks } from './objects/navMegaMenuAutoReferenceLinks'
+import { websitePageBreadcrumbs } from './objects/websitePageBreadcrumbs'
+import { servicesPageIntro } from './objects/servicesPageIntro'
 
 export const schemaTypes = [
   siteSettings,
@@ -53,6 +58,7 @@ export const schemaTypes = [
   navigation,
   homepage,
   websitePage,
+  service,
   program,
   provider,
   location,
@@ -88,7 +94,11 @@ export const schemaTypes = [
   servicesBlock,
   sidebarCard,
   seoFields,
+  servicesPageContent,
+  navMegaMenuAutoReferenceLinks,
   ctaButton,
+  websitePageBreadcrumbs,
+  servicesPageIntro,
   ctaBlock,
   footerDisclaimer,
   serviceHighlight,

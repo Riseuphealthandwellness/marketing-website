@@ -17,6 +17,7 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
 import { PageBlocks } from "@/components/sections/page-blocks";
+import { PageHero } from "@/components/sections/page-hero";
 import { TeamMemberPortrait } from "@/components/team/team-member-portrait";
 import { getMarketingPage, getProviders } from "@/lib/cms/content-source";
 import type { AboutContent, AboutIconName, PageBlock } from "@/lib/cms/types";
@@ -186,18 +187,28 @@ export default async function AboutPage() {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden border-b border-brand-coal/15 bg-brand-warm-white text-brand-coal">
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,var(--brand-warm-accent),var(--brand-emphasis),var(--brand-soft-accent))]"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_16%_18%,rgb(249_201_79_/_0.28),transparent_30%),radial-gradient(circle_at_84%_8%,rgb(188_65_47_/_0.18),transparent_34%),linear-gradient(180deg,rgb(247_243_238)_0%,rgb(255_255_255)_72%)]"
-        />
+      <PageHero
+        eyebrow={page.eyebrow}
+        title={page.title}
+        description={page.description}
+      />
 
-        <Container className="grid gap-8 py-8 sm:py-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:py-12">
-          <div className="relative z-10">
+      <section className="relative isolate min-h-[480px] overflow-hidden border-b border-brand-coal/15 sm:min-h-[540px] lg:min-h-[600px]">
+        {/* Full-bleed background image */}
+        <Image
+          alt={hero?.imageAlt ?? ""}
+          className="absolute inset-0 h-full w-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          src="/images/content/about-community-collage.png"
+        />
+        {/* Subtle dark scrim over entire image */}
+        <div aria-hidden="true" className="absolute inset-0 bg-brand-coal/40" />
+
+        <Container className="relative flex items-center py-14 sm:py-18 lg:py-24">
+          {/* Frosted text card */}
+          <div className="max-w-xl rounded-xl bg-white/80 p-7 shadow-[0_8px_40px_rgb(31_28_25_/_22%)] backdrop-blur-md sm:p-9">
             {breadcrumbs && breadcrumbs.length > 1 ? (
               <nav aria-label="Breadcrumb" className="mb-4">
                 <ol className="flex flex-wrap items-center gap-2 text-xs font-semibold text-brand-trust/65">
@@ -222,11 +233,11 @@ export default async function AboutPage() {
                 {page.eyebrow}
               </p>
             ) : null}
-            <h1 className="mt-4 max-w-3xl font-heading text-5xl font-black leading-[0.98] tracking-normal text-brand-coal sm:text-6xl lg:text-7xl">
+            <h1 className="mt-3 font-heading text-4xl font-black leading-tight tracking-normal text-brand-coal sm:text-5xl lg:text-6xl">
               {hero?.heading ?? page.title}
             </h1>
             {page.description ? (
-              <p className="mt-5 max-w-2xl text-lg leading-7 text-brand-coal/76 sm:text-xl sm:leading-8">
+              <p className="mt-4 text-base leading-7 text-brand-coal/76 sm:text-lg">
                 {page.description}
               </p>
             ) : null}
@@ -234,7 +245,7 @@ export default async function AboutPage() {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 {hero.primaryLabel && hero.primaryHref ? (
                   <Link
-                    className="inline-flex min-h-14 items-center justify-center gap-2 rounded-md bg-brand-action px-6 font-heading text-sm font-bold text-brand-warm-white shadow-[var(--shadow-soft)] transition-colors hover:bg-brand-action-hover"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-action px-6 font-heading text-sm font-bold text-brand-warm-white shadow-[var(--shadow-soft)] transition-colors hover:bg-brand-action-hover"
                     href={hero.primaryHref}
                   >
                     {hero.primaryLabel}
@@ -243,7 +254,7 @@ export default async function AboutPage() {
                 ) : null}
                 {hero.secondaryLabel && hero.secondaryHref ? (
                   <Link
-                    className="inline-flex min-h-14 items-center justify-center gap-2 rounded-md border border-brand-trust/25 bg-white/75 px-6 font-heading text-sm font-bold text-brand-trust transition-colors hover:bg-brand-trust/10"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-trust/25 bg-white/75 px-6 font-heading text-sm font-bold text-brand-trust transition-colors hover:bg-brand-trust/10"
                     href={hero.secondaryHref}
                   >
                     {hero.secondaryLabel}
@@ -252,30 +263,6 @@ export default async function AboutPage() {
                 ) : null}
               </div>
             ) : null}
-          </div>
-
-          <div className="relative min-h-[320px] overflow-hidden rounded-lg border border-brand-coal/10 bg-white shadow-[0_18px_52px_rgb(31_28_25_/_13%)] sm:min-h-[390px]">
-            <Image
-              alt={hero?.imageAlt ?? ""}
-              className="absolute inset-0 h-full w-full object-cover"
-              fill
-              priority
-              sizes="(min-width: 1024px) 56vw, 100vw"
-              src="/images/content/about-community-collage.png"
-            />
-            <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-3/4 bg-[linear-gradient(180deg,transparent,rgb(12_22_38_/_0.97))]" />
-            <div className="absolute inset-x-0 bottom-0 p-5 text-brand-warm-white sm:p-6">
-              {hero?.panelEyebrow ? (
-                <p className="font-heading text-sm font-black uppercase tracking-widest text-brand-soft-accent">
-                  {hero.panelEyebrow}
-                </p>
-              ) : null}
-              {hero?.panelDescription ? (
-                <p className="mt-3 max-w-xl text-sm leading-6 text-brand-warm-white/84 sm:text-base">
-                  {hero.panelDescription}
-                </p>
-              ) : null}
-            </div>
           </div>
         </Container>
       </section>
@@ -445,11 +432,11 @@ export default async function AboutPage() {
         <section className="relative overflow-hidden bg-brand-coal text-brand-warm-white">
           <div className="absolute inset-y-0 right-0 w-3/5">
             <Image
-              alt={community.imageAlt ?? ""}
+              alt="Fall foliage across the Appalachian mountain range in West Virginia"
               className="h-full w-full object-cover opacity-80"
               fill
               sizes="60vw"
-              src="/images/content/about-community-collage.png"
+              src="/images/content/about-mountains.jpg"
             />
           </div>
           <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgb(31_28_25)_42%,rgb(31_28_25_/_0.88)_56%,transparent_78%)]" />

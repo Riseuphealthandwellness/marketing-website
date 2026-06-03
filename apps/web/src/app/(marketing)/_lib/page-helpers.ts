@@ -1,16 +1,18 @@
-import { getMarketingPage, getSiteSettings } from "@/lib/cms/content-source";
+import { getMarketingPage, getMarketingPageByPath, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
 
-export async function metadataForPage(slug: string, path = `/${slug}`) {
+export async function metadataForPage(slugOrPath: string, path?: string) {
+  const isPathLookup = slugOrPath.startsWith("/") && !path;
+  const routePath = path ?? (isPathLookup ? slugOrPath : `/${slugOrPath}`);
   const [page, settings] = await Promise.all([
-    getMarketingPage(slug),
+    isPathLookup ? getMarketingPageByPath(slugOrPath) : getMarketingPage(slugOrPath),
     getSiteSettings(),
   ]);
 
   return createPageMetadata({
     title: page?.title ?? "",
     description: page?.description ?? "",
-    path,
+    path: routePath,
     seo: page?.seo,
     site: settings ?? undefined,
   });

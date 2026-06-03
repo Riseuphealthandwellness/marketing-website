@@ -219,9 +219,17 @@ export const websitePage = defineType({
       name: 'path',
       title: 'Canonical path',
       type: 'string',
-      description: 'Public URL path, such as /care/services.',
+      description: 'Public URL path used by the dynamic website route, such as /care/services. Static page files may also need a matching route or redirect.',
       group: 'system',
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'breadcrumbs',
+      title: 'Breadcrumbs',
+      type: 'websitePageBreadcrumbs',
+      description:
+        'Controls the breadcrumb trail in the page hero. Leave items empty to generate breadcrumbs from the canonical path.',
+      group: 'page',
     }),
     defineField({
       name: 'pageType',
@@ -338,6 +346,14 @@ export const websitePage = defineType({
       hidden: ({document}) => document?.key !== 'about',
     }),
     defineField({
+      name: 'servicesPageContent',
+      title: 'Services page content',
+      type: 'servicesPageContent',
+      description: 'Configurable section copy, labels, optional image, and stats for the Services landing page.',
+      group: 'pageSpecific',
+      hidden: ({document}) => document?.key !== 'services',
+    }),
+    defineField({
       name: 'emptyStateText',
       title: 'Empty state text',
       type: 'string',
@@ -349,10 +365,10 @@ export const websitePage = defineType({
       name: 'services',
       title: 'Services',
       type: 'array',
-      description: 'Services shown on /care/services and service detail pages.',
+      description: 'Deprecated. Use the Service entries under Pages > Care pages > Services instead.',
       group: 'pageSpecific',
       of: [{type: 'embeddedService'}],
-      hidden: ({document}) => document?.key !== 'services',
+      hidden: true,
     }),
     defineField({
       name: 'referralPdf',

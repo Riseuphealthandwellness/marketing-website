@@ -70,6 +70,16 @@ export const condition = defineType({
       ],
     }),
     defineField({
+      name: 'image',
+      title: 'Hero image',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'Optional image shown as the page hero background.',
+      fields: [
+        defineField({name: 'alt', title: 'Alt text', type: 'string'}),
+      ],
+    }),
+    defineField({
       name: 'learnMoreUrl',
       title: 'External learn more URL',
       type: 'url',

@@ -1,3 +1,5 @@
+import type { BreadcrumbConfig } from "@/lib/breadcrumbs";
+
 export type NavItem = {
   label: string;
   href: string;
@@ -25,6 +27,10 @@ export type SiteNavMegaMenu = {
   ctaLabel: string;
   ctaHref: string;
   groups?: NavItemGroup[];
+  autoReferenceLinks?: {
+    enabled?: boolean;
+    excludeServices?: { _id: string }[];
+  };
 };
 
 export type SiteNavItem = SiteNavLink | SiteNavMegaMenu;
@@ -47,11 +53,14 @@ export type ServiceHighlight = {
 };
 
 export type Service = {
+  _id: string;
   slug: string;
   title: string;
   description: string;
   body?: unknown[];
   href?: string;
+  conditions?: Pick<Condition, 'slug' | 'title' | 'category' | 'shortDescription'>[];
+  medications?: Pick<Drug, 'slug' | 'name' | 'genericName' | 'description'>[];
   seo?: SeoFields;
 };
 
@@ -256,13 +265,46 @@ export type AboutContent = {
   };
 };
 
+export type ServicesPageSectionContent = {
+  eyebrow?: string;
+  heading?: string;
+  description?: string;
+};
+
+export type ServicesPageContent = {
+  intro?: ServicesPageSectionContent;
+  feature?: ServicesPageSectionContent & {
+    ctaLabel?: string;
+    ctaHref?: string;
+    image?: CmsImage;
+    stats?: {
+      value?: string;
+      label?: string;
+      description?: string;
+    }[];
+  };
+  services?: ServicesPageSectionContent & {
+    ctaLabel?: string;
+  };
+  references?: ServicesPageSectionContent & {
+    conditionsHeading?: string;
+    treatmentsHeading?: string;
+    ctaLabel?: string;
+  };
+  programs?: ServicesPageSectionContent & {
+    ctaLabel?: string;
+  };
+};
+
 export type MarketingPage = {
   title: string;
   path?: string;
+  breadcrumbs?: BreadcrumbConfig;
   heroImage?: CmsImage;
   eyebrow?: string;
   description?: string;
   aboutContent?: AboutContent;
+  servicesPageContent?: ServicesPageContent;
   body?: unknown[];
   blocks?: PageBlock[];
   sidebar?: SidebarCard[];
@@ -408,6 +450,7 @@ export type Condition = {
   title: string;
   category: string;
   shortDescription: string;
+  image?: CmsImage;
   body?: unknown[];
   learnMoreUrl?: string;
   learnMoreLabel?: string;

@@ -14,11 +14,14 @@ const fileProjection = `{
 const seoProjection = `{ title, description, canonicalUrl, noIndex, ogImage }`;
 
 const serviceProjection = `{
-  slug,
+  _id,
+  "slug": slug.current,
   title,
   description,
   body,
   href,
+  "conditions": conditions[]->{ "slug": slug.current, title, category, shortDescription },
+  "medications": medications[]->{ name, genericName, "slug": slug.current, description },
   seo ${seoProjection}
 }`;
 
@@ -102,8 +105,8 @@ const pageBlocksProjection = `blocks[]{
   },
   _type == "servicesBlock" => {
     heading,
-    "services": *[_type == "websitePage" && key == "services" && status == "published"][0].services[]{
-      slug, title, description, href
+    "services": *[_type == "service"] | order(title asc){
+      "slug": slug.current, title, description, href
     }
   },
   _type == "programsBlock" => {
@@ -118,6 +121,22 @@ const pageBlocksProjection = `blocks[]{
     description,
     items[]{ title, body, iconName }
   }
+}`;
+
+const servicesPageContentProjection = `servicesPageContent{
+  intro{eyebrow, heading, description},
+  feature{
+    eyebrow,
+    heading,
+    description,
+    ctaLabel,
+    ctaHref,
+    "image": image ${imageProjection},
+    stats[]{value, label, description}
+  },
+  services{eyebrow, heading, description, ctaLabel},
+  references{eyebrow, heading, description, conditionsHeading, treatmentsHeading, ctaLabel},
+  programs{eyebrow, heading, description, ctaLabel}
 }`;
 
 export const cmsQueries = {
@@ -162,6 +181,10 @@ export const cmsQueries = {
         description,
         ctaLabel,
         ctaHref,
+        autoReferenceLinks{
+          enabled,
+          "excludeServices": excludeServices[]->{ _id }
+        },
         "groups": groups[]{
           title,
           "links": links[]{ label, href, description }
@@ -197,10 +220,33 @@ export const cmsQueries = {
   pageBySlug: `*[_type == "websitePage" && key == $slug && status == "published"][0]{
     title,
     path,
+    breadcrumbs{enabled, items[]{label, href}},
     eyebrow,
     description,
     "heroImage": heroImage ${imageProjection},
     aboutContent,
+    ${servicesPageContentProjection},
+    body,
+    ${pageBlocksProjection},
+    sidebar[]{heading, description, ctaLabel, ctaHref},
+    contactForm,
+    newPatientSteps,
+    newPatientAccessCards,
+    emptyStateText,
+    "recordRequestPdf": recordRequestPdf ${fileProjection},
+    recordRequestPdfLabel,
+    seo
+  }`,
+
+  pageByPath: `*[_type == "websitePage" && path == $path && status == "published"][0]{
+    title,
+    path,
+    breadcrumbs{enabled, items[]{label, href}},
+    eyebrow,
+    description,
+    "heroImage": heroImage ${imageProjection},
+    aboutContent,
+    ${servicesPageContentProjection},
     body,
     ${pageBlocksProjection},
     sidebar[]{heading, description, ctaLabel, ctaHref},
@@ -215,6 +261,10 @@ export const cmsQueries = {
 
   allPageSlugs: `*[_type == "websitePage" && pageType == "custom" && status == "published" && defined(key)]{
     "slug": key
+  }`,
+
+  allPagePaths: `*[_type == "websitePage" && status == "published" && defined(path)]{
+    path
   }`,
 
   referralSettings: `*[_type == "websitePage" && key == "referrals" && status == "published"][0]{
@@ -232,7 +282,7 @@ export const cmsQueries = {
 
   conditionsByCategory: `*[_type == "condition" && category == $category] | order(title asc){ "slug": slug.current, title, shortDescription }`,
 
-  conditionBySlug: `*[_type == "condition" && slug.current == $slug][0]{ "slug": slug.current, title, category, shortDescription, "body": body ${richBodyProjection}, learnMoreUrl, learnMoreLabel, seo }`,
+  conditionBySlug: `*[_type == "condition" && slug.current == $slug][0]{ "slug": slug.current, title, category, shortDescription, "image": image ${imageProjection}, "body": body ${richBodyProjection}, learnMoreUrl, learnMoreLabel, seo }`,
 
   allDrugs: `*[_type == "drug"] | order(name asc){ name, genericName, aliases, "slug": slug.current, description, learnMoreUrl }`,
 
@@ -261,11 +311,21 @@ export const cmsQueries = {
     "link": link{ label, href }
   }`,
 
-  services: `*[_type == "websitePage" && key == "services" && status == "published"][0].services[] ${serviceProjection}`,
+  services: `*[_type == "service"] | order(title asc) ${serviceProjection}`,
 
-  serviceBySlug: `*[_type == "websitePage" && key == "services" && status == "published"][0].services[slug == $slug][0] ${serviceProjection}`,
+  navigationReferenceServices: `*[_type == "service"] | order(title asc){
+    _id,
+    "slug": slug.current,
+    title,
+    description,
+    href,
+    "conditions": conditions[]->{ "slug": slug.current, title, category, shortDescription },
+    "medications": medications[]->{ name, genericName, "slug": slug.current, description }
+  }`,
 
-  allServiceSlugs: `*[_type == "websitePage" && key == "services" && status == "published"][0].services[defined(slug)]{ slug }`,
+  serviceBySlug: `*[_type == "service" && slug.current == $slug][0] ${serviceProjection}`,
+
+  allServiceSlugs: `*[_type == "service" && defined(slug.current)]{ "slug": slug.current }`,
 
   programs: `*[_type == "program"] | order(title asc) ${programProjection}`,
 
