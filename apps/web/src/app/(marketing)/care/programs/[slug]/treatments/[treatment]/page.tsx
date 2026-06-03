@@ -23,7 +23,6 @@ export default async function Page({ params }: Props) {
     <DrugDetailPage
       slug={treatment}
       path={`/care/programs/${slug}/treatments/${treatment}`}
-      eyebrow={program.title}
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "Care", href: "/care" },

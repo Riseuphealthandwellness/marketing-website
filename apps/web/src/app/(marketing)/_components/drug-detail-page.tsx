@@ -11,7 +11,6 @@ import { SupplementalSections } from "@/components/sections/supplemental-section
 import { getDrugBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { buildBreadcrumbs, type BreadcrumbItem } from "@/lib/breadcrumbs";
-import { drugSupplementalContent } from "@/lib/supplemental-content/drugs";
 
 type DrugDetailPageProps = {
   slug: string;
@@ -41,13 +40,12 @@ export async function generateDrugMetadata({
 export async function DrugDetailPage({
   slug,
   path,
-  eyebrow = "Medications",
+  eyebrow = "Treatments",
   breadcrumbs,
 }: DrugDetailPageProps) {
   const drug = await getDrugBySlug(slug);
   if (!drug) notFound();
 
-  const supplemental = drugSupplementalContent[slug] ?? null;
   const subtitle = drug.genericName ? `${drug.genericName}` : undefined;
 
   return (
@@ -122,7 +120,9 @@ export async function DrugDetailPage({
         </Container>
       </Section>
 
-      {supplemental ? <SupplementalSections data={supplemental} /> : null}
+      {drug.supplementalSections?.length ? (
+        <SupplementalSections data={{ sections: drug.supplementalSections }} />
+      ) : null}
 
       <ContactBand />
     </>

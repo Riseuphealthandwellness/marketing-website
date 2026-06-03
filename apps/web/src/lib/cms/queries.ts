@@ -35,6 +35,39 @@ const programProjection = `{
   seo ${seoProjection}
 }`;
 
+const supplementalSectionsProjection = `supplementalSections[coalesce(enabled, true)]{
+  _type == "supplementalStatsSection" => {
+    "type": "stats",
+    "items": items[coalesce(enabled, true)]{ value, label }
+  },
+  _type == "supplementalProseSection" => {
+    "type": "prose",
+    eyebrow,
+    heading,
+    paragraphs
+  },
+  _type == "supplementalSymptomsSection" => {
+    "type": "symptoms",
+    eyebrow,
+    heading,
+    description,
+    groups[]{ heading, items }
+  },
+  _type == "supplementalStepsSection" => {
+    "type": "steps",
+    eyebrow,
+    heading,
+    description,
+    "steps": steps[coalesce(enabled, true)]{ title, body }
+  },
+  _type == "supplementalBulletsSection" => {
+    "type": "bullets",
+    eyebrow,
+    heading,
+    items
+  }
+}`;
+
 const providerProjection = `{
   "slug": slug.current,
   name,
@@ -292,6 +325,7 @@ export const cmsQueries = {
     description,
     "body": body ${richBodyProjection},
     learnMoreUrl, learnMoreLabel,
+    ${supplementalSectionsProjection},
     seo ${seoProjection}
   }`,
 

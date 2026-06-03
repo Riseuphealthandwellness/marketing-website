@@ -1,6 +1,6 @@
-import type { SupplementalData } from "./types";
+import {getCliClient} from 'sanity/cli'
 
-export const drugSupplementalContent: Record<string, SupplementalData> = {
+const drugSupplementalContent = {
   "antabuse": {
     sections: [
       {
@@ -413,4 +413,119 @@ export const drugSupplementalContent: Record<string, SupplementalData> = {
       },
     ],
   },
-};
+}
+
+const typeMap = {
+  stats: 'supplementalStatsSection',
+  prose: 'supplementalProseSection',
+  symptoms: 'supplementalSymptomsSection',
+  steps: 'supplementalStepsSection',
+  bullets: 'supplementalBulletsSection',
+}
+
+function keyFor(...parts) {
+  return parts
+    .filter(Boolean)
+    .join('-')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80)
+}
+
+function withEnabled(item) {
+  return {
+    ...item,
+    enabled: item.enabled ?? true,
+  }
+}
+
+function toSanitySection(section, sectionIndex) {
+  const base = {
+    _key: keyFor(section.type, section.heading, sectionIndex),
+    _type: typeMap[section.type],
+    enabled: true,
+  }
+
+  if (section.type === 'stats') {
+    return {
+      ...base,
+      items: section.items.map((item, itemIndex) => ({
+        _key: keyFor('stat', item.value, itemIndex),
+        _type: 'supplementalStatItem',
+        ...withEnabled(item),
+      })),
+    }
+  }
+
+  if (section.type === 'steps') {
+    return {
+      ...base,
+      eyebrow: section.eyebrow,
+      heading: section.heading,
+      description: section.description,
+      steps: section.steps.map((step, stepIndex) => ({
+        _key: keyFor('step', step.title, stepIndex),
+        _type: 'supplementalStepItem',
+        ...withEnabled(step),
+      })),
+    }
+  }
+
+  if (section.type === 'symptoms') {
+    return {
+      ...base,
+      eyebrow: section.eyebrow,
+      heading: section.heading,
+      description: section.description,
+      groups: section.groups.map((group, groupIndex) => ({
+        _key: keyFor('group', group.heading, groupIndex),
+        _type: 'supplementalSymptomGroup',
+        ...group,
+      })),
+    }
+  }
+
+  if (section.type === 'prose') {
+    return {
+      ...base,
+      eyebrow: section.eyebrow,
+      heading: section.heading,
+      paragraphs: section.paragraphs,
+    }
+  }
+
+  return {
+    ...base,
+    eyebrow: section.eyebrow,
+    heading: section.heading,
+    items: section.items,
+  }
+}
+
+const dryRun = process.argv.includes('--dry-run')
+const client = getCliClient({apiVersion: '2025-01-01'})
+
+for (const [slug, data] of Object.entries(drugSupplementalContent)) {
+  const drug = await client.fetch(
+    '*[_type == "drug" && slug.current == $slug][0]{_id, name}',
+    {slug},
+  )
+
+  if (!drug?._id) {
+    console.warn(`No drug document found for slug "${slug}". Skipping.`)
+    continue
+  }
+
+  const supplementalSections = data.sections.map(toSanitySection)
+
+  if (dryRun) {
+    console.log(
+      `[dry-run] Would set ${supplementalSections.length} supplemental sections on ${drug.name} (${slug}).`,
+    )
+    continue
+  }
+
+  await client.patch(drug._id).set({supplementalSections}).commit()
+  console.log(`Set ${supplementalSections.length} supplemental sections on ${drug.name} (${slug}).`)
+}

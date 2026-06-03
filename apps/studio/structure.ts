@@ -249,42 +249,6 @@ export const structure: StructureResolver = (S) =>
             ]),
         ),
 
-      S.divider(),
-
-      S.listItem()
-        .title('Components')
-        .icon(HeartIcon)
-        .child(
-          S.list()
-            .title('Components')
-            .items([
-              S.listItem()
-                .title('Care components')
-                .icon(HeartIcon)
-                .child(
-                  S.list()
-                    .title('Care components')
-                    .items([
-                      S.documentTypeListItem('program').title('Programs').icon(StackIcon),
-                      S.documentTypeListItem('faq').title('FAQs').icon(HelpCircleIcon),
-                    ]),
-                ),
-              S.listItem()
-                .title('Organization directory')
-                .icon(UsersIcon)
-                .child(
-                  S.list()
-                    .title('Organization directory')
-                    .items([
-                      S.documentTypeListItem('provider').title('Team members').icon(UsersIcon),
-                      S.documentTypeListItem('location').title('Locations').icon(PinIcon),
-                    ]),
-                ),
-            ]),
-        ),
-
-      S.divider(),
-
       S.listItem()
         .title('Site administration')
         .icon(CogIcon)

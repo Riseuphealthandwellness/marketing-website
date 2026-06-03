@@ -53,6 +53,16 @@ import {servicesBlock} from './objects/servicesBlock'
 import {sidebarCard} from './objects/sidebarCard'
 import {footerDisclaimer} from './objects/footerDisclaimer'
 import {textColor} from './objects/textColor'
+import {
+  supplementalBulletsSection,
+  supplementalProseSection,
+  supplementalStatItem,
+  supplementalStatsSection,
+  supplementalStepItem,
+  supplementalStepsSection,
+  supplementalSymptomGroup,
+  supplementalSymptomsSection,
+} from './objects/supplementalContent'
 import { navMegaMenuAutoReferenceLinks } from './objects/navMegaMenuAutoReferenceLinks'
 import { websitePageBreadcrumbs } from './objects/websitePageBreadcrumbs'
 import { servicesPageIntro } from './objects/servicesPageIntro'
@@ -112,5 +122,13 @@ export const schemaTypes = [
   ctaBlock,
   footerDisclaimer,
   serviceHighlight,
+  supplementalBulletsSection,
+  supplementalProseSection,
+  supplementalStatItem,
+  supplementalStatsSection,
+  supplementalStepItem,
+  supplementalStepsSection,
+  supplementalSymptomGroup,
+  supplementalSymptomsSection,
   textColor,
 ]

@@ -96,6 +96,20 @@ export const drug = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'supplementalSections',
+      title: 'Detail page sections',
+      description:
+        'Optional sections shown below the main treatment detail content. Turn sections or individual steps off without deleting them.',
+      type: 'array',
+      of: [
+        {type: 'supplementalStatsSection'},
+        {type: 'supplementalProseSection'},
+        {type: 'supplementalSymptomsSection'},
+        {type: 'supplementalStepsSection'},
+        {type: 'supplementalBulletsSection'},
+      ],
+    }),
+    defineField({
       name: 'seo',
       title: 'SEO',
       type: 'seoFields',

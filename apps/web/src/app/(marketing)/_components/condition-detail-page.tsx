@@ -47,7 +47,6 @@ export async function generateConditionMetadata({
 export async function ConditionDetailPage({
   slug,
   serviceSlug,
-  serviceLabel,
   path,
   breadcrumbs,
 }: Props) {
@@ -65,7 +64,7 @@ export async function ConditionDetailPage({
       <PageHero
         backgroundImage={condition.image}
         breadcrumbs={breadcrumbs ?? buildBreadcrumbs(path ?? `/care/${serviceSlug}/${slug}`)}
-        eyebrow={serviceLabel}
+        eyebrow="Conditions"
         title={condition.title}
         description={condition.shortDescription}
       />

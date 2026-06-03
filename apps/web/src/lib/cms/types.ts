@@ -1,4 +1,5 @@
 import type { BreadcrumbConfig } from "@/lib/breadcrumbs";
+import type { SupplementalSection } from "@/lib/supplemental-content/types";
 
 export type NavItem = {
   label: string;
@@ -436,6 +437,7 @@ export type Drug = {
   body?: unknown[];
   learnMoreUrl?: string;
   learnMoreLabel?: string;
+  supplementalSections?: SupplementalSection[];
   seo?: SeoFields;
 };
 
