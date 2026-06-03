@@ -31,6 +31,10 @@ export default defineConfig({
     enabled: false,
   },
 
+  scheduledDrafts: {
+    enabled: false,
+  },
+
   plugins: [structureTool({structure}), unsplashImageAsset(), publishToSitePlugin()],
 
   schema: {
