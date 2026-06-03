@@ -7,6 +7,66 @@ const sectionFields = [
   defineField({name: 'description', title: 'Description', type: 'text', rows: 3}),
 ]
 
+export const servicesPageFeatureStat = defineType({
+  name: 'servicesPageFeatureStat',
+  title: 'Services page feature stat',
+  type: 'object',
+  fields: [
+    defineField({name: 'value', title: 'Value', type: 'string'}),
+    defineField({name: 'label', title: 'Label', type: 'string'}),
+    defineField({name: 'description', title: 'Description', type: 'text', rows: 2}),
+  ],
+  preview: {
+    select: {title: 'value', subtitle: 'label'},
+  },
+})
+
+export const servicesPageFeature = defineType({
+  name: 'servicesPageFeature',
+  title: 'Services page feature panel',
+  type: 'object',
+  fields: [
+    ...sectionFields,
+    defineField({name: 'ctaLabel', title: 'Button label', type: 'string'}),
+    defineField({name: 'ctaHref', title: 'Button URL or path', type: 'string'}),
+    defineField({
+      name: 'image',
+      title: 'Image',
+      type: 'image',
+      options: {hotspot: true},
+      fields: [defineField({name: 'alt', title: 'Alt text', type: 'string'})],
+    }),
+    defineField({
+      name: 'stats',
+      title: 'Stats',
+      type: 'array',
+      of: [{type: 'servicesPageFeatureStat'}],
+    }),
+  ],
+})
+
+export const servicesPageSection = defineType({
+  name: 'servicesPageSection',
+  title: 'Services page section',
+  type: 'object',
+  fields: [
+    ...sectionFields,
+    defineField({name: 'ctaLabel', title: 'Card CTA label', type: 'string'}),
+  ],
+})
+
+export const servicesPageReferences = defineType({
+  name: 'servicesPageReferences',
+  title: 'Services page reference section',
+  type: 'object',
+  fields: [
+    ...sectionFields,
+    defineField({name: 'conditionsHeading', title: 'Conditions heading', type: 'string'}),
+    defineField({name: 'treatmentsHeading', title: 'Treatments heading', type: 'string'}),
+    defineField({name: 'ctaLabel', title: 'Link CTA label', type: 'string'}),
+  ],
+})
+
 export const servicesPageContent = defineType({
   name: 'servicesPageContent',
   title: 'Services page content',
@@ -21,66 +81,22 @@ export const servicesPageContent = defineType({
     defineField({
       name: 'feature',
       title: 'Feature panel',
-      type: 'object',
-      fields: [
-        ...sectionFields,
-        defineField({name: 'ctaLabel', title: 'Button label', type: 'string'}),
-        defineField({name: 'ctaHref', title: 'Button URL or path', type: 'string'}),
-        defineField({
-          name: 'image',
-          title: 'Image',
-          type: 'image',
-          options: {hotspot: true},
-          fields: [defineField({name: 'alt', title: 'Alt text', type: 'string'})],
-        }),
-        defineField({
-          name: 'stats',
-          title: 'Stats',
-          type: 'array',
-          of: [
-            {
-              type: 'object',
-              fields: [
-                defineField({name: 'value', title: 'Value', type: 'string'}),
-                defineField({name: 'label', title: 'Label', type: 'string'}),
-                defineField({name: 'description', title: 'Description', type: 'text', rows: 2}),
-              ],
-              preview: {
-                select: {title: 'value', subtitle: 'label'},
-              },
-            },
-          ],
-        }),
-      ],
+      type: 'servicesPageFeature',
     }),
     defineField({
       name: 'services',
       title: 'Services section',
-      type: 'object',
-      fields: [
-        ...sectionFields,
-        defineField({name: 'ctaLabel', title: 'Card CTA label', type: 'string'}),
-      ],
+      type: 'servicesPageSection',
     }),
     defineField({
       name: 'references',
       title: 'Reference pages section',
-      type: 'object',
-      fields: [
-        ...sectionFields,
-        defineField({name: 'conditionsHeading', title: 'Conditions heading', type: 'string'}),
-        defineField({name: 'treatmentsHeading', title: 'Treatments heading', type: 'string'}),
-        defineField({name: 'ctaLabel', title: 'Link CTA label', type: 'string'}),
-      ],
+      type: 'servicesPageReferences',
     }),
     defineField({
       name: 'programs',
       title: 'Programs section',
-      type: 'object',
-      fields: [
-        ...sectionFields,
-        defineField({name: 'ctaLabel', title: 'Card CTA label', type: 'string'}),
-      ],
+      type: 'servicesPageSection',
     }),
   ],
 })

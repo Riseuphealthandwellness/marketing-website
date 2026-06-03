@@ -42,7 +42,13 @@ import {pageSection} from './objects/pageSection'
 import {programsBlock} from './objects/programsBlock'
 import {seoFields} from './objects/seoFields'
 import {serviceHighlight} from './objects/serviceHighlight'
-import {servicesPageContent} from './objects/servicesPageContent'
+import {
+  servicesPageContent,
+  servicesPageFeature,
+  servicesPageFeatureStat,
+  servicesPageReferences,
+  servicesPageSection,
+} from './objects/servicesPageContent'
 import {servicesBlock} from './objects/servicesBlock'
 import {sidebarCard} from './objects/sidebarCard'
 import {footerDisclaimer} from './objects/footerDisclaimer'
@@ -95,6 +101,10 @@ export const schemaTypes = [
   sidebarCard,
   seoFields,
   servicesPageContent,
+  servicesPageFeature,
+  servicesPageFeatureStat,
+  servicesPageReferences,
+  servicesPageSection,
   navMegaMenuAutoReferenceLinks,
   ctaButton,
   websitePageBreadcrumbs,
