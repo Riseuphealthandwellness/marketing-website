@@ -415,10 +415,9 @@ function ProcessSection({ content }: { content: ProcessComponent }) {
           {steps?.map((step, index) => (
             <article className="rounded-lg border border-border bg-white p-6 shadow-sm" key={step.title}>
               <div className="flex items-center gap-4">
-                <span className="flex size-12 items-center justify-center rounded-md bg-brand-action font-heading text-lg font-black text-brand-warm-white">
-                  {index + 1}
+                <span className="flex size-12 items-center justify-center rounded-md bg-brand-action text-brand-warm-white">
+                  <HomepageV2Icon className="size-7" name={step.icon} />
                 </span>
-                <HomepageV2Icon className="size-7 text-brand-trust" name={step.icon} />
               </div>
               <h3 className="mt-5 font-heading text-2xl font-black tracking-normal text-brand-coal">
                 {step.title}

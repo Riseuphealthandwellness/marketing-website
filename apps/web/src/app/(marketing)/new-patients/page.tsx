@@ -79,11 +79,10 @@ export default async function NewPatientsPage() {
               const cta = resolveStepCta(step, settings, access);
               return (
                 <div key={step.title} className="flex flex-col">
-                  <div className="mb-4 flex items-center gap-3">
-                    <span className="flex size-10 items-center justify-center rounded-full bg-brand-trust text-brand-warm-white font-heading font-black text-sm">
-                      {i + 1}
+                  <div className="mb-4">
+                    <span className="flex size-10 items-center justify-center rounded-full bg-brand-warm-accent text-white">
+                      <Icon className="size-5" aria-hidden="true" />
                     </span>
-                    <Icon className="size-5 text-brand-warm-accent" aria-hidden="true" />
                   </div>
                   <h2 className="font-heading text-xl font-black tracking-normal text-foreground">
                     {step.title}
