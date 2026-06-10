@@ -116,12 +116,12 @@ function MegaMenuItem({ item }: MegaMenuItemProps) {
               </div>
             </div>
             <Link
-              className="mt-auto flex items-center justify-between gap-2 border-t border-border/70 px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted/80 hover:text-brand-action"
+              className="mt-auto flex items-center justify-between gap-2 bg-brand-action px-5 py-3 text-sm font-semibold text-brand-warm-white transition-colors hover:bg-brand-action-hover hover:text-brand-warm-white"
               href={item.ctaHref}
               onClick={() => setIsOpen(false)}
             >
               <span>{item.ctaLabel}</span>
-              <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+              <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-brand-warm-white/80" />
             </Link>
           </div>
 

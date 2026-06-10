@@ -58,6 +58,10 @@ export type Service = {
   slug: string;
   title: string;
   description: string;
+  icon?: HomepageV2IconName;
+  cardColor?: string;
+  cardEyebrow?: string;
+  sortOrder?: number;
   body?: unknown[];
   href?: string;
   conditions?: Pick<Condition, 'slug' | 'title' | 'category' | 'shortDescription'>[];
@@ -66,9 +70,14 @@ export type Service = {
 };
 
 export type Program = {
+  _id?: string;
   slug: string;
   title: string;
   description: string;
+  icon?: HomepageV2IconName;
+  cardColor?: string;
+  cardEyebrow?: string;
+  sortOrder?: number;
   audience?: string;
   body?: unknown[];
   href?: string;
@@ -132,6 +141,7 @@ export type SiteSettings = {
     zoom: number;
   };
   accessLinks: PatientAccessLinks;
+  showBreadcrumbs?: boolean;
   contactBand?: ContactBandContent;
   footerNotice?: string;
   footerDisclaimers?: { text: string }[];
@@ -232,6 +242,7 @@ export type AboutIconCard = {
 export type AboutContent = {
   hero?: {
     heading?: string;
+    backgroundImage?: CmsImage;
     primaryLabel?: string;
     primaryHref?: string;
     secondaryLabel?: string;
@@ -254,16 +265,20 @@ export type AboutContent = {
     eyebrow?: string;
     heading?: string;
     ctaLabel?: string;
+    ctaHref?: string;
     mobileCtaLabel?: string;
+    maxProviders?: number;
   };
   community?: {
     eyebrow?: string;
     heading?: string;
     description?: string;
+    backgroundImage?: CmsImage;
     ctaLabel?: string;
     ctaHref?: string;
     imageAlt?: string;
   };
+  featuredNarrativeHeadings?: string[];
 };
 
 export type ServicesPageSectionContent = {
@@ -355,6 +370,13 @@ export type ContactBandContent = {
   eyebrow: string;
   heading: string;
   description: string;
+  phoneLabel: string;
+  emailLabel: string;
+  locationLabel: string;
+  mapPreviewLabel: string;
+  expandMapLabel: string;
+  closeMapLabel: string;
+  mapImageAlt: string;
 };
 
 export type ContactFormContent = {
@@ -427,6 +449,12 @@ export type PortableHeading = {
   }>;
 }[];
 
+export type DrugPageLabels = {
+  eyebrow?: string;
+  genericNameLabel?: string;
+  aliasesLabel?: string;
+};
+
 export type Drug = {
   name: string;
   genericName?: string;
@@ -437,6 +465,7 @@ export type Drug = {
   body?: unknown[];
   learnMoreUrl?: string;
   learnMoreLabel?: string;
+  pageLabels?: DrugPageLabels;
   supplementalSections?: SupplementalSection[];
   seo?: SeoFields;
 };
@@ -445,6 +474,16 @@ export type DrugReferenceMark = {
   _key: string;
   _type: 'drugReference';
   drug: Pick<Drug, 'name' | 'slug' | 'description'>;
+};
+
+export type ConditionPageLabels = {
+  eyebrow?: string;
+  ctaHeading?: string;
+  ctaDescription?: string;
+  ctaButtonLabel?: string;
+  ctaButtonHref?: string;
+  medicationsHeading?: string;
+  viewAllLabel?: string;
 };
 
 export type Condition = {
@@ -456,6 +495,8 @@ export type Condition = {
   body?: unknown[];
   learnMoreUrl?: string;
   learnMoreLabel?: string;
+  pageLabels?: ConditionPageLabels;
+  supplementalSections?: SupplementalSection[];
   seo?: SeoFields;
 };
 
@@ -487,5 +528,132 @@ export type HomepageContent = {
   heroFeaturePanel?: HomepageFeaturePanel;
   serviceHighlights?: ServiceHighlight[];
   referralCta?: CtaBlock;
+  seo?: SeoFields;
+};
+
+export type HomepageV2IconName =
+  | 'arrowRight'
+  | 'brain'
+  | 'checkCircle'
+  | 'clipboardList'
+  | 'heartHandshake'
+  | 'heartPulse'
+  | 'mapPin'
+  | 'phoneCall'
+  | 'route'
+  | 'send'
+  | 'shieldCheck'
+  | 'sparkles'
+  | 'stethoscope'
+  | 'usersRound';
+
+export type HomepageV2Link = {
+  label: string;
+  href: string;
+  description?: string;
+};
+
+export type HomepageV2StartPathCard = {
+  icon: HomepageV2IconName;
+  title: string;
+  body: string;
+  link: HomepageV2Link;
+};
+
+export type HomepageV2IconCard = {
+  icon: HomepageV2IconName;
+  title: string;
+  body: string;
+};
+
+export type HomepageV2Offering = {
+  _key?: string;
+  item?: {
+    _id: string;
+    _type: 'service' | 'program';
+    slug: string;
+    title: string;
+    description: string;
+    icon?: HomepageV2IconName;
+    cardEyebrow?: string;
+    audience?: string;
+    href?: string;
+  };
+};
+
+export type HomepageV2ProcessStep = {
+  icon: HomepageV2IconName;
+  title: string;
+  body: string;
+};
+
+export type HomepageV2CareMapCard = {
+  icon: HomepageV2IconName;
+  title: string;
+  label?: string;
+};
+
+export type HomepageV2Component =
+  | {
+      _type: 'homepageV2HeroComponent';
+      enabled?: boolean;
+      eyebrow?: string;
+      heading: string;
+      description?: string;
+      backgroundImage?: CmsImage;
+      buttons?: CtaButton[];
+      pathCards?: HomepageV2StartPathCard[];
+    }
+  | {
+      _type: 'homepageV2AdvantageComponent';
+      enabled?: boolean;
+      eyebrow?: string;
+      heading: string;
+      description?: string;
+      cards?: HomepageV2IconCard[];
+    }
+  | {
+      _type: 'homepageV2ServicesComponent';
+      enabled?: boolean;
+      eyebrow?: string;
+      heading: string;
+      description?: string;
+      featureImage?: CmsImage;
+      offerings?: HomepageV2Offering[];
+    }
+  | {
+      _type: 'homepageV2ProcessComponent';
+      enabled?: boolean;
+      eyebrow?: string;
+      heading: string;
+      description?: string;
+      steps?: HomepageV2ProcessStep[];
+    }
+  | {
+      _type: 'homepageV2CareCoordinationComponent';
+      enabled?: boolean;
+      eyebrow?: string;
+      heading: string;
+      description?: string;
+      centerCard?: {
+        icon: HomepageV2IconName;
+        title: string;
+        body?: string;
+      };
+      careMapCards?: HomepageV2CareMapCard[];
+    }
+  | {
+      _type: 'homepageV2FinalCtaComponent';
+      enabled?: boolean;
+      eyebrow?: string;
+      heading: string;
+      buttons?: CtaButton[];
+    };
+
+export type HomepageV2Settings = {
+  title: string;
+  routePath: string;
+  status: 'draft' | 'published';
+  components?: HomepageV2Component[];
   seo?: SeoFields;
 };

@@ -6,20 +6,25 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PageBlocks } from "@/components/sections/page-blocks";
 import { PageHero } from "@/components/sections/page-hero";
-import { getLocations, getMarketingPage } from "@/lib/cms/content-source";
+import { getLocations, getMarketingPage, getSiteSettings } from "@/lib/cms/content-source";
 import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
-import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 export const generateMetadata = () => metadataForPage("locations");
 
 export default async function LocationsPage() {
-  const [locations, page] = await Promise.all([getLocations(), getMarketingPage("locations")]);
+  const [locations, page, settings] = await Promise.all([
+    getLocations(),
+    getMarketingPage("locations"),
+    getSiteSettings(),
+  ]);
   if (!page) notFound();
+  const breadcrumbs = resolveBreadcrumbs(page.path, page.breadcrumbs, settings?.showBreadcrumbs);
 
   return (
     <>
       <PageHero
-        breadcrumbs={page.path ? buildBreadcrumbs(page.path) : undefined}
+        breadcrumbs={breadcrumbs}
         eyebrow={page?.eyebrow}
         title={page.title}
         description={page?.description}

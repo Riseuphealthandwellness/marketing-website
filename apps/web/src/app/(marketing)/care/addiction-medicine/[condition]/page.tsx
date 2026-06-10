@@ -1,32 +1,8 @@
-import type { Metadata } from "next";
-
-import {
-  ConditionDetailPage,
-  generateConditionMetadata,
-} from "@/app/(marketing)/_components/condition-detail-page";
-import { getAllConditionSlugs } from "@/lib/cms/content-source";
+import { permanentRedirect } from "next/navigation";
 
 type Props = { params: Promise<{ condition: string }> };
 
-export async function generateStaticParams() {
-  const slugs = await getAllConditionSlugs();
-  return slugs
-    .filter((s) => s.category === "addiction-medicine")
-    .map((s) => ({ condition: s.slug }));
-}
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { condition } = await params;
-  return generateConditionMetadata({ slug: condition, serviceSlug: "addiction-medicine" });
-}
-
 export default async function Page({ params }: Props) {
   const { condition } = await params;
-  return (
-    <ConditionDetailPage
-      slug={condition}
-      serviceSlug="addiction-medicine"
-      serviceLabel="Addiction medicine"
-    />
-  );
+  permanentRedirect(`/care/services/addiction-medicine/conditions/${condition}`);
 }

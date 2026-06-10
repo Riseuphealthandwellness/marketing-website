@@ -1,5 +1,6 @@
 import {HeartIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
+import {careCardColorField, careIconField} from '../objects/careIconOptions'
 
 export const service = defineType({
   name: 'service',
@@ -8,6 +9,7 @@ export const service = defineType({
   icon: HeartIcon,
   groups: [
     {name: 'content', title: 'Content', default: true},
+    {name: 'display', title: 'Display'},
     {name: 'references', title: 'Reference pages'},
     {name: 'seo', title: 'SEO'},
   ],
@@ -35,6 +37,22 @@ export const service = defineType({
       description: 'Used in card previews and search results.',
       validation: (rule) => rule.required(),
       group: 'content',
+    }),
+    careIconField({group: 'display'}),
+    careCardColorField({group: 'display'}),
+    defineField({
+      name: 'cardEyebrow',
+      title: 'Card eyebrow',
+      type: 'string',
+      description: 'Short label shown above the title in cards and homepage offering modules.',
+      group: 'display',
+    }),
+    defineField({
+      name: 'sortOrder',
+      title: 'Sort order',
+      type: 'number',
+      description: 'Lower numbers appear first in service lists.',
+      group: 'display',
     }),
     defineField({
       name: 'body',

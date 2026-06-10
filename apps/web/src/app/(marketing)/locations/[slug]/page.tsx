@@ -8,7 +8,7 @@ import { ContactBand } from "@/components/sections/contact-band";
 import { PageHero } from "@/components/sections/page-hero";
 import { getAllLocationSlugs, getLocationBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
-import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -31,8 +31,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LocationPage({ params }: Props) {
   const { slug } = await params;
-  const location = await getLocationBySlug(slug);
+  const [location, settings] = await Promise.all([getLocationBySlug(slug), getSiteSettings()]);
   if (!location) notFound();
+  const breadcrumbs = resolveBreadcrumbs(`/locations/${slug}`, undefined, settings?.showBreadcrumbs);
 
   const lat = location.coordinates?.lat;
   const lng = location.coordinates?.lng;
@@ -44,7 +45,7 @@ export default async function LocationPage({ params }: Props) {
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs(`/locations`)}
+        breadcrumbs={breadcrumbs}
         eyebrow="Location"
         title={location.name}
         description={location.address}

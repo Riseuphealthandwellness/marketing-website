@@ -1,16 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Brain,
-  HeartPulse,
-  Pill,
-  ShieldPlus,
-  Stethoscope,
-  Users,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
 
+import { getCardColor, getCareIcon } from "@/components/care/care-icon";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
@@ -19,21 +11,10 @@ import { PageHero } from "@/components/sections/page-hero";
 import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
 import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 import { getProgramHref, getServiceHref } from "@/lib/care-routes";
-import { getMarketingPage, getPrograms, getServices } from "@/lib/cms/content-source";
+import { getMarketingPage, getPrograms, getServices, getSiteSettings } from "@/lib/cms/content-source";
 import type { Drug, Program, Service, ServicesPageSectionContent } from "@/lib/cms/types";
 
 export const generateMetadata = () => metadataForPage("services", "/care/services");
-
-const serviceIconPool = [HeartPulse, Stethoscope, Pill, Brain, ShieldPlus, Users];
-
-const servicePanelBgs = [
-  "bg-brand-rise-red",
-  "bg-brand-deep-slate",
-  "bg-brand-coal",
-  "bg-brand-rise-red",
-  "bg-brand-deep-slate",
-  "bg-brand-coal",
-] as const;
 
 type ConditionLink = { key: string; title: string; href: string };
 
@@ -51,7 +32,7 @@ function buildConditionLinks(services: Service[]): {
       conditions.set(key, {
         key,
         title: condition.title,
-        href: `/care/${condition.category}/${condition.slug}`,
+        href: `/care/services/${condition.category}/conditions/${condition.slug}`,
       });
     });
 
@@ -165,15 +146,20 @@ function ProgramsGrid({ programs, ctaLabel }: { programs: Program[]; ctaLabel?: 
 }
 
 export default async function ServicesPage() {
-  const [services, programs, page] = await Promise.all([
+  const [services, programs, page, settings] = await Promise.all([
     getServices(),
     getPrograms(),
     getMarketingPage("services"),
+    getSiteSettings(),
   ]);
   if (!page) notFound();
 
   const content = page.servicesPageContent;
-  const breadcrumbs = resolveBreadcrumbs(page.path ?? "/care/services", page.breadcrumbs);
+  const breadcrumbs = resolveBreadcrumbs(
+    page.path ?? "/care/services",
+    page.breadcrumbs,
+    settings?.showBreadcrumbs,
+  );
   const { conditions, treatments } = buildConditionLinks(services);
   const hasConditionsOrTreatments = conditions.length > 0 || treatments.length > 0;
 
@@ -191,16 +177,46 @@ export default async function ServicesPage() {
       {services.length > 0 ? (
         <div className="divide-y divide-border border-b border-border">
           {services.map((service, i) => {
-            const Icon = serviceIconPool[i % serviceIconPool.length]!;
-            const panelBg = servicePanelBgs[i % servicePanelBgs.length]!;
+            const Icon = getCareIcon(service.icon);
+            const panelBg = getCardColor(service.cardColor, i);
             const isReversed = i % 2 === 1;
 
             return (
-              <div key={service.slug} className="grid lg:grid-cols-2">
+              <div
+                key={service.slug}
+                className="group grid lg:grid-cols-[minmax(0,1fr)_minmax(0,40rem)_minmax(0,40rem)_minmax(0,1fr)]"
+              >
+                <div
+                  aria-hidden="true"
+                  className={`hidden lg:col-start-1 lg:col-end-3 lg:row-start-1 lg:block ${
+                    isReversed ? panelBg : "bg-background"
+                  }`}
+                />
+                <div
+                  aria-hidden="true"
+                  className={`hidden lg:col-start-3 lg:col-end-5 lg:row-start-1 lg:block ${
+                    isReversed ? "bg-background" : panelBg
+                  }`}
+                />
+                <div
+                  aria-hidden="true"
+                  className={`hidden lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:block ${
+                    isReversed ? "bg-black/10" : "bg-brand-coal/[0.035]"
+                  }`}
+                />
+                <div
+                  aria-hidden="true"
+                  className={`hidden lg:col-start-4 lg:col-end-5 lg:row-start-1 lg:block ${
+                    isReversed ? "bg-brand-coal/[0.035]" : "bg-black/10"
+                  }`}
+                />
+
                 {/* Text side */}
                 <div
-                  className={`flex flex-col justify-center bg-background px-6 py-12 sm:px-10 lg:px-16 lg:py-20 ${
-                    isReversed ? "lg:order-2" : "lg:order-1"
+                  className={`relative z-10 flex flex-col justify-center bg-background px-4 py-12 transition-colors group-hover:bg-brand-warm-accent/[0.08] group-hover:ring-1 group-hover:ring-inset group-hover:ring-brand-action/20 sm:px-6 lg:row-start-1 lg:bg-transparent lg:px-8 lg:py-20 ${
+                    isReversed
+                      ? "lg:col-start-3 lg:col-end-4"
+                      : "lg:col-start-2 lg:col-end-3"
                   }`}
                 >
                   <span
@@ -209,7 +225,7 @@ export default async function ServicesPage() {
                   >
                     0{i + 1}
                   </span>
-                  <h2 className="-mt-6 font-heading text-4xl font-black leading-tight tracking-normal text-brand-coal sm:text-5xl">
+                  <h2 className="-mt-6 font-heading text-4xl font-black leading-tight tracking-normal text-brand-coal transition-colors group-hover:text-brand-action sm:text-5xl">
                     {service.title}
                   </h2>
                   <p className="mt-5 max-w-md text-base leading-7 text-muted-foreground">
@@ -228,13 +244,15 @@ export default async function ServicesPage() {
 
                 {/* Colored panel side */}
                 <div
-                  className={`flex min-h-[220px] items-center justify-center ${panelBg} lg:min-h-full ${
-                    isReversed ? "lg:order-1" : "lg:order-2"
+                  className={`relative z-10 flex min-h-[220px] items-center justify-center ${panelBg} px-4 sm:px-6 lg:row-start-1 lg:min-h-full lg:bg-transparent lg:px-8 ${
+                    isReversed
+                      ? "lg:col-start-2 lg:col-end-3"
+                      : "lg:col-start-3 lg:col-end-4"
                   }`}
                 >
                   <Icon
                     aria-hidden="true"
-                    className="size-28 text-white/30 sm:size-36 lg:size-44"
+                    className="size-28 text-white transition-transform duration-300 group-hover:scale-105 sm:size-36 lg:size-44"
                   />
                 </div>
               </div>
@@ -242,44 +260,6 @@ export default async function ServicesPage() {
           })}
         </div>
       ) : null}
-
-      {/* ── Photo break ── */}
-      <section className="relative overflow-hidden bg-brand-coal text-brand-warm-white">
-        <div className="absolute inset-y-0 right-0 w-[62%]">
-          <Image
-            alt="Doctor and patient talking at golden hour in the Appalachian mountains"
-            className="h-full w-full object-cover"
-            fill
-            sizes="62vw"
-            src="/images/content/care-menu-feature.png"
-            priority={false}
-          />
-        </div>
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-[linear-gradient(90deg,rgb(31_28_25)_38%,rgb(31_28_25_/_0.88)_54%,transparent_76%)]"
-        />
-        <Container className="relative py-16 sm:py-20 lg:py-24">
-          <div className="max-w-[480px]">
-            <p className="font-heading text-xs font-black uppercase tracking-widest text-brand-soft-accent">
-              Integrated care
-            </p>
-            <h2 className="mt-3 font-heading text-3xl font-black leading-tight tracking-normal sm:text-4xl">
-              One team. Every part of your health.
-            </h2>
-            <p className="mt-4 text-base leading-7 text-brand-warm-white/78 sm:text-lg">
-              Primary care, addiction treatment, and wellness support — all coordinated by providers who already know your full picture.
-            </p>
-            <Link
-              href="/new-patients"
-              className="mt-7 inline-flex min-h-11 items-center gap-2 rounded-md border border-brand-warm-white/30 bg-brand-warm-white/8 px-5 font-heading text-sm font-bold text-brand-warm-white transition-colors hover:bg-brand-warm-white/14"
-            >
-              Get started
-              <ArrowRight aria-hidden="true" className="size-4" />
-            </Link>
-          </div>
-        </Container>
-      </section>
 
       {/* ── Conditions and treatments ── */}
       {hasConditionsOrTreatments ? (

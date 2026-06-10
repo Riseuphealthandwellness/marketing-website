@@ -12,9 +12,8 @@ import { SupplementalSections } from "@/components/sections/supplemental-section
 import { getConditionBySlug, getServiceBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { getTreatmentHref, getServiceHref } from "@/lib/care-routes";
 import { createPageMetadata } from "@/lib/seo/metadata";
-import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 import type { BreadcrumbItem } from "@/lib/breadcrumbs";
-import { conditionSupplementalContent } from "@/lib/supplemental-content/conditions";
 
 type Props = {
   slug: string;
@@ -50,21 +49,30 @@ export async function ConditionDetailPage({
   path,
   breadcrumbs,
 }: Props) {
-  const [condition, service] = await Promise.all([
+  const [condition, service, settings] = await Promise.all([
     getConditionBySlug(slug),
     getServiceBySlug(serviceSlug),
+    getSiteSettings(),
   ]);
   if (!condition) notFound();
 
-  const supplemental = conditionSupplementalContent[slug] ?? null;
   const medications = service?.medications ?? [];
+  const breadcrumbsForHero =
+    settings?.showBreadcrumbs === false
+      ? undefined
+      : (breadcrumbs ??
+        resolveBreadcrumbs(
+          path ?? `/care/services/${serviceSlug}/conditions/${slug}`,
+          undefined,
+          settings?.showBreadcrumbs,
+        ));
 
   return (
     <>
       <PageHero
         backgroundImage={condition.image}
-        breadcrumbs={breadcrumbs ?? buildBreadcrumbs(path ?? `/care/${serviceSlug}/${slug}`)}
-        eyebrow="Conditions"
+        breadcrumbs={breadcrumbsForHero}
+        eyebrow={condition.pageLabels?.eyebrow}
         title={condition.title}
         description={condition.shortDescription}
       />
@@ -81,18 +89,20 @@ export async function ConditionDetailPage({
                 {/* Get started card */}
                 <div className="rounded-lg border border-brand-action/25 bg-brand-action/5 p-5">
                   <p className="font-heading text-sm font-black uppercase tracking-widest text-brand-action">
-                    Ready to get started?
+                    {condition.pageLabels?.ctaHeading}
                   </p>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    Our team can help you understand your options and take the next step.
+                    {condition.pageLabels?.ctaDescription}
                   </p>
-                  <Link
-                    href="/new-patients"
-                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md bg-brand-action px-4 py-3 font-heading text-sm font-bold text-white transition-colors hover:bg-brand-action-hover"
-                  >
-                    Start your care
-                    <ArrowRight aria-hidden="true" className="size-3.5" />
-                  </Link>
+                  {condition.pageLabels?.ctaButtonHref ? (
+                    <Link
+                      href={condition.pageLabels.ctaButtonHref}
+                      className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md bg-brand-action px-4 py-3 font-heading text-sm font-bold text-white transition-colors hover:bg-brand-action-hover"
+                    >
+                      {condition.pageLabels?.ctaButtonLabel}
+                      <ArrowRight aria-hidden="true" className="size-3.5" />
+                    </Link>
+                  ) : null}
                 </div>
 
                 {/* Related medications */}
@@ -101,7 +111,7 @@ export async function ConditionDetailPage({
                     <div className="mb-3 flex items-center gap-2">
                       <Pill aria-hidden="true" className="size-4 text-brand-action" />
                       <p className="font-heading text-xs font-black uppercase tracking-widest text-brand-coal">
-                        Medications &amp; treatments
+                        {condition.pageLabels?.medicationsHeading}
                       </p>
                     </div>
                     <ul className="space-y-0.5">
@@ -125,7 +135,7 @@ export async function ConditionDetailPage({
                         href={`${getServiceHref(service)}#medications`}
                         className="mt-3 block text-xs font-semibold text-brand-action hover:underline"
                       >
-                        View all treatments
+                        {condition.pageLabels?.viewAllLabel}
                       </Link>
                     ) : null}
                   </div>
@@ -140,7 +150,7 @@ export async function ConditionDetailPage({
                     target="_blank"
                   >
                     <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
-                    {condition.learnMoreLabel || "Learn more"}
+                    {condition.learnMoreLabel}
                   </a>
                 ) : null}
               </aside>
@@ -149,7 +159,9 @@ export async function ConditionDetailPage({
         </Section>
       ) : null}
 
-      {supplemental ? <SupplementalSections data={supplemental} /> : null}
+      {condition.supplementalSections?.length ? (
+        <SupplementalSections data={{ sections: condition.supplementalSections }} />
+      ) : null}
 
       <ContactBand />
     </>

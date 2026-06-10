@@ -7,20 +7,25 @@ import { PageBlocks } from "@/components/sections/page-blocks";
 import { PageHero } from "@/components/sections/page-hero";
 import { TeamMemberPortrait } from "@/components/team/team-member-portrait";
 import { Badge } from "@/components/ui/badge";
-import { getMarketingPage, getProviders } from "@/lib/cms/content-source";
+import { getMarketingPage, getProviders, getSiteSettings } from "@/lib/cms/content-source";
 import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
-import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 export const generateMetadata = () => metadataForPage("team");
 
 export default async function TeamPage() {
-  const [teamMembers, page] = await Promise.all([getProviders(), getMarketingPage("team")]);
+  const [teamMembers, page, settings] = await Promise.all([
+    getProviders(),
+    getMarketingPage("team"),
+    getSiteSettings(),
+  ]);
   if (!page) notFound();
+  const breadcrumbs = resolveBreadcrumbs(page.path, page.breadcrumbs, settings?.showBreadcrumbs);
 
   return (
     <>
       <PageHero
-        breadcrumbs={page.path ? buildBreadcrumbs(page.path) : undefined}
+        breadcrumbs={breadcrumbs}
         eyebrow={page?.eyebrow}
         title={page.title}
         description={page?.description}

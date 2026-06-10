@@ -19,10 +19,10 @@ import { ContactBand } from "@/components/sections/contact-band";
 import { PageBlocks } from "@/components/sections/page-blocks";
 import { PageHero } from "@/components/sections/page-hero";
 import { TeamMemberPortrait } from "@/components/team/team-member-portrait";
-import { getMarketingPage, getProviders } from "@/lib/cms/content-source";
-import type { AboutContent, AboutIconName, PageBlock } from "@/lib/cms/types";
+import { getMarketingPage, getProviders, getSiteSettings } from "@/lib/cms/content-source";
+import type { AboutIconName, PageBlock } from "@/lib/cms/types";
 import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
-import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 export const generateMetadata = () => metadataForPage("about");
 
@@ -38,102 +38,12 @@ const aboutIcons = {
 
 type AboutNarrativeBlock = Extract<PageBlock, { _type: "pageSection" }>;
 
-const aboutNarrativeHeadings = new Set([
-  "Treatment that meets people where they are",
-  "Integrated, not just co-located",
-]);
-
-function isAboutNarrativeBlock(block: PageBlock): block is AboutNarrativeBlock {
-  return block._type === "pageSection" && aboutNarrativeHeadings.has(block.heading);
+function isAboutNarrativeBlock(
+  block: PageBlock,
+  featuredHeadings: Set<string>,
+): block is AboutNarrativeBlock {
+  return block._type === "pageSection" && featuredHeadings.has(block.heading);
 }
-
-const defaultAboutContent: AboutContent = {
-  hero: {
-    heading: "Whole-person care, rooted in community.",
-    primaryLabel: "Start care",
-    primaryHref: "/new-patients",
-    secondaryLabel: "Meet the team",
-    secondaryHref: "/team",
-    imageAlt:
-      "Original collage artwork showing integrated care, community connection, and Appalachian landscape motifs",
-    panelEyebrow: "Our mission, vision, and values",
-    panelDescription:
-      "Make care easier to enter, easier to understand, and easier to stay connected to.",
-  },
-  glance: {
-    eyebrow: "Rise Up at a glance",
-    heading: "A simpler front door for connected healthcare.",
-    items: [
-      {
-        _key: "glance-integrated-care",
-        iconName: "stethoscope",
-        label: "Integrated care",
-        detail: "Primary care plus recovery support",
-      },
-      {
-        _key: "glance-clear-access",
-        iconName: "route",
-        label: "Clear access",
-        detail: "New patients and referrals routed simply",
-      },
-      {
-        _key: "glance-whole-person-focus",
-        iconName: "sparkles",
-        label: "Whole-person focus",
-        detail: "Wellness, stability, and follow-through",
-      },
-      {
-        _key: "glance-local-team",
-        iconName: "badge-check",
-        label: "Local team",
-        detail: "Care designed for West Virginia communities",
-      },
-    ],
-  },
-  values: {
-    eyebrow: "What guides us",
-    heading: "Care is more durable when it is coordinated.",
-    items: [
-      {
-        _key: "value-care-stays-connected",
-        iconName: "heart-handshake",
-        title: "Care stays connected",
-        description:
-          "Primary care, treatment, recovery support, and wellness goals stay in the same conversation.",
-      },
-      {
-        _key: "value-people-before-process",
-        iconName: "users",
-        title: "People before process",
-        description:
-          "Patients and families get a clear starting point, plain next steps, and support from real staff.",
-      },
-      {
-        _key: "value-rooted-in-west-virginia",
-        iconName: "map-pin",
-        title: "Rooted in West Virginia",
-        description:
-          "Our model is built around local access, community referrals, and long-term relationships.",
-      },
-    ],
-  },
-  team: {
-    eyebrow: "People",
-    heading: "Meet the team",
-    ctaLabel: "View all",
-    mobileCtaLabel: "View all team members",
-  },
-  community: {
-    eyebrow: "Community connections",
-    heading: "Built for patients, families, and referral partners.",
-    description:
-      "Whether someone reaches out directly or through a provider, Rise Up gives them a clear route into support that can continue over time.",
-    ctaLabel: "Referral information",
-    ctaHref: "/referrals",
-    imageAlt:
-      "Original collage artwork showing integrated care, community connection, and Appalachian landscape motifs",
-  },
-};
 
 function AboutNarrativeBlocks({ blocks }: { blocks: AboutNarrativeBlock[] }) {
   return (
@@ -172,62 +82,54 @@ function AboutNarrativeBlocks({ blocks }: { blocks: AboutNarrativeBlock[] }) {
 }
 
 export default async function AboutPage() {
-  const [providers, page] = await Promise.all([getProviders(), getMarketingPage("about")]);
+  const [providers, page, settings] = await Promise.all([
+    getProviders(),
+    getMarketingPage("about"),
+    getSiteSettings(),
+  ]);
   if (!page) notFound();
-  const breadcrumbs = page.path ? buildBreadcrumbs(page.path) : undefined;
-  const about = page.aboutContent ?? defaultAboutContent;
+  const breadcrumbs = resolveBreadcrumbs(page.path, page.breadcrumbs, settings?.showBreadcrumbs);
+  const about = page.aboutContent;
   const hero = about?.hero;
   const glance = about?.glance;
   const values = about?.values;
   const team = about?.team;
   const community = about?.community;
+  const featuredNarrativeHeadings = new Set(about?.featuredNarrativeHeadings ?? []);
   const pageBlocks = page.blocks ?? [];
-  const narrativeBlocks = pageBlocks.filter(isAboutNarrativeBlock);
-  const remainingBlocks = pageBlocks.filter((block) => !isAboutNarrativeBlock(block));
+  const narrativeBlocks = pageBlocks.filter((block) =>
+    isAboutNarrativeBlock(block, featuredNarrativeHeadings),
+  );
+  const remainingBlocks = pageBlocks.filter(
+    (block) => !isAboutNarrativeBlock(block, featuredNarrativeHeadings),
+  );
 
   return (
     <>
       <PageHero
+        breadcrumbs={breadcrumbs}
         eyebrow={page.eyebrow}
         title={page.title}
         description={page.description}
       />
 
       <section className="relative isolate min-h-[480px] overflow-hidden border-b border-brand-coal/15 sm:min-h-[540px] lg:min-h-[600px]">
-        {/* Full-bleed background image */}
-        <Image
-          alt={hero?.imageAlt ?? ""}
-          className="absolute inset-0 h-full w-full object-cover"
-          fill
-          priority
-          sizes="100vw"
-          src="/images/content/about-community-collage.png"
-        />
+        {hero?.backgroundImage?.url ? (
+          <Image
+            alt={hero.backgroundImage.alt ?? hero.imageAlt ?? ""}
+            className="absolute inset-0 h-full w-full object-cover"
+            fill
+            priority
+            sizes="100vw"
+            src={hero.backgroundImage.url}
+          />
+        ) : null}
         {/* Subtle dark scrim over entire image */}
         <div aria-hidden="true" className="absolute inset-0 bg-brand-coal/40" />
 
         <Container className="relative flex items-center py-14 sm:py-18 lg:py-24">
           {/* Frosted text card */}
           <div className="max-w-xl rounded-xl bg-white/80 p-7 shadow-[0_8px_40px_rgb(31_28_25_/_22%)] backdrop-blur-md sm:p-9">
-            {breadcrumbs && breadcrumbs.length > 1 ? (
-              <nav aria-label="Breadcrumb" className="mb-4">
-                <ol className="flex flex-wrap items-center gap-2 text-xs font-semibold text-brand-trust/65">
-                  {breadcrumbs.map((crumb, index) => (
-                    <li className="flex items-center gap-2" key={`${crumb.label}-${index}`}>
-                      {index > 0 ? <span aria-hidden="true">/</span> : null}
-                      {crumb.href ? (
-                        <Link className="hover:text-brand-action hover:underline" href={crumb.href}>
-                          {crumb.label}
-                        </Link>
-                      ) : (
-                        <span>{crumb.label}</span>
-                      )}
-                    </li>
-                  ))}
-                </ol>
-              </nav>
-            ) : null}
-
             {page.eyebrow ? (
               <p className="font-heading text-sm font-black uppercase tracking-widest text-brand-action">
                 {page.eyebrow}
@@ -376,9 +278,9 @@ export default async function AboutPage() {
                   </h2>
                 ) : null}
               </div>
-              {team?.ctaLabel ? (
+              {team?.ctaLabel && team.ctaHref ? (
                 <Link
-                  href="/team"
+                  href={team.ctaHref}
                   className="hidden shrink-0 text-sm font-semibold text-brand-action hover:underline sm:inline-flex sm:items-center sm:gap-1"
                 >
                   {team.ctaLabel}
@@ -388,7 +290,7 @@ export default async function AboutPage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {providers.slice(0, 4).map((provider) => (
+              {providers.slice(0, team.maxProviders ?? providers.length).map((provider) => (
                 <Link
                   key={provider.slug}
                   href={`/team/${provider.slug}`}
@@ -413,10 +315,10 @@ export default async function AboutPage() {
               ))}
             </div>
 
-            {team?.mobileCtaLabel ? (
+            {team?.mobileCtaLabel && team.ctaHref ? (
               <div className="mt-8 sm:hidden">
                 <Link
-                  href="/team"
+                  href={team.ctaHref}
                   className="inline-flex items-center gap-1 text-sm font-semibold text-brand-action hover:underline"
                 >
                   {team.mobileCtaLabel}
@@ -430,15 +332,17 @@ export default async function AboutPage() {
 
       {community ? (
         <section className="relative overflow-hidden bg-brand-coal text-brand-warm-white">
-          <div className="absolute inset-y-0 right-0 w-3/5">
-            <Image
-              alt="Fall foliage across the Appalachian mountain range in West Virginia"
-              className="h-full w-full object-cover opacity-80"
-              fill
-              sizes="60vw"
-              src="/images/content/about-mountains.jpg"
-            />
-          </div>
+          {community.backgroundImage?.url ? (
+            <div className="absolute inset-y-0 right-0 w-3/5">
+              <Image
+                alt={community.backgroundImage.alt ?? community.imageAlt ?? ""}
+                className="h-full w-full object-cover opacity-80"
+                fill
+                sizes="60vw"
+                src={community.backgroundImage.url}
+              />
+            </div>
+          ) : null}
           <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgb(31_28_25)_42%,rgb(31_28_25_/_0.88)_56%,transparent_78%)]" />
           <Container className="relative py-5 lg:py-6">
             <div className="max-w-lg">

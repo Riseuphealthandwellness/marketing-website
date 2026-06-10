@@ -96,6 +96,12 @@ export const drug = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'pageLabels',
+      title: 'Page labels',
+      description: 'Override the default text labels shown on this treatment\'s detail page. Leave any field blank to use the site default.',
+      type: 'drugPageLabels',
+    }),
+    defineField({
       name: 'supplementalSections',
       title: 'Detail page sections',
       description:

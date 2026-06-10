@@ -6,7 +6,7 @@ import { PageSidebar } from "@/components/sections/page-sidebar";
 import { LegalPageBody } from "@/components/sections/legal-page-body";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
-import { getMarketingPage, getMarketingPageByPath } from "@/lib/cms/content-source";
+import { getMarketingPage, getMarketingPageByPath, getSiteSettings } from "@/lib/cms/content-source";
 import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 type MarketingPageProps = {
@@ -15,10 +15,17 @@ type MarketingPageProps = {
 };
 
 export async function MarketingPage({ slug, path }: MarketingPageProps) {
-  const page = path ? await getMarketingPageByPath(path) : slug ? await getMarketingPage(slug) : null;
+  const [page, settings] = await Promise.all([
+    path ? getMarketingPageByPath(path) : slug ? getMarketingPage(slug) : null,
+    getSiteSettings(),
+  ]);
   if (!page) notFound();
 
-  const breadcrumbs = resolveBreadcrumbs(path ?? page.path, page.breadcrumbs);
+  const breadcrumbs = resolveBreadcrumbs(
+    path ?? page.path,
+    page.breadcrumbs,
+    settings?.showBreadcrumbs,
+  );
 
   if (page.body) {
     return (

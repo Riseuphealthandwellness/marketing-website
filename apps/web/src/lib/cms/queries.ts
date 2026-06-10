@@ -18,6 +18,10 @@ const serviceProjection = `{
   "slug": slug.current,
   title,
   description,
+  icon,
+  cardColor,
+  cardEyebrow,
+  sortOrder,
   body,
   href,
   "conditions": conditions[]->{ "slug": slug.current, title, category, shortDescription },
@@ -26,9 +30,14 @@ const serviceProjection = `{
 }`;
 
 const programProjection = `{
+  _id,
   "slug": slug.current,
   title,
   description,
+  icon,
+  cardColor,
+  cardEyebrow,
+  sortOrder,
   audience,
   body,
   href,
@@ -138,14 +147,14 @@ const pageBlocksProjection = `blocks[]{
   },
   _type == "servicesBlock" => {
     heading,
-    "services": *[_type == "service"] | order(title asc){
-      "slug": slug.current, title, description, href
+    "services": *[_type == "service"] | order(coalesce(sortOrder, 9999) asc, title asc){
+      "slug": slug.current, title, description, href, icon, cardEyebrow, sortOrder
     }
   },
   _type == "programsBlock" => {
     heading,
-    "programs": *[_type == "program"] | order(title asc){
-      "slug": slug.current, title, description, audience, href
+    "programs": *[_type == "program"] | order(coalesce(sortOrder, 9999) asc, title asc){
+      "slug": slug.current, title, description, audience, href, icon, cardEyebrow, sortOrder
     }
   },
   _type == "careModelBlock" => {
@@ -172,6 +181,48 @@ const servicesPageContentProjection = `servicesPageContent{
   programs{eyebrow, heading, description, ctaLabel}
 }`;
 
+const aboutContentProjection = `aboutContent{
+  hero{
+    heading,
+    "backgroundImage": backgroundImage ${imageProjection},
+    primaryLabel,
+    primaryHref,
+    secondaryLabel,
+    secondaryHref,
+    imageAlt,
+    panelEyebrow,
+    panelDescription
+  },
+  glance{
+    eyebrow,
+    heading,
+    items[]{ _key, iconName, label, title, detail, description }
+  },
+  values{
+    eyebrow,
+    heading,
+    items[]{ _key, iconName, label, title, detail, description }
+  },
+  team{
+    eyebrow,
+    heading,
+    ctaLabel,
+    ctaHref,
+    mobileCtaLabel,
+    maxProviders
+  },
+  community{
+    eyebrow,
+    heading,
+    description,
+    "backgroundImage": backgroundImage ${imageProjection},
+    ctaLabel,
+    ctaHref,
+    imageAlt
+  },
+  featuredNarrativeHeadings
+}`;
+
 export const cmsQueries = {
   siteSettings: `*[_type == "siteSettings"][0]{
     name,
@@ -189,6 +240,7 @@ export const cmsQueries = {
       "zoom": coalesce(locationZoom, 13)
     },
     accessLinks,
+    "showBreadcrumbs": coalesce(showBreadcrumbs, true),
     contactBand,
     footerNotice,
     footerDisclaimers[]{ text },
@@ -250,6 +302,42 @@ export const cmsQueries = {
     seo
   }`,
 
+  homepageV2Settings: `*[_type == "homepageV2Settings" && _id == "homepageV2Settings"][0]{
+    title,
+    routePath,
+    status,
+    components[]{
+      _type,
+      enabled,
+      eyebrow,
+      heading,
+      description,
+      buttons,
+      pathCards[]{ icon, title, body, link },
+      cards[]{ icon, title, body },
+      "backgroundImage": backgroundImage ${imageProjection},
+      "featureImage": featureImage ${imageProjection},
+      offerings[]{
+        _key,
+        "item": item->{
+          _type,
+          _id,
+          "slug": slug.current,
+          title,
+          description,
+          icon,
+          cardEyebrow,
+          audience,
+          href
+        }
+      },
+      steps[]{ icon, title, body },
+      centerCard{ icon, title, body },
+      careMapCards[]{ icon, title, label }
+    },
+    seo
+  }`,
+
   pageBySlug: `*[_type == "websitePage" && key == $slug && status == "published"][0]{
     title,
     path,
@@ -257,7 +345,7 @@ export const cmsQueries = {
     eyebrow,
     description,
     "heroImage": heroImage ${imageProjection},
-    aboutContent,
+    ${aboutContentProjection},
     ${servicesPageContentProjection},
     body,
     ${pageBlocksProjection},
@@ -278,7 +366,7 @@ export const cmsQueries = {
     eyebrow,
     description,
     "heroImage": heroImage ${imageProjection},
-    aboutContent,
+    ${aboutContentProjection},
     ${servicesPageContentProjection},
     body,
     ${pageBlocksProjection},
@@ -300,6 +388,11 @@ export const cmsQueries = {
     path
   }`,
 
+  allPublishedPages: `*[_type == "websitePage" && status == "published" && defined(path)] | order(path asc){
+    title,
+    path
+  }`,
+
   referralSettings: `*[_type == "websitePage" && key == "referrals" && status == "published"][0]{
     downloadLabel,
     pdfSectionHeading,
@@ -315,7 +408,7 @@ export const cmsQueries = {
 
   conditionsByCategory: `*[_type == "condition" && category == $category] | order(title asc){ "slug": slug.current, title, shortDescription }`,
 
-  conditionBySlug: `*[_type == "condition" && slug.current == $slug][0]{ "slug": slug.current, title, category, shortDescription, "image": image ${imageProjection}, "body": body ${richBodyProjection}, learnMoreUrl, learnMoreLabel, seo }`,
+  conditionBySlug: `*[_type == "condition" && slug.current == $slug][0]{ "slug": slug.current, title, category, shortDescription, "image": image ${imageProjection}, "body": body ${richBodyProjection}, learnMoreUrl, learnMoreLabel, pageLabels, ${supplementalSectionsProjection}, seo }`,
 
   allDrugs: `*[_type == "drug"] | order(name asc){ name, genericName, aliases, "slug": slug.current, description, learnMoreUrl }`,
 
@@ -325,6 +418,7 @@ export const cmsQueries = {
     description,
     "body": body ${richBodyProjection},
     learnMoreUrl, learnMoreLabel,
+    pageLabels,
     ${supplementalSectionsProjection},
     seo ${seoProjection}
   }`,
@@ -345,9 +439,9 @@ export const cmsQueries = {
     "link": link{ label, href }
   }`,
 
-  services: `*[_type == "service"] | order(title asc) ${serviceProjection}`,
+  services: `*[_type == "service"] | order(coalesce(sortOrder, 9999) asc, title asc) ${serviceProjection}`,
 
-  navigationReferenceServices: `*[_type == "service"] | order(title asc){
+  navigationReferenceServices: `*[_type == "service"] | order(coalesce(sortOrder, 9999) asc, title asc){
     _id,
     "slug": slug.current,
     title,
@@ -361,7 +455,7 @@ export const cmsQueries = {
 
   allServiceSlugs: `*[_type == "service" && defined(slug.current)]{ "slug": slug.current }`,
 
-  programs: `*[_type == "program"] | order(title asc) ${programProjection}`,
+  programs: `*[_type == "program"] | order(coalesce(sortOrder, 9999) asc, title asc) ${programProjection}`,
 
   programBySlug: `*[_type == "program" && slug.current == $slug][0] ${programProjection}`,
 

@@ -1,11 +1,11 @@
-import {HeartIcon} from '@sanity/icons'
+import {FilterIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
 
 export const condition = defineType({
   name: 'condition',
   title: 'Condition',
   type: 'document',
-  icon: HeartIcon,
+  icon: FilterIcon,
   fields: [
     defineField({
       name: 'title',
@@ -90,6 +90,26 @@ export const condition = defineType({
       title: 'External link label',
       type: 'string',
       description: 'Text shown for the external link. Defaults to "Learn more" if left blank.',
+    }),
+    defineField({
+      name: 'pageLabels',
+      title: 'Page labels',
+      description: 'Override the default text labels shown on this condition\'s detail page. Leave any field blank to use the site default.',
+      type: 'conditionPageLabels',
+    }),
+    defineField({
+      name: 'supplementalSections',
+      title: 'Detail page sections',
+      description:
+        'Optional sections shown below the main condition detail content. Turn sections or individual steps off without deleting them.',
+      type: 'array',
+      of: [
+        {type: 'supplementalStatsSection'},
+        {type: 'supplementalProseSection'},
+        {type: 'supplementalSymptomsSection'},
+        {type: 'supplementalStepsSection'},
+        {type: 'supplementalBulletsSection'},
+      ],
     }),
     defineField({
       name: 'seo',

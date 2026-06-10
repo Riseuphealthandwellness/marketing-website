@@ -42,6 +42,14 @@ export const aboutContent = defineType({
       title: 'Community CTA',
       type: 'aboutCommunityCta',
     }),
+    defineField({
+      name: 'featuredNarrativeHeadings',
+      title: 'Featured narrative section headings',
+      description:
+        'Page section headings that should use the custom split narrative layout on the About page.',
+      type: 'array',
+      of: [{type: 'string'}],
+    }),
   ],
 })
 
@@ -51,6 +59,13 @@ export const aboutHero = defineType({
   type: 'object',
   fields: [
     defineField({name: 'heading', title: 'Heading', type: 'string'}),
+    defineField({
+      name: 'backgroundImage',
+      title: 'Background image',
+      type: 'image',
+      options: {hotspot: true},
+      fields: [defineField({name: 'alt', title: 'Alt text', type: 'string'})],
+    }),
     defineField({name: 'primaryLabel', title: 'Primary button label', type: 'string'}),
     defineField({name: 'primaryHref', title: 'Primary button URL or path', type: 'string'}),
     defineField({name: 'secondaryLabel', title: 'Secondary button label', type: 'string'}),
@@ -85,7 +100,15 @@ export const aboutTeamSection = defineType({
     defineField({name: 'eyebrow', title: 'Eyebrow', type: 'string'}),
     defineField({name: 'heading', title: 'Heading', type: 'string'}),
     defineField({name: 'ctaLabel', title: 'Desktop CTA label', type: 'string'}),
+    defineField({name: 'ctaHref', title: 'Desktop CTA URL or path', type: 'string'}),
     defineField({name: 'mobileCtaLabel', title: 'Mobile CTA label', type: 'string'}),
+    defineField({
+      name: 'maxProviders',
+      title: 'Number of team members to show',
+      type: 'number',
+      initialValue: 4,
+      validation: (rule) => rule.integer().min(1).max(12),
+    }),
   ],
 })
 
@@ -97,6 +120,13 @@ export const aboutCommunityCta = defineType({
     defineField({name: 'eyebrow', title: 'Eyebrow', type: 'string'}),
     defineField({name: 'heading', title: 'Heading', type: 'string'}),
     defineField({name: 'description', title: 'Description', type: 'text', rows: 3}),
+    defineField({
+      name: 'backgroundImage',
+      title: 'Background image',
+      type: 'image',
+      options: {hotspot: true},
+      fields: [defineField({name: 'alt', title: 'Alt text', type: 'string'})],
+    }),
     defineField({name: 'ctaLabel', title: 'Button label', type: 'string'}),
     defineField({name: 'ctaHref', title: 'Button URL or path', type: 'string'}),
     defineField({name: 'imageAlt', title: 'Background artwork alt text', type: 'string'}),

@@ -80,7 +80,7 @@ export const websiteManagedPages = [
   {
     id: 'website-page-addiction-medicine',
     key: 'addiction-medicine',
-    path: '/care/addiction-medicine',
+    path: '/care/services/addiction-medicine',
     group: 'care',
     title: 'Addiction medicine',
     pageTitle: 'Addiction medicine at Rise Up',
@@ -90,7 +90,7 @@ export const websiteManagedPages = [
   {
     id: 'website-page-primary-care',
     key: 'primary-care',
-    path: '/care/primary-care',
+    path: '/care/services/primary-care',
     group: 'care',
     title: 'Primary care',
     pageTitle: 'Primary care connected to the whole picture',
@@ -365,7 +365,7 @@ export const websitePage = defineType({
       name: 'services',
       title: 'Services',
       type: 'array',
-      description: 'Deprecated. Use the Service entries under Pages > Care pages > Services instead.',
+      description: 'Deprecated. Use the Service entries under Content > Services instead.',
       group: 'pageSpecific',
       of: [{type: 'embeddedService'}],
       hidden: true,

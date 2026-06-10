@@ -10,7 +10,7 @@ import { PageHero } from "@/components/sections/page-hero";
 import { SupplementalSections } from "@/components/sections/supplemental-sections";
 import { getDrugBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
-import { buildBreadcrumbs, type BreadcrumbItem } from "@/lib/breadcrumbs";
+import { resolveBreadcrumbs, type BreadcrumbItem } from "@/lib/breadcrumbs";
 
 type DrugDetailPageProps = {
   slug: string;
@@ -40,19 +40,24 @@ export async function generateDrugMetadata({
 export async function DrugDetailPage({
   slug,
   path,
-  eyebrow = "Treatments",
+  eyebrow,
   breadcrumbs,
 }: DrugDetailPageProps) {
-  const drug = await getDrugBySlug(slug);
+  const [drug, settings] = await Promise.all([getDrugBySlug(slug), getSiteSettings()]);
   if (!drug) notFound();
 
   const subtitle = drug.genericName ? `${drug.genericName}` : undefined;
+  const breadcrumbsForHero =
+    settings?.showBreadcrumbs === false
+      ? undefined
+      : (breadcrumbs ??
+        resolveBreadcrumbs(path ?? `/care/medications/${slug}`, undefined, settings?.showBreadcrumbs));
 
   return (
     <>
       <PageHero
-        breadcrumbs={breadcrumbs ?? buildBreadcrumbs(path ?? `/care/medications/${slug}`)}
-        eyebrow={eyebrow}
+        breadcrumbs={breadcrumbsForHero}
+        eyebrow={eyebrow ?? drug.pageLabels?.eyebrow}
         title={drug.name}
         description={subtitle}
         backgroundImage={drug.image}
@@ -80,7 +85,7 @@ export async function DrugDetailPage({
                 {drug.genericName ? (
                   <div className="mb-4">
                     <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                      Generic name
+                      {drug.pageLabels?.genericNameLabel}
                     </p>
                     <p className="mt-1 text-sm font-semibold text-brand-coal">
                       {drug.genericName}
@@ -91,7 +96,7 @@ export async function DrugDetailPage({
                 {drug.aliases && drug.aliases.length > 0 ? (
                   <div className="mb-4">
                     <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                      Also known as
+                      {drug.pageLabels?.aliasesLabel}
                     </p>
                     <ul className="mt-1 space-y-0.5">
                       {drug.aliases.map((alias) => (
@@ -111,7 +116,7 @@ export async function DrugDetailPage({
                     target="_blank"
                   >
                     <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
-                    {drug.learnMoreLabel ?? "Learn more"}
+                    {drug.learnMoreLabel}
                   </a>
                 ) : null}
               </div>

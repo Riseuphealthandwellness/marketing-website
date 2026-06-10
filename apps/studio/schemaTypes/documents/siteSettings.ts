@@ -119,6 +119,15 @@ export const siteSettings = defineType({
       group: 'access',
     }),
     defineField({
+      name: 'showBreadcrumbs',
+      title: 'Show breadcrumbs by default',
+      type: 'boolean',
+      group: 'sharedContent',
+      initialValue: true,
+      description:
+        'Global default for page hero breadcrumbs. Individual page breadcrumb settings can override this.',
+    }),
+    defineField({
       name: 'contactBand',
       title: 'Contact section',
       type: 'contactBandContent',
