@@ -18,10 +18,10 @@
   ],
   "dependencies": {
     "@sanity/icons": "^3.7.4",
-    "@sanity/vision": "^5.30.0",
+    "@sanity/vision": "^5.31.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "sanity": "^5.30.0",
+    "sanity": "^5.31.0",
     "sanity-plugin-asset-source-unsplash": "^7.0.7",
     "styled-components": "^6.1.18"
   },
