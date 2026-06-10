@@ -4,6 +4,7 @@ import {
   CogIcon,
   DocumentTextIcon,
   DocumentsIcon,
+  FilterIcon,
   HeartIcon,
   HelpCircleIcon,
   HomeIcon,
@@ -100,6 +101,12 @@ export const structure: StructureResolver = (S) =>
                 schemaType: 'homepage',
                 documentId: 'singleton-homepage',
               }),
+              singletonListItem(S, {
+                title: 'Home Page 2',
+                icon: HomeIcon,
+                schemaType: 'homepageV2Settings',
+                documentId: 'homepageV2Settings',
+              }),
               S.divider(),
               S.listItem()
                 .title('Patient access pages')
@@ -123,15 +130,10 @@ export const structure: StructureResolver = (S) =>
                     .title('Care pages')
                     .items([
                       pageBundleListItem(S, landingPage('care'), [
-                        S.documentTypeListItem('program').title('Programs shown on care pages').icon(StackIcon),
                         S.documentTypeListItem('faq').title('Care FAQs').icon(HelpCircleIcon),
                       ]),
-                      pageBundleListItem(S, landingPage('services'), [
-                        S.documentTypeListItem('service').title('Service entries').icon(HeartIcon),
-                      ]),
-                      pageBundleListItem(S, landingPage('programs'), [
-                        S.documentTypeListItem('program').title('Program entries').icon(StackIcon),
-                      ]),
+                      pageSettingsListItem(S, landingPage('services')),
+                      pageSettingsListItem(S, landingPage('programs')),
                     ]),
                 ),
               S.listItem()
@@ -197,24 +199,26 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
 
       S.listItem()
-        .title('Reference pages')
-        .icon(DocumentTextIcon)
+        .title('Content')
+        .icon(StackIcon)
         .child(
           S.list()
-            .title('Reference pages')
+            .title('Content')
             .items([
+              S.documentTypeListItem('service').title('Services').icon(HeartIcon),
+              S.documentTypeListItem('program').title('Programs').icon(StackIcon),
               S.listItem()
                 .title('Conditions')
-                .icon(HeartIcon)
+                .icon(FilterIcon)
                 .child(
                   S.list()
                     .title('Conditions')
                     .items([
-                      S.documentTypeListItem('condition').title('All conditions').icon(HeartIcon),
+                      S.documentTypeListItem('condition').title('All conditions').icon(FilterIcon),
                       S.documentTypeListItem('condition')
                         .title('Primary care conditions')
-                        .id('reference-primary-care-conditions')
-                        .icon(HeartIcon)
+                        .id('content-primary-care-conditions')
+                        .icon(FilterIcon)
                         .child(
                           S.documentTypeList('condition')
                             .title('Primary care conditions')
@@ -223,8 +227,8 @@ export const structure: StructureResolver = (S) =>
                         ),
                       S.documentTypeListItem('condition')
                         .title('Addiction medicine conditions')
-                        .id('reference-addiction-medicine-conditions')
-                        .icon(HeartIcon)
+                        .id('content-addiction-medicine-conditions')
+                        .icon(FilterIcon)
                         .child(
                           S.documentTypeList('condition')
                             .title('Addiction medicine conditions')
@@ -233,8 +237,8 @@ export const structure: StructureResolver = (S) =>
                         ),
                       S.documentTypeListItem('condition')
                         .title('Weight loss conditions')
-                        .id('reference-weight-loss-conditions')
-                        .icon(HeartIcon)
+                        .id('content-weight-loss-conditions')
+                        .icon(FilterIcon)
                         .child(
                           S.documentTypeList('condition')
                             .title('Weight loss conditions')

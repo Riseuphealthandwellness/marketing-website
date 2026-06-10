@@ -5,8 +5,8 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
 import { PageHero } from "@/components/sections/page-hero";
-import { getAllDrugs } from "@/lib/cms/content-source";
-import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import { getAllDrugs, getSiteSettings } from "@/lib/cms/content-source";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 export const metadata = {
   title: "Medications",
@@ -14,12 +14,13 @@ export const metadata = {
 };
 
 export default async function MedicationsPage() {
-  const drugs = await getAllDrugs();
+  const [drugs, settings] = await Promise.all([getAllDrugs(), getSiteSettings()]);
+  const breadcrumbs = resolveBreadcrumbs("/care/medications", undefined, settings?.showBreadcrumbs);
 
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs("/care")}
+        breadcrumbs={breadcrumbs}
         eyebrow="Medications"
         title="Medications we offer"
         description="Evidence-based medications used as part of individualized treatment plans at Rise Up."

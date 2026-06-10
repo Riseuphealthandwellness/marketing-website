@@ -102,7 +102,7 @@ gcloud run deploy riseupwv-marketing \
   --platform managed \
   --allow-unauthenticated \
   --port 3000 \
-  --set-env-vars SITE_URL=https://riseupwv.org
+  --set-env-vars SITE_URL=https://riseupwv.com
 ```
 
 Add the patient access, Sanity, map, and analytics environment variables from `.env.example` in Cloud Run service settings or with `--set-env-vars` / `--set-secrets`.
@@ -113,7 +113,7 @@ The web app caches Sanity reads for up to 5 minutes and also exposes a protected
 on-demand revalidation endpoint for Sanity webhooks:
 
 ```text
-POST https://riseupwv.org/api/revalidate
+POST https://riseupwv.com/api/revalidate
 Authorization: Bearer SANITY_REVALIDATE_SECRET
 ```
 

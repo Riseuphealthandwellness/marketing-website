@@ -159,7 +159,7 @@ export async function SiteFooter() {
           {settings?.footerDisclaimers && settings.footerDisclaimers.length > 0 ? (
             <div className="mb-6 space-y-4">
               {settings.footerDisclaimers.map((d, i) => (
-                <p className="max-w-5xl text-sm leading-6 text-white/40" key={i}>
+                <p className="text-sm leading-6 text-white/40" key={i}>
                   {d.text}
                 </p>
               ))}

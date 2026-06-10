@@ -1,15 +1,8 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  Brain,
-  HeartPulse,
-  Pill,
-  ShieldPlus,
-  Stethoscope,
-  Users,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
 
+import { getCardColor, getCareIcon } from "@/components/care/care-icon";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
@@ -17,34 +10,28 @@ import { FaqSection } from "@/components/sections/faq-section";
 import { PageBlocks } from "@/components/sections/page-blocks";
 import { PageHero } from "@/components/sections/page-hero";
 import { getProgramHref, getServiceHref } from "@/lib/care-routes";
-import { getFaqsByCategory, getMarketingPage, getPrograms, getServices } from "@/lib/cms/content-source";
+import { getFaqsByCategory, getMarketingPage, getPrograms, getServices, getSiteSettings } from "@/lib/cms/content-source";
 import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 export const generateMetadata = () => metadataForPage("care", "/care");
 
-const serviceIconPool = [HeartPulse, Stethoscope, Pill, Brain, ShieldPlus, Users];
-
-const servicePanelBgs = [
-  "bg-brand-rise-red",
-  "bg-brand-deep-slate",
-  "bg-brand-coal",
-  "bg-brand-ember-orange",
-  "bg-brand-rise-red",
-  "bg-brand-deep-slate",
-] as const;
 
 export default async function CarePage() {
-  const [services, programs, page, faqs] = await Promise.all([
+  const [services, programs, page, faqs, settings] = await Promise.all([
     getServices(),
     getPrograms(),
     getMarketingPage("care"),
     getFaqsByCategory("care"),
+    getSiteSettings(),
   ]);
   if (!page) notFound();
+  const breadcrumbs = resolveBreadcrumbs(page.path ?? "/care", page.breadcrumbs, settings?.showBreadcrumbs);
 
   return (
     <>
       <PageHero
+        breadcrumbs={breadcrumbs}
         eyebrow={page?.eyebrow}
         title={page.title}
         description={page?.description}
@@ -75,8 +62,8 @@ export default async function CarePage() {
 
             <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {services.map((service, i) => {
-                const Icon = serviceIconPool[i % serviceIconPool.length]!;
-                const panelBg = servicePanelBgs[i % servicePanelBgs.length]!;
+                const Icon = getCareIcon(service.icon);
+                const panelBg = getCardColor(service.cardColor, i);
                 return (
                   <Link
                     key={service.slug}

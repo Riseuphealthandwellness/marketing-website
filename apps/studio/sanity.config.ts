@@ -10,6 +10,7 @@ import {publishToSitePlugin} from './plugins/publishToSite'
 
 const hiddenCreateSchemaTypes = new Set([
   'homepage',
+  'homepageV2Settings',
   'navigation',
   'websitePage',
   'siteSettings',

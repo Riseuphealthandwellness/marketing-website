@@ -17,7 +17,7 @@ export const websitePageBreadcrumbs = defineType({
       title: 'Custom breadcrumb items',
       type: 'array',
       description:
-        'Optional override. The final current-page label is intentionally omitted from generated breadcrumbs.',
+        'Optional override. Generated breadcrumbs include Home, ancestor pages, and the current page as the final unlinked crumb.',
       of: [{type: 'link'}],
     }),
   ],

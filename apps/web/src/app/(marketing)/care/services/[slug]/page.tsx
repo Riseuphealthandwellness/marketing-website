@@ -12,7 +12,7 @@ import { PageHero } from "@/components/sections/page-hero";
 import { getConditionHref, getTreatmentHref } from "@/lib/care-routes";
 import { getAllServiceSlugs, getServiceBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
-import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ServicePage({ params }: Props) {
   const { slug } = await params;
-  const service = await getServiceBySlug(slug);
+  const [service, settings] = await Promise.all([getServiceBySlug(slug), getSiteSettings()]);
   if (!service) notFound();
 
   const hasConditions = (service.conditions?.length ?? 0) > 0;
@@ -45,7 +45,7 @@ export default async function ServicePage({ params }: Props) {
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs(`/care/services/${slug}`)}
+        breadcrumbs={resolveBreadcrumbs(`/care/services/${slug}`, undefined, settings?.showBreadcrumbs)}
         eyebrow="Services"
         title={service.title}
         description={service.description}

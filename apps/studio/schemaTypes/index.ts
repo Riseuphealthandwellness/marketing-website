@@ -4,6 +4,7 @@ import {drug} from './documents/drug'
 import {drugReferenceAnnotation} from './annotations/drugReference'
 import {faq} from './documents/faq'
 import {homepage} from './documents/homepage'
+import {homepageV2Settings} from './documents/homepageV2Settings'
 import {location} from './documents/location'
 import {navigation} from './documents/navigation'
 import {program} from './documents/program'
@@ -27,6 +28,20 @@ import {contactFormContent} from './objects/contactFormContent'
 import {homepageHero} from './objects/homepageHero'
 import {homepageCareOptions} from './objects/homepageCareOptions'
 import {homepageFeaturePanel, homepageFeaturePanelItem} from './objects/homepageFeaturePanel'
+import {
+  homepageV2AdvantageComponent,
+  homepageV2CenterCard,
+  homepageV2CareCoordinationComponent,
+  homepageV2CareMapCard,
+  homepageV2FinalCtaComponent,
+  homepageV2HeroComponent,
+  homepageV2IconCard,
+  homepageV2OfferingReference,
+  homepageV2ProcessComponent,
+  homepageV2ProcessStep,
+  homepageV2ServicesComponent,
+  homepageV2StartPathCard,
+} from './objects/homepageV2Components'
 import {link} from './objects/link'
 import {navLink} from './objects/navLink'
 import {navMegaMenu} from './objects/navMegaMenu'
@@ -64,6 +79,7 @@ import {
   supplementalSymptomsSection,
 } from './objects/supplementalContent'
 import { navMegaMenuAutoReferenceLinks } from './objects/navMegaMenuAutoReferenceLinks'
+import {conditionPageLabels, drugPageLabels} from './objects/pageLabels'
 import { websitePageBreadcrumbs } from './objects/websitePageBreadcrumbs'
 import { servicesPageIntro } from './objects/servicesPageIntro'
 
@@ -73,6 +89,7 @@ export const schemaTypes = [
   drugReferenceAnnotation,
   navigation,
   homepage,
+  homepageV2Settings,
   websitePage,
   service,
   program,
@@ -94,6 +111,18 @@ export const schemaTypes = [
   homepageCareOptions,
   homepageFeaturePanel,
   homepageFeaturePanelItem,
+  homepageV2AdvantageComponent,
+  homepageV2CenterCard,
+  homepageV2CareCoordinationComponent,
+  homepageV2CareMapCard,
+  homepageV2FinalCtaComponent,
+  homepageV2HeroComponent,
+  homepageV2IconCard,
+  homepageV2OfferingReference,
+  homepageV2ProcessComponent,
+  homepageV2ProcessStep,
+  homepageV2ServicesComponent,
+  homepageV2StartPathCard,
   link,
   navLink,
   navMegaMenu,
@@ -131,4 +160,6 @@ export const schemaTypes = [
   supplementalSymptomGroup,
   supplementalSymptomsSection,
   textColor,
+  conditionPageLabels,
+  drugPageLabels,
 ]

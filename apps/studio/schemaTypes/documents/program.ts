@@ -1,5 +1,6 @@
 import {StackIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
+import {careCardColorField, careIconField} from '../objects/careIconOptions'
 
 export const program = defineType({
   name: 'program',
@@ -8,6 +9,7 @@ export const program = defineType({
   icon: StackIcon,
   groups: [
     {name: 'content', title: 'Content', default: true},
+    {name: 'display', title: 'Display'},
     {name: 'seo', title: 'SEO'},
   ],
   fields: [
@@ -25,6 +27,22 @@ export const program = defineType({
       options: {source: 'title'},
       validation: (rule) => rule.required(),
       group: 'content',
+    }),
+    careIconField({group: 'display'}),
+    careCardColorField({group: 'display'}),
+    defineField({
+      name: 'cardEyebrow',
+      title: 'Card eyebrow',
+      type: 'string',
+      description: 'Short label shown above the title in cards and homepage offering modules.',
+      group: 'display',
+    }),
+    defineField({
+      name: 'sortOrder',
+      title: 'Sort order',
+      type: 'number',
+      description: 'Lower numbers appear first in program lists.',
+      group: 'display',
     }),
     defineField({
       name: 'audience',

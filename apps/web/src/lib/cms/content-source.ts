@@ -10,6 +10,7 @@ import type {
   Drug,
   Faq,
   HomepageContent,
+  HomepageV2Settings,
   Location,
   MarketingPage,
   NavItemGroup,
@@ -129,9 +130,28 @@ export async function getAllPagePaths(): Promise<string[]> {
   return rows?.map((r) => r.path).filter(Boolean) ?? [];
 }
 
+export async function getAllPublishedPages(): Promise<{ title: string; path: string }[]> {
+  if (!isCmsConfigured) return [];
+  const rows = await sanityClient.fetch<{ title: string; path: string }[] | null>(
+    cmsQueries.allPublishedPages,
+    {},
+    sanityFetchOptions,
+  );
+  return rows?.filter((page) => Boolean(page.path)) ?? [];
+}
+
 export async function getHomepageContent(): Promise<HomepageContent | null> {
   if (!isCmsConfigured) return null;
   return sanityClient.fetch<HomepageContent | null>(cmsQueries.homepage, {}, sanityFetchOptions);
+}
+
+export async function getHomepageV2Settings(): Promise<HomepageV2Settings | null> {
+  if (!isCmsConfigured) return null;
+  return sanityClient.fetch<HomepageV2Settings | null>(
+    cmsQueries.homepageV2Settings,
+    {},
+    sanityFetchOptions,
+  );
 }
 
 export async function getReferralSettings(): Promise<ReferralSettings | null> {

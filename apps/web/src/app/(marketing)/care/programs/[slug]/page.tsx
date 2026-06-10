@@ -12,7 +12,7 @@ import { PageHero } from "@/components/sections/page-hero";
 import { getTreatmentHref } from "@/lib/care-routes";
 import { getAllProgramSlugs, getProgramBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
-import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,13 +36,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProgramPage({ params }: Props) {
   const { slug } = await params;
-  const program = await getProgramBySlug(slug);
+  const [program, settings] = await Promise.all([getProgramBySlug(slug), getSiteSettings()]);
   if (!program) notFound();
 
   return (
     <>
       <PageHero
-        breadcrumbs={buildBreadcrumbs(`/care/programs/${slug}`)}
+        breadcrumbs={resolveBreadcrumbs(`/care/programs/${slug}`, undefined, settings?.showBreadcrumbs)}
         eyebrow="Programs"
         title={program.title}
         description={program.description}

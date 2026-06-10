@@ -2,11 +2,15 @@
 
 import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/utils";
 import type { SiteNavItem, SiteNavMegaMenu } from "@/lib/cms/types";
+
+const subscribeToHydration = () => () => undefined;
+const getClientHydrationSnapshot = () => true;
+const getServerHydrationSnapshot = () => false;
 
 function MegaMenuSection({
   item,
@@ -37,12 +41,12 @@ function MegaMenuSection({
       {expanded ? (
         <div className="pb-3">
           <Link
-            className="mx-5 mb-3 flex items-center gap-2 rounded-md bg-muted/60 px-3 py-2.5 text-sm font-semibold text-foreground"
+            className="mx-5 mb-3 flex items-center gap-2 rounded-md bg-brand-action px-3 py-2.5 text-sm font-semibold text-brand-warm-white"
             href={item.ctaHref}
             onClick={onClose}
           >
             {item.ctaLabel}
-            <ChevronRight aria-hidden="true" className="size-3.5 text-muted-foreground" />
+            <ChevronRight aria-hidden="true" className="size-3.5 text-brand-warm-white/80" />
           </Link>
 
           {item.groups?.map((group) => (
@@ -73,11 +77,12 @@ function MegaMenuSection({
 
 export function MobileNavButton({ mainNav }: { mainNav: SiteNavItem[] }) {
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const isHydrated = useSyncExternalStore(
+    subscribeToHydration,
+    getClientHydrationSnapshot,
+    getServerHydrationSnapshot,
+  );
+  const portalRoot = isHydrated ? document.body : null;
 
   const close = () => setOpen(false);
 
@@ -116,7 +121,7 @@ export function MobileNavButton({ mainNav }: { mainNav: SiteNavItem[] }) {
         )}
       </button>
 
-      {mounted
+      {portalRoot
         ? createPortal(
             <>
               {/* Backdrop — portal ensures it sits above the sticky header */}
@@ -170,7 +175,7 @@ export function MobileNavButton({ mainNav }: { mainNav: SiteNavItem[] }) {
                 </nav>
               </div>
             </>,
-            document.body,
+            portalRoot,
           )
         : null}
     </>

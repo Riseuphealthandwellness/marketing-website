@@ -5,7 +5,7 @@ import { PortableTextContent } from "@/components/cms/portable-text-content";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PageHero } from "@/components/sections/page-hero";
-import { getMarketingPage } from "@/lib/cms/content-source";
+import { getMarketingPage, getSiteSettings } from "@/lib/cms/content-source";
 import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 export const metadata = {
@@ -34,14 +34,17 @@ const privacyLinks = [
 ];
 
 export default async function PatientsRightsPrivacyPage() {
-  const page = await getMarketingPage("patients-rights-privacy");
+  const [page, settings] = await Promise.all([
+    getMarketingPage("patients-rights-privacy"),
+    getSiteSettings(),
+  ]);
 
   const title = page?.title ?? "Your Privacy is Important to Us";
   const eyebrow = page?.eyebrow ?? "Patient rights";
   const description =
     page?.description ??
     "Rise Up is committed to protecting our patients’ privacy. We make all reasonable efforts to comply with applicable federal and state privacy regulations, including the Health Insurance Portability and Accountability Act (HIPAA)/HITECH ACT.";
-  const breadcrumbs = resolveBreadcrumbs(page?.path, page?.breadcrumbs);
+  const breadcrumbs = resolveBreadcrumbs(page?.path, page?.breadcrumbs, settings?.showBreadcrumbs);
 
   return (
     <>

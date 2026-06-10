@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 const routes = [
   "",
   "/care",
-  "/care/primary-care",
+  "/care/services/primary-care",
+  "/care/services/addiction-medicine",
   "/care/weight-loss-mgmt",
   "/care/services",
   "/care/programs",
@@ -20,6 +21,8 @@ const routes = [
   "/careers",
   "/team",
   "/locations",
+  "/site-map",
+  "/home-page-2",
   "/privacy-policy",
   "/terms-of-service",
 ];
@@ -44,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...programSlugs.map((slug) => `/care/programs/${slug}`),
   ];
 
-  return [...routes, ...dynamicRoutes].map((route) => ({
+  return Array.from(new Set([...routes, ...dynamicRoutes])).map((route) => ({
     url: new URL(route || "/", settings?.url ?? "https://localhost:3000").toString(),
     lastModified: now,
     changeFrequency: route ? "monthly" : "weekly",
