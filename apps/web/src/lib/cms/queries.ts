@@ -240,7 +240,7 @@ export const cmsQueries = {
     },
     accessLinks,
     "showBreadcrumbs": coalesce(showBreadcrumbs, true),
-    contactBand,
+    "contactBand": *[_type == "websitePage" && key == "contact"][0].contactBand,
     headerCta,
     "logo": logo ${imageProjection}
   }`,

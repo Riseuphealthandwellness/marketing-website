@@ -327,6 +327,14 @@ export const websitePage = defineType({
       ],
     }),
     defineField({
+      name: 'contactBand',
+      title: 'Contact section (global)',
+      type: 'contactBandContent',
+      description: 'Eyebrow, heading, and description shown in the contact band at the bottom of every page.',
+      group: 'pageSpecific',
+      hidden: ({document}) => document?.key !== 'contact',
+    }),
+    defineField({
       name: 'contactForm',
       title: 'Contact form copy',
       type: 'contactFormContent',

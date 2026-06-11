@@ -149,7 +149,7 @@ export const structure: StructureResolver = (S) =>
                         schemaType: 'websitePage',
                         documentId: 'website-page-about',
                       }),
-                      pageBundleListItem(S, landingPage('patient-rights-privacy'), [
+                      pageBundleListItem(S, landingPage('patients-rights-privacy'), [
                         singletonListItem(S, {
                           title: 'Notice of privacy practices',
                           icon: DocumentTextIcon,
@@ -169,10 +169,10 @@ export const structure: StructureResolver = (S) =>
                           documentId: 'website-page-medical-record-request-authorization',
                         }),
                         singletonListItem(S, {
-                          title: 'Terms of service',
+                          title: 'Terms of use',
                           icon: DocumentTextIcon,
                           schemaType: 'websitePage',
-                          documentId: 'website-page-terms-of-service',
+                          documentId: 'website-page-terms-of-use',
                         }),
                       ]),
                       pageBundleListItem(S, landingPage('team'), [

@@ -12,7 +12,7 @@ export function PageSidebar({ cards }: PageSidebarProps) {
 
   return (
     <aside>
-      <div className="sticky top-8 divide-y divide-border border-y border-border">
+      <div className="sticky top-24 divide-y divide-border border-y border-border">
         {cards.map((card, i) => (
           <div
             key={i}

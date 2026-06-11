@@ -381,13 +381,6 @@ export type ContactBandContent = {
   eyebrow: string;
   heading: string;
   description: string;
-  phoneLabel: string;
-  emailLabel: string;
-  locationLabel: string;
-  mapPreviewLabel: string;
-  expandMapLabel: string;
-  closeMapLabel: string;
-  mapImageAlt: string;
 };
 
 export type ContactFormContent = {

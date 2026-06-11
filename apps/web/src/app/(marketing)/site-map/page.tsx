@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
 import { Container } from "@/components/layout/container";
 import { PageHero } from "@/components/sections/page-hero";
@@ -130,21 +129,38 @@ function sortedChildren(node: SiteMapNode) {
   return Array.from(node.children.values()).sort((a, b) => a.label.localeCompare(b.label));
 }
 
-function SiteMapLink({ node }: { node: SiteMapNode }) {
+function NodeLink({ node, depth }: { node: SiteMapNode; depth: number }) {
+  const labelClass =
+    depth === 0
+      ? "text-4xl font-black tracking-tight text-foreground"
+      : depth === 1
+        ? "text-2xl font-bold text-foreground"
+        : depth === 2
+          ? "text-lg font-semibold text-foreground/80"
+          : "text-base text-muted-foreground";
+
+  const pathClass =
+    depth <= 1
+      ? "shrink-0 font-mono text-sm text-muted-foreground/45"
+      : "shrink-0 font-mono text-xs text-muted-foreground/45";
+
+  const rowClass =
+    depth <= 1
+      ? "-mx-3 px-3 py-2 rounded-lg"
+      : "-mx-2 px-2 py-1 rounded-md";
+
   if (!node.href) {
-    return <span className="text-sm font-semibold text-brand-coal">{node.label}</span>;
+    return <span className={labelClass}>{node.label}</span>;
   }
 
   return (
     <Link
-      className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-trust transition-colors hover:text-brand-action"
       href={node.href}
+      className={`group flex w-full items-center ${rowClass} hover:bg-brand-trust/[0.06] transition-colors`}
     >
-      <span>{node.label}</span>
-      <ArrowRight
-        aria-hidden={true}
-        className="size-3.5 shrink-0 text-brand-trust/34 transition-all group-hover:translate-x-0.5 group-hover:text-brand-action"
-      />
+      <span className={`${labelClass} shrink-0 group-hover:text-brand-trust transition-colors`}>{node.label}</span>
+      <span aria-hidden className="mx-3 flex-1 self-center border-b border-dotted border-muted-foreground/25 group-hover:border-brand-trust/20 transition-colors" />
+      <span className={`${pathClass} shrink-0 group-hover:text-brand-trust/50 transition-colors`}>{node.href}</span>
     </Link>
   );
 }
@@ -152,15 +168,40 @@ function SiteMapLink({ node }: { node: SiteMapNode }) {
 function SiteMapBranch({ nodes, depth = 0 }: { nodes: SiteMapNode[]; depth?: number }) {
   if (!nodes.length) return null;
 
+  const spacing =
+    depth === 1 ? "space-y-8" :
+    depth === 2 ? "space-y-3" :
+    "space-y-2";
+
+  const indentClass =
+    depth === 2
+      ? "mt-3 ml-1 border-l-2 border-brand-trust/15 pl-6 space-y-3"
+      : depth >= 3
+        ? "mt-2 ml-1 border-l border-border pl-5 space-y-1.5"
+        : `mt-6 ${spacing}`;
+
+  if (depth === 1) {
+    return (
+      <ul className={`mt-6 ${spacing}`}>
+        {nodes.map((node) => (
+          <li key={node.href ?? node.label}>
+            <NodeLink node={node} depth={depth} />
+            {node.children.size > 0 ? (
+              <SiteMapBranch nodes={sortedChildren(node)} depth={depth + 1} />
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
   return (
-    <ul className={depth === 0 ? "space-y-3" : "mt-2 space-y-2"}>
+    <ul className={indentClass}>
       {nodes.map((node) => (
         <li key={node.href ?? node.label}>
-          <SiteMapLink node={node} />
+          <NodeLink node={node} depth={depth} />
           {node.children.size > 0 ? (
-            <div className="pl-4">
-              <SiteMapBranch nodes={sortedChildren(node)} depth={depth + 1} />
-            </div>
+            <SiteMapBranch nodes={sortedChildren(node)} depth={depth + 1} />
           ) : null}
         </li>
       ))}
@@ -230,27 +271,11 @@ export default async function SiteMapPage() {
         title="Find your way around"
         description="A complete index of published pages and resources on this website."
       />
-      <section className="bg-brand-warm-white py-14 sm:py-16">
+      <section className="bg-brand-warm-white py-16 sm:py-20">
         <Container>
-          <div className="mb-6 rounded-md border border-border bg-white p-5 shadow-sm">
-            <SiteMapLink node={tree} />
-          </div>
-          <div className="grid gap-5 lg:grid-cols-2">
-            {sortedChildren(tree).map((node) => (
-              <section
-                key={node.href ?? node.label}
-                className="rounded-md border border-border bg-white p-5 shadow-sm sm:p-6"
-              >
-                <div className="border-b border-border pb-3">
-                  <SiteMapLink node={node} />
-                </div>
-                {node.children.size > 0 ? (
-                  <div className="mt-4">
-                    <SiteMapBranch nodes={sortedChildren(node)} />
-                  </div>
-                ) : null}
-              </section>
-            ))}
+          <div>
+            <NodeLink node={tree} depth={0} />
+            <SiteMapBranch nodes={sortedChildren(tree)} depth={1} />
           </div>
         </Container>
       </section>

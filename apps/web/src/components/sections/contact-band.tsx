@@ -43,15 +43,6 @@ export async function ContactBand() {
           address={settings?.address ?? ""}
           mapSrc={mapSrc}
           mapSrcLarge={mapSrcLarge}
-          labels={{
-            phone: content.phoneLabel,
-            email: content.emailLabel,
-            location: content.locationLabel,
-            mapPreview: content.mapPreviewLabel,
-            expandMap: content.expandMapLabel,
-            closeMap: content.closeMapLabel,
-            mapImageAlt: content.mapImageAlt,
-          }}
         />
       </Container>
     </Section>

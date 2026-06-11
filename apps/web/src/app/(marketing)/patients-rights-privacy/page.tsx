@@ -50,7 +50,7 @@ export default async function PatientsRightsPrivacyPage() {
     <>
       <PageHero breadcrumbs={breadcrumbs} eyebrow={eyebrow} title={title} />
 
-      <Section className="bg-white py-10 sm:py-12 lg:py-14">
+      <Section className="bg-brand-warm-white py-10 sm:py-12 lg:py-14">
         <Container>
           <p className="max-w-3xl text-lg leading-8 text-brand-coal/80">{description}</p>
 
