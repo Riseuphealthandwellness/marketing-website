@@ -67,7 +67,7 @@ export function SiteHeaderClient({
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/96 backdrop-blur after:absolute after:inset-x-0 after:bottom-[-5px] after:h-[5px] after:bg-[linear-gradient(90deg,var(--brand-warm-accent),var(--brand-emphasis))] after:content-['']">
+    <header className="sticky top-0 z-40 border-b border-border bg-white after:absolute after:inset-x-0 after:bottom-[-5px] after:h-[5px] after:bg-[linear-gradient(90deg,var(--brand-warm-accent),var(--brand-emphasis))] after:content-['']">
       <Container className="grid min-h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 py-1 lg:min-h-16 lg:gap-5">
         <Link
           aria-label={siteName ? `${siteName} home` : "Home"}

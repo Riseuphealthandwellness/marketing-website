@@ -58,7 +58,7 @@ export default async function ServicePage({ params }: Props) {
             <PortableTextContent
               autoLinkDrugs
               className="max-w-3xl"
-              drugReferenceHref={(drug) => getTreatmentHref(drug, { serviceSlug: service.slug })}
+              drugReferenceHref={(drug) => getTreatmentHref(drug)}
               value={service.body}
             />
           </Container>
@@ -103,7 +103,7 @@ export default async function ServicePage({ params }: Props) {
                     {service.medications!.map((medication) => (
                       <li key={medication.slug} className="break-inside-avoid border-b border-border/50">
                         <Link
-                          href={getTreatmentHref(medication, { serviceSlug: service.slug })}
+                          href={getTreatmentHref(medication)}
                           className="group flex items-center justify-between py-1.5 text-sm text-foreground transition-colors hover:text-brand-action"
                         >
                           <span>{medication.name}</span>

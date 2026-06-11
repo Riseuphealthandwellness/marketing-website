@@ -16,7 +16,7 @@ import {
 } from '@sanity/icons'
 import type {ComponentType} from 'react'
 import type {StructureResolver} from 'sanity/structure'
-import {navigationSingletons} from './schemaTypes/documents/navigation'
+import {SITE_FOOTER_ID} from './schemaTypes/documents/siteFooter'
 import {websiteManagedPages} from './schemaTypes/documents/websitePage'
 
 type StructureBuilder = Parameters<StructureResolver>[0]
@@ -272,20 +272,23 @@ export const structure: StructureResolver = (S) =>
                 .child(
                   S.list()
                     .title('Navigation menus')
-                    .items(
-                      navigationSingletons.map((nav) =>
-                        S.listItem()
-                          .title(nav.title)
-                          .icon(ListIcon)
-                          .child(
-                            S.document()
-                              .schemaType('navigation')
-                              .documentId(nav.id)
-                              .initialValueTemplate(`navigation-${nav.key}`)
-                              .title(nav.title),
-                          ),
-                      ),
-                    ),
+                    .items([
+                      S.listItem()
+                        .title('Main navigation')
+                        .icon(ListIcon)
+                        .child(
+                          S.document()
+                            .schemaType('navigation')
+                            .documentId('navigation-main')
+                            .title('Main navigation'),
+                        ),
+                      singletonListItem(S, {
+                        title: 'Footer',
+                        icon: ListIcon,
+                        schemaType: 'siteFooter',
+                        documentId: SITE_FOOTER_ID,
+                      }),
+                    ]),
                 ),
               S.documentTypeListItem('announcement').title('Announcements').icon(BellIcon),
             ]),

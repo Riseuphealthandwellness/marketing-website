@@ -9,7 +9,12 @@
       "Bash(curl -L -o apps/web/public/images/content/about-mountains.jpg \"https://images.unsplash.com/photo-1634662626305-44f7f243eb09?w=1920&q=85&auto=format&fit=crop\")",
       "Bash(curl -L -o apps/web/public/images/content/about-community.jpg \"https://images.unsplash.com/photo-1778230123972-07eafe417fc4?w=1920&q=85&auto=format&fit=crop\")",
       "Bash(curl -L -o /tmp/preview1.jpg \"https://images.unsplash.com/photo-1758691462321-9b6c98c40f7e?w=800&q=80&auto=format&fit=crop\")",
-      "Bash(curl -L -o /tmp/preview2.jpg \"https://images.unsplash.com/photo-1758691462477-976f771224d8?w=800&q=80&auto=format&fit=crop\")"
+      "Bash(curl -L -o /tmp/preview2.jpg \"https://images.unsplash.com/photo-1758691462477-976f771224d8?w=800&q=80&auto=format&fit=crop\")",
+      "Bash(sed -i '' 's/getTreatmentHref\\(drug, { programSlug: program\\\\.slug }\\)/getTreatmentHref\\(drug\\)/g' /Users/evankohout/projects/RiseUp/marketing-website/apps/web/src/app/\\\\\\(marketing\\\\\\)/care/programs/\\\\[slug\\\\]/page.tsx)",
+      "Bash(sed -i '' 's/getTreatmentHref\\(drug, { serviceSlug: service\\\\.slug }\\)/getTreatmentHref\\(drug\\)/g' /Users/evankohout/projects/RiseUp/marketing-website/apps/web/src/app/\\\\\\(marketing\\\\\\)/care/services/\\\\[slug\\\\]/page.tsx)",
+      "Bash(sed -i '' 's/getTreatmentHref\\(medication, { serviceSlug: service\\\\.slug }\\)/getTreatmentHref\\(medication\\)/g' /Users/evankohout/projects/RiseUp/marketing-website/apps/web/src/app/\\\\\\(marketing\\\\\\)/care/services/\\\\[slug\\\\]/page.tsx)",
+      "Bash(sed -i '' 's/getTreatmentHref\\(med, { serviceSlug }\\)/getTreatmentHref\\(med\\)/g' /Users/evankohout/projects/RiseUp/marketing-website/apps/web/src/app/\\\\\\(marketing\\\\\\)/_components/condition-detail-page.tsx)",
+      "Bash(sed -i '' 's/getTreatmentHref\\(medication, { serviceSlug: service\\\\.slug }\\)/getTreatmentHref\\(medication\\)/g' /Users/evankohout/projects/RiseUp/marketing-website/apps/web/src/app/\\\\\\(marketing\\\\\\)/site-map/page.tsx)"
     ]
   }
 }

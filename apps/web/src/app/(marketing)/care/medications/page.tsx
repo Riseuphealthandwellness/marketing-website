@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -5,25 +6,46 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
 import { PageHero } from "@/components/sections/page-hero";
-import { getAllDrugs, getSiteSettings } from "@/lib/cms/content-source";
+import { getAllDrugs, getMarketingPage, getSiteSettings } from "@/lib/cms/content-source";
 import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
+import { createPageMetadata } from "@/lib/seo/metadata";
 
-export const metadata = {
-  title: "Medications",
-  description: "Medications offered at Rise Up Health & Wellness.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const [page, settings] = await Promise.all([getMarketingPage("medications"), getSiteSettings()]);
+  return createPageMetadata({
+    title: page?.title ?? "Medications",
+    description:
+      page?.description ??
+      "Evidence-based medications used as part of individualized treatment plans at Rise Up Health & Wellness.",
+    path: "/care/medications",
+    seo: page?.seo,
+    site: settings ?? undefined,
+  });
+}
 
 export default async function MedicationsPage() {
-  const [drugs, settings] = await Promise.all([getAllDrugs(), getSiteSettings()]);
-  const breadcrumbs = resolveBreadcrumbs("/care/medications", undefined, settings?.showBreadcrumbs);
+  const [drugs, page, settings] = await Promise.all([
+    getAllDrugs(),
+    getMarketingPage("medications"),
+    getSiteSettings(),
+  ]);
+
+  const breadcrumbs = resolveBreadcrumbs(
+    page?.path ?? "/care/medications",
+    page?.breadcrumbs,
+    settings?.showBreadcrumbs,
+  );
 
   return (
     <>
       <PageHero
         breadcrumbs={breadcrumbs}
-        eyebrow="Medications"
-        title="Medications we offer"
-        description="Evidence-based medications used as part of individualized treatment plans at Rise Up."
+        eyebrow={page?.eyebrow ?? "Medications"}
+        title={page?.title ?? "Medications we offer"}
+        description={
+          page?.description ??
+          "Evidence-based medications used as part of individualized treatment plans at Rise Up."
+        }
       />
 
       {drugs.length > 0 ? (

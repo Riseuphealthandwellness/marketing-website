@@ -119,6 +119,17 @@ export const websiteManagedPages = [
       'Learn about Rise Up programs designed to support recovery, wellness, and long-term stability.',
   },
   {
+    id: 'website-page-medications',
+    key: 'medications',
+    path: '/care/medications',
+    group: 'care',
+    title: 'Medications',
+    pageTitle: 'Medications we offer',
+    eyebrow: 'Medications',
+    description:
+      'Evidence-based medications used as part of individualized treatment plans at Rise Up Health & Wellness.',
+  },
+  {
     id: 'website-page-weight-loss-mgmt',
     key: 'weight-loss-mgmt',
     path: '/care/weight-loss-mgmt',

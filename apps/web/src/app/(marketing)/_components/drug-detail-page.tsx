@@ -80,6 +80,7 @@ export async function DrugDetailPage({
               ) : null}
             </div>
 
+            {drug.genericName || drug.aliases?.length || drug.learnMoreUrl ? (
             <aside className="space-y-4">
               <div className="rounded-lg border border-border bg-brand-warm-white p-5 shadow-[var(--shadow-soft)]">
                 {drug.genericName ? (
@@ -121,6 +122,7 @@ export async function DrugDetailPage({
                 ) : null}
               </div>
             </aside>
+            ) : null}
           </div>
         </Container>
       </Section>

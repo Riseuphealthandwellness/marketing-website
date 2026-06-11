@@ -118,7 +118,7 @@ export async function ConditionDetailPage({
                       {medications.map((med) => (
                         <li key={med.slug}>
                           <Link
-                            href={getTreatmentHref(med, { serviceSlug })}
+                            href={getTreatmentHref(med)}
                             className="group flex items-center justify-between py-1.5 text-sm text-foreground transition-colors hover:text-brand-action"
                           >
                             <span>{med.name}</span>

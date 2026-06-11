@@ -123,11 +123,14 @@ function normalizeSiteUrl(value: string) {
 }
 
 function PublishToSiteTool() {
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [message, setMessage] = useState('')
+  const [cacheStatus, setCacheStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [cacheMessage, setCacheMessage] = useState('')
   const [pendingStatus, setPendingStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [pendingMessage, setPendingMessage] = useState('')
   const [pendingItems, setPendingItems] = useState<PendingContentItem[]>([])
+  const [publishingItems, setPublishingItems] = useState<Set<string>>(new Set())
+  const [publishAllStatus, setPublishAllStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [publishAllMessage, setPublishAllMessage] = useState('')
   const client = useClient({apiVersion: '2025-01-01'})
 
   const siteUrl = normalizeSiteUrl(process.env.SANITY_STUDIO_SITE_URL ?? 'https://riseupwv.com')
@@ -199,9 +202,57 @@ function PublishToSiteTool() {
     void loadPendingContent()
   }, [loadPendingContent])
 
-  async function handlePublish() {
-    setStatus('loading')
-    setMessage('')
+  async function publishItem(item: PendingContentItem) {
+    if (item.state === 'statusDraft') {
+      await client.patch(item.liveId!).set({status: 'published'}).commit()
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {changedFields, latestChangeAt, liveId, state, _id: draftId, ...rest} = item
+      const liveDoc = {...rest, _id: liveId!}
+      await client.transaction().createOrReplace(liveDoc).delete(draftId).commit()
+    }
+  }
+
+  async function handlePublishItem(item: PendingContentItem) {
+    setPublishingItems((prev) => new Set([...prev, item._id]))
+    try {
+      await publishItem(item)
+    } finally {
+      setPublishingItems((prev) => {
+        const next = new Set(prev)
+        next.delete(item._id)
+        return next
+      })
+      void loadPendingContent()
+    }
+  }
+
+  async function handlePublishAll() {
+    if (pendingItems.length === 0) return
+    setPublishAllStatus('loading')
+    setPublishAllMessage('')
+    setPublishingItems(new Set(pendingItems.map((i) => i._id)))
+
+    try {
+      await Promise.all(pendingItems.map((item) => publishItem(item)))
+      setPublishAllStatus('success')
+      setPublishAllMessage(
+        `Published ${pendingItems.length} item${pendingItems.length !== 1 ? 's' : ''} successfully.`,
+      )
+    } catch (error) {
+      setPublishAllStatus('error')
+      setPublishAllMessage(
+        error instanceof Error && error.message ? error.message : 'Failed to publish all items.',
+      )
+    } finally {
+      setPublishingItems(new Set())
+      void loadPendingContent()
+    }
+  }
+
+  async function handleClearCache() {
+    setCacheStatus('loading')
+    setCacheMessage('')
     try {
       const res = await fetch(`${siteUrl}/api/revalidate`, {
         method: 'POST',
@@ -209,17 +260,17 @@ function PublishToSiteTool() {
       })
       const data = await res.json()
       if (res.ok) {
-        setStatus('success')
-        setMessage(`Cache cleared at ${new Date(data.revalidatedAt).toLocaleTimeString()}`)
+        setCacheStatus('success')
+        setCacheMessage(`Cache cleared at ${new Date(data.revalidatedAt).toLocaleTimeString()}`)
         void loadPendingContent()
       } else {
-        setStatus('error')
-        setMessage(data.message ?? 'Revalidation failed.')
+        setCacheStatus('error')
+        setCacheMessage(data.message ?? 'Revalidation failed.')
       }
     } catch (error) {
-      setStatus('error')
+      setCacheStatus('error')
       const details = error instanceof Error && error.message ? ` ${error.message}` : ''
-      setMessage(`Could not reach ${siteUrl}.${details}`)
+      setCacheMessage(`Could not reach ${siteUrl}.${details}`)
     }
   }
 
@@ -231,11 +282,13 @@ function PublishToSiteTool() {
     }, {})
   }, [pendingItems])
 
+  const anyPublishing = publishingItems.size > 0
+
   return (
     <div style={{padding: '2rem', maxWidth: 760, color: 'var(--card-fg-color)'}}>
       <div style={{marginBottom: '1rem'}}>
         <h2 style={{margin: '0 0 0.5rem', fontSize: '1.1rem', fontWeight: 700}}>
-          Publish to live site
+          Publish &amp; deploy
         </h2>
         <p
           style={{
@@ -245,8 +298,9 @@ function PublishToSiteTool() {
             lineHeight: 1.5,
           }}
         >
-          This button refreshes the website cache so changes that are already published in
-          Sanity appear immediately. It does not publish draft documents.
+          Use <strong>Publish</strong> buttons to push draft documents live in Sanity. Use{' '}
+          <strong>Clear cache</strong> after publishing to make changes appear on the website
+          immediately.
         </p>
       </div>
 
@@ -311,24 +365,13 @@ function PublishToSiteTool() {
 
         {pendingStatus === 'success' && pendingItems.length === 0 ? (
           <p style={{margin: 0, color: 'var(--card-positive-fg-color)', fontSize: '0.875rem'}}>
-            No draft or not-live content found. Cache refresh is safe to run when published
-            edits need to appear immediately.
+            No draft or not-live content found. Clear cache below if you need published changes to
+            appear on the website immediately.
           </p>
         ) : null}
 
         {pendingStatus === 'success' && pendingItems.length > 0 ? (
           <div style={{display: 'grid', gap: '0.875rem'}}>
-            <p
-              style={{
-                margin: 0,
-                color: 'var(--card-muted-fg-color, var(--card-fg-color))',
-                fontSize: '0.8125rem',
-                lineHeight: 1.5,
-              }}
-            >
-              These items still need to be published in their editor before they can appear
-              on the live website. The button below only refreshes the website cache.
-            </p>
             {Object.entries(groupedPendingItems).map(([group, items]) => (
               <div key={group}>
                 <h4
@@ -344,80 +387,116 @@ function PublishToSiteTool() {
                   {group}
                 </h4>
                 <ul style={{display: 'grid', gap: '0.375rem', margin: 0, padding: 0}}>
-                  {items.map((item) => (
-                    <li
-                      key={item._id}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        gap: '1rem',
-                        listStyle: 'none',
-                        padding: '0.625rem 0.75rem',
-                        border: '1px solid var(--card-border-color)',
-                        borderRadius: '0.375rem',
-                        background: 'color-mix(in srgb, var(--card-bg-color), var(--card-fg-color) 3%)',
-                      }}
-                    >
-                      <span>
-                        <span
-                          style={{
-                            display: 'block',
-                            color: 'var(--card-fg-color)',
-                            fontSize: '0.875rem',
-                            fontWeight: 600,
-                          }}
-                        >
-                          {titleForDocument(item)}
-                        </span>
-                        {item.path || item.slug ? (
+                  {items.map((item) => {
+                    const isPublishing = publishingItems.has(item._id)
+                    return (
+                      <li
+                        key={item._id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          gap: '1rem',
+                          listStyle: 'none',
+                          padding: '0.625rem 0.75rem',
+                          border: '1px solid var(--card-border-color)',
+                          borderRadius: '0.375rem',
+                          background:
+                            'color-mix(in srgb, var(--card-bg-color), var(--card-fg-color) 3%)',
+                          opacity: isPublishing ? 0.7 : 1,
+                          transition: 'opacity 0.15s',
+                        }}
+                      >
+                        <span style={{minWidth: 0}}>
+                          <span
+                            style={{
+                              display: 'block',
+                              color: 'var(--card-fg-color)',
+                              fontSize: '0.875rem',
+                              fontWeight: 600,
+                            }}
+                          >
+                            {titleForDocument(item)}
+                          </span>
+                          {item.path || item.slug ? (
+                            <span
+                              style={{
+                                display: 'block',
+                                color: 'var(--card-muted-fg-color, var(--card-fg-color))',
+                                fontSize: '0.75rem',
+                              }}
+                            >
+                              {item.path ?? item.slug}
+                            </span>
+                          ) : null}
                           <span
                             style={{
                               display: 'block',
                               color: 'var(--card-muted-fg-color, var(--card-fg-color))',
                               fontSize: '0.75rem',
+                              lineHeight: 1.4,
+                              marginTop: '0.375rem',
                             }}
                           >
-                            {item.path ?? item.slug}
+                            Changed: {changeSummary(item)}
                           </span>
-                        ) : null}
+                          <span
+                            style={{
+                              display: 'block',
+                              color: 'var(--card-muted-fg-color, var(--card-fg-color))',
+                              fontSize: '0.75rem',
+                              lineHeight: 1.4,
+                              marginTop: '0.125rem',
+                            }}
+                          >
+                            Updated{' '}
+                            {formatDateTime(item.latestChangeAt)
+                              ? `on ${formatDateTime(item.latestChangeAt)}`
+                              : 'recently'}
+                          </span>
+                        </span>
+
                         <span
                           style={{
-                            display: 'block',
-                            color: 'var(--card-muted-fg-color, var(--card-fg-color))',
-                            fontSize: '0.75rem',
-                            lineHeight: 1.4,
-                            marginTop: '0.375rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-end',
+                            gap: '0.5rem',
+                            flexShrink: 0,
                           }}
                         >
-                          Changed: {changeSummary(item)}
+                          <span
+                            style={{
+                              color: 'var(--card-badge-caution-fg-color, var(--card-fg-color))',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {stateLabel(item)}
+                          </span>
+                          <button
+                            disabled={isPublishing || anyPublishing}
+                            onClick={() => void handlePublishItem(item)}
+                            style={{
+                              border: 'none',
+                              background: isPublishing ? '#9ca3af' : '#16a34a',
+                              color: '#fff',
+                              borderRadius: '0.25rem',
+                              padding: '0.3rem 0.75rem',
+                              fontSize: '0.75rem',
+                              fontWeight: 600,
+                              cursor: isPublishing || anyPublishing ? 'not-allowed' : 'pointer',
+                              whiteSpace: 'nowrap',
+                              opacity: !isPublishing && anyPublishing ? 0.5 : 1,
+                            }}
+                          >
+                            {isPublishing ? 'Publishing…' : 'Publish'}
+                          </button>
                         </span>
-                        <span
-                          style={{
-                            display: 'block',
-                            color: 'var(--card-muted-fg-color, var(--card-fg-color))',
-                            fontSize: '0.75rem',
-                            lineHeight: 1.4,
-                            marginTop: '0.125rem',
-                          }}
-                        >
-                          Updated{' '}
-                          {formatDateTime(item.latestChangeAt)
-                            ? `on ${formatDateTime(item.latestChangeAt)}`
-                            : 'recently'}
-                        </span>
-                      </span>
-                      <span
-                        style={{
-                          color: 'var(--card-badge-caution-fg-color, var(--card-fg-color))',
-                          fontSize: '0.75rem',
-                          fontWeight: 700,
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {stateLabel(item)}
-                      </span>
-                    </li>
-                  ))}
+                      </li>
+                    )
+                  })}
                 </ul>
               </div>
             ))}
@@ -425,31 +504,65 @@ function PublishToSiteTool() {
         ) : null}
       </div>
 
-      <button
-        disabled={status === 'loading'}
-        onClick={handlePublish}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.625rem 1.25rem',
-          background: status === 'loading' ? '#9ca3af' : '#2563eb',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '0.375rem',
-          fontSize: '0.875rem',
-          fontWeight: 600,
-          cursor: status === 'loading' ? 'not-allowed' : 'pointer',
-        }}
-      >
-        {status !== 'loading' && <RocketIcon style={{width: 16, height: 16}} />}
-        {status === 'loading' ? 'Clearing cache...' : 'Publish to live site'}
-      </button>
+      {/* Bottom action bar */}
+      <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center'}}>
+        {/* Publish all — green */}
+        <button
+          disabled={
+            pendingItems.length === 0 || anyPublishing || pendingStatus !== 'success'
+          }
+          onClick={() => void handlePublishAll()}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.625rem 1.25rem',
+            background:
+              pendingItems.length === 0 || anyPublishing || pendingStatus !== 'success'
+                ? '#9ca3af'
+                : '#16a34a',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '0.375rem',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            cursor:
+              pendingItems.length === 0 || anyPublishing || pendingStatus !== 'success'
+                ? 'not-allowed'
+                : 'pointer',
+          }}
+        >
+          {anyPublishing ? 'Publishing…' : `Publish all${pendingItems.length > 0 ? ` (${pendingItems.length})` : ''}`}
+        </button>
 
-      {status === 'success' && (
+        {/* Clear cache — blue */}
+        <button
+          disabled={cacheStatus === 'loading'}
+          onClick={() => void handleClearCache()}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.625rem 1.25rem',
+            background: cacheStatus === 'loading' ? '#9ca3af' : '#2563eb',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '0.375rem',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            cursor: cacheStatus === 'loading' ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {cacheStatus !== 'loading' && <RocketIcon style={{width: 16, height: 16}} />}
+          {cacheStatus === 'loading' ? 'Clearing cache…' : 'Clear cache from live site'}
+        </button>
+      </div>
+
+      {/* Publish all feedback */}
+      {publishAllStatus === 'success' && (
         <div
           style={{
-            marginTop: '1rem',
+            marginTop: '0.75rem',
             padding: '0.75rem 1rem',
             background: 'var(--card-positive-bg-color)',
             color: 'var(--card-positive-fg-color)',
@@ -457,13 +570,13 @@ function PublishToSiteTool() {
             fontSize: '0.875rem',
           }}
         >
-          Success: {message}
+          {publishAllMessage}
         </div>
       )}
-      {status === 'error' && (
+      {publishAllStatus === 'error' && (
         <div
           style={{
-            marginTop: '1rem',
+            marginTop: '0.75rem',
             padding: '0.75rem 1rem',
             background: 'var(--card-critical-bg-color)',
             color: 'var(--card-critical-fg-color)',
@@ -471,7 +584,37 @@ function PublishToSiteTool() {
             fontSize: '0.875rem',
           }}
         >
-          Error: {message}
+          Publish all failed: {publishAllMessage}
+        </div>
+      )}
+
+      {/* Cache clear feedback */}
+      {cacheStatus === 'success' && (
+        <div
+          style={{
+            marginTop: '0.75rem',
+            padding: '0.75rem 1rem',
+            background: 'var(--card-positive-bg-color)',
+            color: 'var(--card-positive-fg-color)',
+            borderRadius: '0.375rem',
+            fontSize: '0.875rem',
+          }}
+        >
+          Success: {cacheMessage}
+        </div>
+      )}
+      {cacheStatus === 'error' && (
+        <div
+          style={{
+            marginTop: '0.75rem',
+            padding: '0.75rem 1rem',
+            background: 'var(--card-critical-bg-color)',
+            color: 'var(--card-critical-fg-color)',
+            borderRadius: '0.375rem',
+            fontSize: '0.875rem',
+          }}
+        >
+          Error: {cacheMessage}
         </div>
       )}
     </div>

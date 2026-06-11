@@ -1,9 +1,5 @@
-import { MarketingPage } from "@/app/(marketing)/_components/marketing-page";
-import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
+import { permanentRedirect } from "next/navigation";
 
-export const generateMetadata = () =>
-  metadataForPage("terms-of-service", "/about/terms-of-service");
-
-export default function TermsOfServicePage() {
-  return <MarketingPage slug="terms-of-service" />;
+export default function Page() {
+  permanentRedirect("/patients-rights-privacy/terms-of-use");
 }

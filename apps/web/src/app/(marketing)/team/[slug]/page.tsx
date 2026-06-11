@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
@@ -8,6 +10,7 @@ import { TeamMemberPortrait } from "@/components/team/team-member-portrait";
 import { Badge } from "@/components/ui/badge";
 import { getAllProviderSlugs, getProviderBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -31,13 +34,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProviderPage({ params }: Props) {
   const { slug } = await params;
-  const provider = await getProviderBySlug(slug);
+  const [provider, settings] = await Promise.all([getProviderBySlug(slug), getSiteSettings()]);
   if (!provider) notFound();
+
+  const breadcrumbs = resolveBreadcrumbs(`/team/${slug}`, undefined, settings?.showBreadcrumbs);
+  const showBreadcrumbs = breadcrumbs && breadcrumbs.length > 1;
 
   return (
     <>
       <section className="border-b border-border bg-background py-10 sm:py-14">
         <Container>
+          {showBreadcrumbs ? (
+            <nav aria-label="Breadcrumb" className="mb-6">
+              <ol className="flex flex-wrap items-center gap-y-1">
+                {breadcrumbs.map((crumb, i) => (
+                  <li key={i} className="flex items-center">
+                    {i > 0 ? (
+                      <ChevronRight aria-hidden="true" className="mx-1.5 size-3 shrink-0 text-muted-foreground/50" />
+                    ) : null}
+                    {!crumb.href ? (
+                      <span className="text-xs font-medium text-muted-foreground sm:text-sm">{crumb.label}</span>
+                    ) : (
+                      <Link href={crumb.href} className="text-xs font-medium text-muted-foreground/70 transition-colors hover:text-foreground sm:text-sm">
+                        {crumb.label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          ) : null}
           <div className="grid gap-8 lg:grid-cols-[300px_1fr] lg:gap-10">
             <div className="flex justify-center lg:justify-start">
               <TeamMemberPortrait
@@ -125,9 +151,16 @@ export default async function ProviderPage({ params }: Props) {
                   <h2 className="font-heading text-lg font-black tracking-normal text-foreground">
                     Locations
                   </h2>
-                  <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                  <ul className="mt-4 space-y-2 text-sm">
                     {provider.locations.map((location) => (
-                      <li key={location.slug}>{location.name}</li>
+                      <li key={location.slug}>
+                        <Link
+                          href={`/locations/${location.slug}`}
+                          className="text-brand-trust transition-colors hover:text-brand-action"
+                        >
+                          {location.name}
+                        </Link>
+                      </li>
                     ))}
                   </ul>
                 </div>

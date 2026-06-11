@@ -8,12 +8,12 @@ import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 import { getConditionHref, getProgramHref, getServiceHref, getTreatmentHref } from "@/lib/care-routes";
 import {
   getAllPublishedPages,
-  getFooterNav,
   getLocations,
   getNavigation,
   getPrograms,
   getProviders,
   getServices,
+  getSiteFooter,
   getSiteSettings,
 } from "@/lib/cms/content-source";
 import type { NavItem, SiteNavItem } from "@/lib/cms/types";
@@ -167,9 +167,9 @@ function SiteMapBranch({ nodes, depth = 0 }: { nodes: SiteMapNode[]; depth?: num
 }
 
 export default async function SiteMapPage() {
-  const [mainNav, footerNav, pages, services, programs, providers, locations, settings] = await Promise.all([
+  const [mainNav, footer, pages, services, programs, providers, locations, settings] = await Promise.all([
     getNavigation("main"),
-    getFooterNav(),
+    getSiteFooter(),
     getAllPublishedPages(),
     getServices(),
     getPrograms(),
@@ -181,7 +181,7 @@ export default async function SiteMapPage() {
   const links = new Map<string, SiteMapLink>();
   addLink(links, { href: "/", label: "Home" });
   addNavigationLinks(links, mainNav);
-  footerNav.forEach((group) => group.links.forEach((link) => addLink(links, link)));
+  footer?.columns?.forEach((col) => col.links.forEach((link) => addLink(links, link)));
   pages.forEach((page) => addLink(links, { href: page.path, label: page.title }));
 
   services.forEach((service) => {
@@ -195,7 +195,7 @@ export default async function SiteMapPage() {
     });
     service.medications?.forEach((medication) => {
       addLink(links, {
-        href: getTreatmentHref(medication, { serviceSlug: service.slug }),
+        href: getTreatmentHref(medication),
         label: medication.name,
       });
     });

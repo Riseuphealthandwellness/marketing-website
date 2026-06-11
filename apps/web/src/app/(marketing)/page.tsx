@@ -14,7 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return createPageMetadata({
     title: "Integrated primary care and wellness in West Virginia",
-    description: "",
+    description:
+      "Rise Up Health & Wellness provides integrated primary care, addiction medicine, and recovery support in West Virginia — all under one roof.",
     path: "/",
     site: settings ?? undefined,
   });

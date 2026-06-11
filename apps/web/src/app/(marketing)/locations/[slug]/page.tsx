@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { MapPin, Phone, Mail, Clock, Car, Accessibility, CalendarCheck } from "lucide-react";
+import { Phone, Mail, Clock, Car, Accessibility, CalendarCheck } from "lucide-react";
 
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
 import { PageHero } from "@/components/sections/page-hero";
+import { LocationMap } from "@/components/site/location-map";
 import { getAllLocationSlugs, getLocationBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
@@ -39,7 +40,11 @@ export default async function LocationPage({ params }: Props) {
   const lng = location.coordinates?.lng;
   const mapSrc =
     Number.isFinite(lat) && Number.isFinite(lng)
-      ? `/api/map/static?lat=${lat}&lng=${lng}&z=15&w=800&h=400&style=${encodeURIComponent("mapbox/streets-v12")}`
+      ? `/api/map/static?lat=${lat}&lng=${lng}&z=15&w=900&h=500&scale=2&style=${encodeURIComponent("mapbox/streets-v12")}`
+      : null;
+  const expandedMapSrc =
+    Number.isFinite(lat) && Number.isFinite(lng)
+      ? `/api/map/static?lat=${lat}&lng=${lng}&z=14&w=1600&h=900&scale=2&style=${encodeURIComponent("mapbox/streets-v12")}`
       : null;
 
   return (
@@ -131,34 +136,16 @@ export default async function LocationPage({ params }: Props) {
             </div>
 
             {/* Map */}
-            <div className="flex flex-col gap-4">
-              <div className="overflow-hidden rounded-lg border border-border">
-                {mapSrc ? (
-                  <div
-                    aria-label={`Map showing ${location.name}`}
-                    className="h-64 bg-cover bg-center lg:h-80"
-                    role="img"
-                    style={{ backgroundImage: `url(${mapSrc})` }}
-                  />
-                ) : null}
-                <div className="p-4">
-                  <p className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <MapPin className="mt-0.5 size-4 shrink-0 text-brand-warm-accent" aria-hidden="true" />
-                    <span className="whitespace-pre-line">{location.address}</span>
-                  </p>
-                  {lat && lng ? (
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-3 block text-sm font-semibold text-brand-action hover:underline"
-                    >
-                      Get directions →
-                    </a>
-                  ) : null}
-                </div>
-              </div>
-            </div>
+            {mapSrc && expandedMapSrc ? (
+              <LocationMap
+                address={location.address}
+                expandedSrc={expandedMapSrc}
+                lat={lat}
+                lng={lng}
+                locationName={location.name}
+                mapSrc={mapSrc}
+              />
+            ) : null}
           </div>
         </Container>
       </Section>

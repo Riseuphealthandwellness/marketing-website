@@ -7,6 +7,7 @@ import {homepage} from './documents/homepage'
 import {homepageV2Settings} from './documents/homepageV2Settings'
 import {location} from './documents/location'
 import {navigation} from './documents/navigation'
+import {siteFooter} from './documents/siteFooter'
 import {program} from './documents/program'
 import {provider} from './documents/provider'
 import {service} from './documents/service'
@@ -66,6 +67,7 @@ import {
 } from './objects/servicesPageContent'
 import {servicesBlock} from './objects/servicesBlock'
 import {sidebarCard} from './objects/sidebarCard'
+import {footerColumn} from './objects/footerColumn'
 import {footerDisclaimer} from './objects/footerDisclaimer'
 import {textColor} from './objects/textColor'
 import {
@@ -85,6 +87,7 @@ import { servicesPageIntro } from './objects/servicesPageIntro'
 
 export const schemaTypes = [
   siteSettings,
+  siteFooter,
   drug,
   drugReferenceAnnotation,
   navigation,
@@ -149,6 +152,7 @@ export const schemaTypes = [
   websitePageBreadcrumbs,
   servicesPageIntro,
   ctaBlock,
+  footerColumn,
   footerDisclaimer,
   serviceHighlight,
   supplementalBulletsSection,
