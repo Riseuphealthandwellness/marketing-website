@@ -11,7 +11,6 @@ export const siteSettings = defineType({
     {name: 'contact', title: 'Contact'},
     {name: 'location', title: 'Location'},
     {name: 'access', title: 'Access links'},
-    {name: 'footer', title: 'Footer'},
     {name: 'sharedContent', title: 'Shared content'},
   ],
   fields: [
@@ -99,14 +98,6 @@ export const siteSettings = defineType({
       ],
     }),
     defineField({
-      name: 'copyrightText',
-      title: 'Copyright text',
-      type: 'string',
-      group: 'footer',
-      description:
-        'Shown in the footer. Supports [year], [name], [privacy], and [terms].',
-    }),
-    defineField({
       name: 'headerCta',
       title: 'Header call to action',
       type: 'ctaButton',
@@ -132,21 +123,6 @@ export const siteSettings = defineType({
       title: 'Contact section',
       type: 'contactBandContent',
       group: 'sharedContent',
-    }),
-    defineField({
-      name: 'footerNotice',
-      title: 'Footer notice',
-      type: 'text',
-      rows: 3,
-      group: 'footer',
-    }),
-    defineField({
-      name: 'footerDisclaimers',
-      title: 'Footer disclaimers',
-      description: 'Legal and informational notices shown in small print at the bottom of every page. Each item is a separate paragraph.',
-      type: 'array',
-      group: 'footer',
-      of: [{type: 'footerDisclaimer'}],
     }),
   ],
   preview: {

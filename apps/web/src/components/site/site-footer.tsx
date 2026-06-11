@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "@/components/layout/container";
-import { getFooterNav, getSiteSettings } from "@/lib/cms/content-source";
+import { getSiteFooter, getSiteSettings } from "@/lib/cms/content-source";
 
 const copyrightTokenPattern = /(\[year\]|\[name\]|\[privacy\]|\[terms\])/g;
 
@@ -36,7 +36,7 @@ function renderCopyrightText(template: string | undefined, name: string | undefi
 }
 
 export async function SiteFooter() {
-  const [settings, footerNav] = await Promise.all([getSiteSettings(), getFooterNav()]);
+  const [settings, footer] = await Promise.all([getSiteSettings(), getSiteFooter()]);
 
   return (
     <footer className="border-t border-border bg-brand-coal text-brand-warm-white">
@@ -101,22 +101,22 @@ export async function SiteFooter() {
               </div>
             ) : null}
 
-            {settings?.footerNotice ? (
+            {footer?.footerNotice ? (
               <p className="max-w-md text-sm leading-6 text-brand-warm-white/68">
-                {settings.footerNotice}
+                {footer.footerNotice}
               </p>
             ) : null}
           </div>
 
-          {footerNav.length > 0 ? (
+          {footer?.columns && footer.columns.length > 0 ? (
             <div className="grid gap-8 sm:grid-cols-3">
-              {footerNav.map((group) => (
-                <div key={group.title}>
+              {footer.columns.map((col) => (
+                <div key={col._key ?? col.heading}>
                   <h2 className="font-heading text-base font-bold tracking-normal text-brand-warm-white sm:text-lg">
-                    {group.title}
+                    {col.heading}
                   </h2>
                   <ul className="mt-4 space-y-3">
-                    {group.links.map((link) => (
+                    {col.links.map((link) => (
                       <li key={link.href}>
                         <Link
                           className="text-sm text-brand-warm-white/72 hover:text-brand-warm-white"
@@ -137,28 +137,25 @@ export async function SiteFooter() {
 
       <div className="border-t border-white/10 bg-black/40">
         <Container className="pb-12 pt-8">
-          <div className="mb-6 flex flex-wrap items-center gap-y-2">
-            {[
-              { label: "Patient Rights & Privacy", href: "/patients-rights-privacy" },
-              { label: "Privacy Policy", href: "/patients-rights-privacy/privacy-policy" },
-              { label: "Terms of Use", href: "/patients-rights-privacy/terms-of-use" },
-              { label: "Contact Us", href: "/contact" },
-            ].map((link, i) => (
-              <span className="flex items-center" key={link.href}>
-                {i > 0 && <span aria-hidden="true" className="mx-4 text-white/20">|</span>}
-                <Link
-                  className="text-sm font-medium text-white/55 transition-colors hover:text-white/85"
-                  href={link.href}
-                >
-                  {link.label}
-                </Link>
-              </span>
-            ))}
-          </div>
+          {footer?.legalLinks && footer.legalLinks.length > 0 ? (
+            <div className="mb-6 flex flex-wrap items-center gap-y-2">
+              {footer.legalLinks.map((link, i) => (
+                <span className="flex items-center" key={link.href}>
+                  {i > 0 && <span aria-hidden="true" className="mx-4 text-white/20">|</span>}
+                  <Link
+                    className="text-sm font-medium text-white/55 transition-colors hover:text-white/85"
+                    href={link.href}
+                  >
+                    {link.label}
+                  </Link>
+                </span>
+              ))}
+            </div>
+          ) : null}
 
-          {settings?.footerDisclaimers && settings.footerDisclaimers.length > 0 ? (
+          {footer?.footerDisclaimers && footer.footerDisclaimers.length > 0 ? (
             <div className="mb-6 space-y-4">
-              {settings.footerDisclaimers.map((d, i) => (
+              {footer.footerDisclaimers.map((d, i) => (
                 <p className="text-sm leading-6 text-white/40" key={i}>
                   {d.text}
                 </p>
@@ -167,7 +164,7 @@ export async function SiteFooter() {
           ) : null}
 
           <p className="text-sm text-white/35">
-            {renderCopyrightText(settings?.copyrightText, settings?.name)}
+            {renderCopyrightText(footer?.copyrightText, settings?.name)}
           </p>
         </Container>
       </div>

@@ -29,11 +29,13 @@ function buildConditionLinks(services: Service[]): {
     service.conditions?.forEach((condition) => {
       if (!condition.slug || !condition.category) return;
       const key = `${condition.category}:${condition.slug}`;
-      conditions.set(key, {
-        key,
-        title: condition.title,
-        href: `/care/services/${condition.category}/conditions/${condition.slug}`,
-      });
+      if (!conditions.has(key)) {
+        conditions.set(key, {
+          key,
+          title: condition.title,
+          href: `/care/services/${service.slug}/conditions/${condition.slug}`,
+        });
+      }
     });
 
     service.medications?.forEach((drug: Pick<Drug, "slug" | "name" | "description">) => {

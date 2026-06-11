@@ -118,6 +118,20 @@ export type Location = {
   };
 };
 
+export type FooterColumn = {
+  _key?: string;
+  heading: string;
+  links: { label: string; href: string }[];
+};
+
+export type SiteFooter = {
+  columns?: FooterColumn[];
+  legalLinks?: { label: string; href: string }[];
+  footerNotice?: string;
+  footerDisclaimers?: { text: string }[];
+  copyrightText?: string;
+};
+
 export type PatientAccessLinks = {
   portal: string;
   scheduling: string;
@@ -128,7 +142,6 @@ export type PatientAccessLinks = {
 export type SiteSettings = {
   name: string;
   tagline?: string;
-  copyrightText?: string;
   url: string;
   phone: string;
   email: string;
@@ -143,8 +156,6 @@ export type SiteSettings = {
   accessLinks: PatientAccessLinks;
   showBreadcrumbs?: boolean;
   contactBand?: ContactBandContent;
-  footerNotice?: string;
-  footerDisclaimers?: { text: string }[];
   headerCta?: CtaButton;
   logo?: CmsImage;
 };

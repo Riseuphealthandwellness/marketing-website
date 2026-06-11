@@ -61,7 +61,7 @@ export default async function ProgramPage({ params }: Props) {
               <PortableTextContent
                 autoLinkDrugs
                 className="max-w-3xl"
-                drugReferenceHref={(drug) => getTreatmentHref(drug, { programSlug: program.slug })}
+                drugReferenceHref={(drug) => getTreatmentHref(drug)}
                 value={program.body}
               />
             ) : null}

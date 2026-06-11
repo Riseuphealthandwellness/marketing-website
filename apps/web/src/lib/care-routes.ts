@@ -25,15 +25,6 @@ export function getConditionHref(
   return `/care/${condition.category}/${condition.slug}`;
 }
 
-export function getTreatmentHref(
-  treatment: { slug: string },
-  context?: CareRouteContext,
-) {
-  if (context?.serviceSlug) {
-    return `/care/services/${context.serviceSlug}/treatments/${treatment.slug}`;
-  }
-  if (context?.programSlug) {
-    return `/care/programs/${context.programSlug}/treatments/${treatment.slug}`;
-  }
+export function getTreatmentHref(treatment: { slug: string }) {
   return `/care/medications/${treatment.slug}`;
 }

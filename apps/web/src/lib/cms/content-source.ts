@@ -18,6 +18,7 @@ import type {
   Provider,
   ReferralSettings,
   Service,
+  SiteFooter,
   SiteNavItem,
   SiteNavMegaMenu,
   SiteSettings,
@@ -76,7 +77,7 @@ function withReferenceLinkGroups(item: SiteNavMegaMenu, services: Service[]): Si
       const medicationLinks =
         service.medications?.map((medication) => ({
           label: medication.name,
-          href: getTreatmentHref(medication, { serviceSlug: service.slug }),
+          href: getTreatmentHref(medication),
           description: medication.description,
         })) ?? [];
       const links = [...conditionLinks, ...medicationLinks];
@@ -91,21 +92,9 @@ function withReferenceLinkGroups(item: SiteNavMegaMenu, services: Service[]): Si
   };
 }
 
-export async function getFooterNav(): Promise<{ title: string; links: { label: string; href: string }[] }[]> {
-  if (!isCmsConfigured) return [];
-  const slugs = ["footer-care", "footer-patients", "footer-about"];
-  const docs = await Promise.all(
-    slugs.map((slug) =>
-      sanityClient.fetch<{ title: string; items: { label: string; href: string }[] } | null>(
-        cmsQueries.navigation,
-        { id: `navigation-${slug}` },
-        sanityFetchOptions,
-      ),
-    ),
-  );
-  return docs
-    .filter((doc): doc is NonNullable<typeof doc> => doc !== null && doc.items?.length > 0)
-    .map((doc) => ({ title: doc.title, links: doc.items }));
+export async function getSiteFooter(): Promise<SiteFooter | null> {
+  if (!isCmsConfigured) return null;
+  return sanityClient.fetch<SiteFooter | null>(cmsQueries.siteFooter, {}, sanityFetchOptions);
 }
 
 export async function getMarketingPage(slug: string): Promise<MarketingPage | null> {

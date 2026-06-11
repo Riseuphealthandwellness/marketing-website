@@ -227,7 +227,6 @@ export const cmsQueries = {
   siteSettings: `*[_type == "siteSettings"][0]{
     name,
     tagline,
-    copyrightText,
     url,
     phone,
     email,
@@ -242,8 +241,6 @@ export const cmsQueries = {
     accessLinks,
     "showBreadcrumbs": coalesce(showBreadcrumbs, true),
     contactBand,
-    footerNotice,
-    footerDisclaimers[]{ text },
     headerCta,
     "logo": logo ${imageProjection}
   }`,
@@ -437,6 +434,18 @@ export const cmsQueries = {
     title,
     message,
     "link": link{ label, href }
+  }`,
+
+  siteFooter: `*[_type == "siteFooter" && _id == "siteFooter"][0]{
+    columns[]{
+      _key,
+      heading,
+      links[]{ label, href }
+    },
+    legalLinks[]{ label, href },
+    footerNotice,
+    footerDisclaimers[]{ text },
+    copyrightText
   }`,
 
   services: `*[_type == "service"] | order(coalesce(sortOrder, 9999) asc, title asc) ${serviceProjection}`,
