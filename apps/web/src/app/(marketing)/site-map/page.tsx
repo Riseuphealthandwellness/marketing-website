@@ -7,6 +7,7 @@ import { PageHero } from "@/components/sections/page-hero";
 import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 import { getConditionHref, getProgramHref, getServiceHref, getTreatmentHref } from "@/lib/care-routes";
 import {
+  getAllDrugs,
   getAllPublishedPages,
   getLocations,
   getNavigation,
@@ -42,6 +43,7 @@ const canonicalHrefAliases = new Map([
   ["/care/addiction-medicine", "/care/services/addiction-medicine"],
   ["/about/patient-rights-privacy", "/patients-rights-privacy"],
   ["/about/privacy-policy", "/patients-rights-privacy/privacy-policy"],
+  ["/about/notice-privacy-practices", "/patients-rights-privacy/notice-privacy-practices"],
   ["/about/terms-of-service", "/patients-rights-privacy/terms-of-use"],
   ["/privacy", "/patients-rights-privacy/privacy-policy"],
   ["/privacy-policy", "/patients-rights-privacy/privacy-policy"],
@@ -167,7 +169,7 @@ function SiteMapBranch({ nodes, depth = 0 }: { nodes: SiteMapNode[]; depth?: num
 }
 
 export default async function SiteMapPage() {
-  const [mainNav, footer, pages, services, programs, providers, locations, settings] = await Promise.all([
+  const [mainNav, footer, pages, services, programs, providers, locations, drugs, settings] = await Promise.all([
     getNavigation("main"),
     getSiteFooter(),
     getAllPublishedPages(),
@@ -175,6 +177,7 @@ export default async function SiteMapPage() {
     getPrograms(),
     getProviders(),
     getLocations(),
+    getAllDrugs(),
     getSiteSettings(),
   ]);
 
@@ -203,6 +206,10 @@ export default async function SiteMapPage() {
 
   programs.forEach((program) => {
     addLink(links, { href: getProgramHref(program), label: program.title });
+  });
+
+  drugs.forEach((drug) => {
+    addLink(links, { href: getTreatmentHref(drug), label: drug.name });
   });
 
   providers.forEach((provider) => {

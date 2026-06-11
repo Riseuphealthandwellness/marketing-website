@@ -1,16 +1,17 @@
 import type { MetadataRoute } from "next";
 
-import { getAllProgramSlugs, getServices, getSiteSettings } from "@/lib/cms/content-source";
+import { getAllDrugSlugs, getAllProgramSlugs, getServices, getSiteSettings } from "@/lib/cms/content-source";
 
 export const dynamic = "force-dynamic";
 
 const routes = [
   "",
   "/care",
+  "/care/services",
   "/care/services/primary-care",
   "/care/services/addiction-medicine",
+  "/care/medications",
   "/care/weight-loss-mgmt",
-  "/care/services",
   "/care/programs",
   "/about",
   "/new-patients",
@@ -21,30 +22,31 @@ const routes = [
   "/careers",
   "/team",
   "/locations",
+  "/patients-rights-privacy",
+  "/patients-rights-privacy/notice-privacy-practices",
+  "/patients-rights-privacy/privacy-policy",
+  "/patients-rights-privacy/medical-record-request-authorization",
+  "/patients-rights-privacy/terms-of-use",
   "/site-map",
-  "/home-page-2",
-  "/privacy-policy",
-  "/terms-of-service",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [settings, services, programSlugs] = await Promise.all([
+  const [settings, services, programSlugs, drugSlugs] = await Promise.all([
     getSiteSettings(),
     getServices(),
     getAllProgramSlugs(),
+    getAllDrugSlugs(),
   ]);
   const now = new Date();
   const dynamicRoutes = [
     ...services.map((service) => `/care/services/${service.slug}`),
-    ...services.flatMap((service) => [
-      ...(service.conditions?.map(
+    ...services.flatMap((service) =>
+      service.conditions?.map(
         (condition) => `/care/services/${service.slug}/conditions/${condition.slug}`,
-      ) ?? []),
-      ...(service.medications?.map(
-        (medication) => `/care/services/${service.slug}/treatments/${medication.slug}`,
-      ) ?? []),
-    ]),
+      ) ?? [],
+    ),
     ...programSlugs.map((slug) => `/care/programs/${slug}`),
+    ...drugSlugs.map((slug) => `/care/medications/${slug}`),
   ];
 
   return Array.from(new Set([...routes, ...dynamicRoutes])).map((route) => ({
