@@ -1,0 +1,94 @@
+name: PR Teardown
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+env:
+  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'marketing-website-494107' }}
+  GCP_REGION: ${{ vars.GCP_REGION || secrets.GCP_REGION || 'us-east4' }}
+  GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER || secrets.GCP_WORKLOAD_IDENTITY_PROVIDER || 'projects/494499026781/locations/global/workloadIdentityPools/riseup-mktg-github/providers/riseup-mktg-provider' }}
+  GCP_DEPLOYER_SERVICE_ACCOUNT: ${{ vars.GCP_DEPLOYER_SERVICE_ACCOUNT || secrets.GCP_DEPLOYER_SERVICE_ACCOUNT || vars.GCP_TERRAFORM_SERVICE_ACCOUNT || secrets.GCP_TERRAFORM_SERVICE_ACCOUNT || 'riseup-mktg-tf-deployer@marketing-website-494107.iam.gserviceaccount.com' }}
+  ARTIFACT_REPOSITORY_ID: ${{ vars.ARTIFACT_REPOSITORY_ID || secrets.ARTIFACT_REPOSITORY_ID || 'riseup-web' }}
+  IMAGE_NAME: marketing-website
+  SERVICE_NAME: riseup-web-pr-${{ github.event.number }}
+
+jobs:
+  teardown:
+    name: Teardown Preview
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_DEPLOYER_SERVICE_ACCOUNT }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          create_credentials_file: true
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Delete Cloud Run service
+        run: |
+          set -euo pipefail
+
+          if gcloud run services describe "${SERVICE_NAME}" \
+              --project="${GCP_PROJECT_ID}" \
+              --region="${GCP_REGION}" \
+              --quiet 2>/dev/null; then
+            gcloud run services delete "${SERVICE_NAME}" \
+              --project="${GCP_PROJECT_ID}" \
+              --region="${GCP_REGION}" \
+              --quiet
+            echo "Deleted Cloud Run service: ${SERVICE_NAME}"
+          else
+            echo "Service ${SERVICE_NAME} not found, nothing to tear down"
+          fi
+
+      - name: Delete PR container images
+        run: |
+          set -euo pipefail
+
+          registry="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REPOSITORY_ID}/${IMAGE_NAME}"
+
+          gcloud artifacts docker tags list "${registry}" \
+            --filter="tag~^pr-${{ github.event.number }}-" \
+            --format="value(tag)" \
+            --project="${GCP_PROJECT_ID}" 2>/dev/null \
+          | while read -r tag; do
+            gcloud artifacts docker images delete "${registry}:${tag}" \
+              --quiet --delete-tags 2>/dev/null || true
+          done
+
+      - name: Update PR comment with teardown notice
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          MARKER="<!-- riseup-preview-url -->"
+          BODY="${MARKER}
+          ### ✅ Preview environment removed
+
+          | | |
+          |---|---|
+          | **Service** | \`${SERVICE_NAME}\` |
+
+          _This preview environment was deleted when the PR was closed._"
+
+          COMMENT_ID=$(gh api \
+            "repos/${{ github.repository }}/issues/${{ github.event.number }}/comments" \
+            --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" \
+            | head -1)
+
+          if [ -n "${COMMENT_ID}" ]; then
+            gh api "repos/${{ github.repository }}/issues/comments/${COMMENT_ID}" \
+              -X PATCH -f body="${BODY}"
+          fi
