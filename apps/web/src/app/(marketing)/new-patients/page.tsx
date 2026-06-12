@@ -74,7 +74,7 @@ export default async function NewPatientsPage() {
       <Section>
         <Container>
           <div className="grid gap-6 lg:grid-cols-3">
-            {steps.map((step, i) => {
+            {steps.map((step) => {
               const Icon = stepIcons[step.iconName];
               const cta = resolveStepCta(step, settings, access);
               return (

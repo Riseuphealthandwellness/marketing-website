@@ -10,7 +10,7 @@ import type {
   Drug,
   Faq,
   HomepageContent,
-  HomepageV2Settings,
+  HomepageSettings,
   Location,
   MarketingPage,
   NavItemGroup,
@@ -134,10 +134,10 @@ export async function getHomepageContent(): Promise<HomepageContent | null> {
   return sanityClient.fetch<HomepageContent | null>(cmsQueries.homepage, {}, sanityFetchOptions);
 }
 
-export async function getHomepageV2Settings(): Promise<HomepageV2Settings | null> {
+export async function getHomepageSettings(): Promise<HomepageSettings | null> {
   if (!isCmsConfigured) return null;
-  return sanityClient.fetch<HomepageV2Settings | null>(
-    cmsQueries.homepageV2Settings,
+  return sanityClient.fetch<HomepageSettings | null>(
+    cmsQueries.homepageSettings,
     {},
     sanityFetchOptions,
   );

@@ -16,7 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import type { HomepageV2IconName } from "@/lib/cms/types";
+import type { HomepageIconName } from "@/lib/cms/types";
 
 export const careIconMap = {
   arrowRight: ArrowRight,
@@ -33,9 +33,9 @@ export const careIconMap = {
   sparkles: Sparkles,
   stethoscope: Stethoscope,
   usersRound: UsersRound,
-} satisfies Record<HomepageV2IconName, LucideIcon>;
+} satisfies Record<HomepageIconName, LucideIcon>;
 
-export function getCareIcon(icon?: HomepageV2IconName): LucideIcon {
+export function getCareIcon(icon?: HomepageIconName): LucideIcon {
   return careIconMap[icon ?? "heartPulse"] ?? HeartPulse;
 }
 

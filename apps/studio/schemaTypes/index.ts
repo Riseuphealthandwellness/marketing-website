@@ -4,7 +4,7 @@ import {drug} from './documents/drug'
 import {drugReferenceAnnotation} from './annotations/drugReference'
 import {faq} from './documents/faq'
 import {homepage} from './documents/homepage'
-import {homepageV2Settings} from './documents/homepageV2Settings'
+import {homepageSettings} from './documents/homepageSettings'
 import {location} from './documents/location'
 import {navigation} from './documents/navigation'
 import {siteFooter} from './documents/siteFooter'
@@ -30,19 +30,19 @@ import {homepageHero} from './objects/homepageHero'
 import {homepageCareOptions} from './objects/homepageCareOptions'
 import {homepageFeaturePanel, homepageFeaturePanelItem} from './objects/homepageFeaturePanel'
 import {
-  homepageV2AdvantageComponent,
-  homepageV2CenterCard,
-  homepageV2CareCoordinationComponent,
-  homepageV2CareMapCard,
-  homepageV2FinalCtaComponent,
-  homepageV2HeroComponent,
-  homepageV2IconCard,
-  homepageV2OfferingReference,
-  homepageV2ProcessComponent,
-  homepageV2ProcessStep,
-  homepageV2ServicesComponent,
-  homepageV2StartPathCard,
-} from './objects/homepageV2Components'
+  homepageAdvantageComponent,
+  homepageCenterCard,
+  homepageCareCoordinationComponent,
+  homepageCareMapCard,
+  homepageFinalCtaComponent,
+  homepageHeroComponent,
+  homepageIconCard,
+  homepageOfferingReference,
+  homepageProcessComponent,
+  homepageProcessStep,
+  homepageServicesComponent,
+  homepageStartPathCard,
+} from './objects/homepageComponents'
 import {link} from './objects/link'
 import {navLink} from './objects/navLink'
 import {navMegaMenu} from './objects/navMegaMenu'
@@ -92,7 +92,7 @@ export const schemaTypes = [
   drugReferenceAnnotation,
   navigation,
   homepage,
-  homepageV2Settings,
+  homepageSettings,
   websitePage,
   service,
   program,
@@ -114,18 +114,18 @@ export const schemaTypes = [
   homepageCareOptions,
   homepageFeaturePanel,
   homepageFeaturePanelItem,
-  homepageV2AdvantageComponent,
-  homepageV2CenterCard,
-  homepageV2CareCoordinationComponent,
-  homepageV2CareMapCard,
-  homepageV2FinalCtaComponent,
-  homepageV2HeroComponent,
-  homepageV2IconCard,
-  homepageV2OfferingReference,
-  homepageV2ProcessComponent,
-  homepageV2ProcessStep,
-  homepageV2ServicesComponent,
-  homepageV2StartPathCard,
+  homepageAdvantageComponent,
+  homepageCenterCard,
+  homepageCareCoordinationComponent,
+  homepageCareMapCard,
+  homepageFinalCtaComponent,
+  homepageHeroComponent,
+  homepageIconCard,
+  homepageOfferingReference,
+  homepageProcessComponent,
+  homepageProcessStep,
+  homepageServicesComponent,
+  homepageStartPathCard,
   link,
   navLink,
   navMegaMenu,

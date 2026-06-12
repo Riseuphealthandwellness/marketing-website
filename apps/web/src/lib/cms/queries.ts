@@ -299,7 +299,7 @@ export const cmsQueries = {
     seo
   }`,
 
-  homepageV2Settings: `*[_type == "homepageV2Settings" && _id == "homepageV2Settings"][0]{
+  homepageSettings: `*[_type == "homepageSettings" && _id == "homepageSettings"][0]{
     title,
     routePath,
     status,

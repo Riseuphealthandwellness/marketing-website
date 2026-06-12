@@ -16,7 +16,7 @@ import {
   getServices,
   getSiteSettings,
 } from "@/lib/cms/content-source";
-import type { HomepageV2IconName, PageBlock } from "@/lib/cms/types";
+import type { HomepageIconName, PageBlock } from "@/lib/cms/types";
 import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
 import { resolveBreadcrumbs } from "@/lib/breadcrumbs";
 
@@ -46,7 +46,7 @@ function CareModelSection({ block }: { block: CareModelBlockType }) {
         {block.items?.length ? (
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
             {block.items.map((item, index) => {
-              const Icon = getCareIcon(item.iconName as HomepageV2IconName);
+              const Icon = getCareIcon(item.iconName as HomepageIconName);
               return (
                 <article
                   className="rounded-lg border border-border bg-white p-6 shadow-sm"
