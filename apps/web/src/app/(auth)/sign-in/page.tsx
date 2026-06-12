@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth, signIn } from "@/auth";
@@ -30,7 +31,7 @@ export default async function SignInPage({
     <div className="min-h-screen bg-brand-warm-white flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center mb-8">
-          <a href="/" className="inline-block">
+          <Link href="/" className="inline-block">
             <Image
               src="/images/brand/riseup-logo-dark-nobg.png"
               alt="RiseUp"
@@ -39,7 +40,7 @@ export default async function SignInPage({
               priority
               className="h-10 w-auto"
             />
-          </a>
+          </Link>
           <p
             className="mt-2 text-xs font-semibold uppercase tracking-widest text-brand-deep-slate"
             style={{ fontFamily: "var(--font-sans)" }}
@@ -78,12 +79,12 @@ export default async function SignInPage({
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          <a
+          <Link
             href="/"
             className="hover:text-brand-action transition-colors underline underline-offset-2"
           >
             ← Back to riseupwv.com
-          </a>
+          </Link>
         </p>
       </div>
     </div>

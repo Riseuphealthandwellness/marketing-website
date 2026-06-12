@@ -437,7 +437,7 @@ function ProcessSection({ content }: { content: ProcessComponent }) {
           ) : null}
         </div>
         <div className="mt-10 grid gap-5 lg:grid-cols-3">
-          {steps?.map((step, index) => (
+          {steps?.map((step) => (
             <article className="rounded-lg border border-border bg-white p-6 shadow-sm" key={step.title}>
               <div className="flex items-center gap-4">
                 <span className="flex size-12 items-center justify-center rounded-md bg-brand-action text-brand-warm-white">

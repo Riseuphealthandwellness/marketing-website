@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { HomepageConcept } from "./_components/homepage-concept-page";
+import { HomepageConcept } from "./_components/homepage";
 import { getHomepageSettings, getPrograms, getServices, getSiteSettings } from "@/lib/cms/content-source";
 import { JsonLd, organizationJsonLd } from "@/lib/seo/json-ld";
 import { createPageMetadata } from "@/lib/seo/metadata";
