@@ -23,9 +23,11 @@
     "typecheck": "turbo typecheck",
     "typecheck:web": "npm run typecheck --workspace @riseupwv/web",
     "clean": "bash ./scripts/clean-ephemeral.sh",
-    "clean:deep": "bash ./scripts/clean-ephemeral.sh --deep"
+    "clean:deep": "bash ./scripts/clean-ephemeral.sh --deep",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
     "turbo": "^2.5.8"
   }
 }
