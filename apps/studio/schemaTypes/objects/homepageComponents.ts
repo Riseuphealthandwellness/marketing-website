@@ -24,8 +24,8 @@ const sectionIntroFields = [
   }),
 ]
 
-export const homepageV2StartPathCard = defineType({
-  name: 'homepageV2StartPathCard',
+export const homepageStartPathCard = defineType({
+  name: 'homepageStartPathCard',
   title: 'Homepage V2 start path card',
   type: 'object',
   icon: LaunchIcon,
@@ -38,8 +38,8 @@ export const homepageV2StartPathCard = defineType({
   preview: {select: {title: 'title', subtitle: 'link.href'}},
 })
 
-export const homepageV2IconCard = defineType({
-  name: 'homepageV2IconCard',
+export const homepageIconCard = defineType({
+  name: 'homepageIconCard',
   title: 'Homepage V2 icon card',
   type: 'object',
   icon: HeartIcon,
@@ -51,8 +51,8 @@ export const homepageV2IconCard = defineType({
   preview: {select: {title: 'title', subtitle: 'body'}},
 })
 
-export const homepageV2OfferingReference = defineType({
-  name: 'homepageV2OfferingReference',
+export const homepageOfferingReference = defineType({
+  name: 'homepageOfferingReference',
   title: 'Homepage V2 offering reference',
   type: 'object',
   icon: StackIcon,
@@ -73,8 +73,8 @@ export const homepageV2OfferingReference = defineType({
   },
 })
 
-export const homepageV2ProcessStep = defineType({
-  name: 'homepageV2ProcessStep',
+export const homepageProcessStep = defineType({
+  name: 'homepageProcessStep',
   title: 'Homepage V2 process step',
   type: 'object',
   icon: BlockElementIcon,
@@ -86,8 +86,8 @@ export const homepageV2ProcessStep = defineType({
   preview: {select: {title: 'title', subtitle: 'body'}},
 })
 
-export const homepageV2CareMapCard = defineType({
-  name: 'homepageV2CareMapCard',
+export const homepageCareMapCard = defineType({
+  name: 'homepageCareMapCard',
   title: 'Homepage V2 care map card',
   type: 'object',
   icon: HeartIcon,
@@ -99,8 +99,8 @@ export const homepageV2CareMapCard = defineType({
   preview: {select: {title: 'title', subtitle: 'label'}},
 })
 
-export const homepageV2CenterCard = defineType({
-  name: 'homepageV2CenterCard',
+export const homepageCenterCard = defineType({
+  name: 'homepageCenterCard',
   title: 'Homepage V2 center card',
   type: 'object',
   icon: HeartIcon,
@@ -112,8 +112,8 @@ export const homepageV2CenterCard = defineType({
   preview: {select: {title: 'title', subtitle: 'body'}},
 })
 
-export const homepageV2HeroComponent = defineType({
-  name: 'homepageV2HeroComponent',
+export const homepageHeroComponent = defineType({
+  name: 'homepageHeroComponent',
   title: 'Homepage V2 hero',
   type: 'object',
   icon: HomeIcon,
@@ -145,15 +145,15 @@ export const homepageV2HeroComponent = defineType({
       name: 'pathCards',
       title: 'Path cards',
       type: 'array',
-      of: [{type: 'homepageV2StartPathCard'}],
+      of: [{type: 'homepageStartPathCard'}],
       validation: (rule) => rule.max(3),
     }),
   ],
   preview: {select: {title: 'heading', subtitle: 'eyebrow'}},
 })
 
-export const homepageV2AdvantageComponent = defineType({
-  name: 'homepageV2AdvantageComponent',
+export const homepageAdvantageComponent = defineType({
+  name: 'homepageAdvantageComponent',
   title: 'Homepage V2 advantage section',
   type: 'object',
   icon: HeartIcon,
@@ -164,15 +164,15 @@ export const homepageV2AdvantageComponent = defineType({
       name: 'cards',
       title: 'Advantage cards',
       type: 'array',
-      of: [{type: 'homepageV2IconCard'}],
+      of: [{type: 'homepageIconCard'}],
       validation: (rule) => rule.required().min(1),
     }),
   ],
   preview: {select: {title: 'heading', subtitle: 'eyebrow'}},
 })
 
-export const homepageV2ServicesComponent = defineType({
-  name: 'homepageV2ServicesComponent',
+export const homepageServicesComponent = defineType({
+  name: 'homepageServicesComponent',
   title: 'Homepage V2 services section',
   type: 'object',
   icon: StackIcon,
@@ -192,15 +192,15 @@ export const homepageV2ServicesComponent = defineType({
       type: 'array',
       description:
         'Ordered list sourced from the central Content > Services and Content > Programs documents.',
-      of: [{type: 'homepageV2OfferingReference'}],
+      of: [{type: 'homepageOfferingReference'}],
       validation: (rule) => rule.required().min(1),
     }),
   ],
   preview: {select: {title: 'heading', subtitle: 'eyebrow'}},
 })
 
-export const homepageV2ProcessComponent = defineType({
-  name: 'homepageV2ProcessComponent',
+export const homepageProcessComponent = defineType({
+  name: 'homepageProcessComponent',
   title: 'Homepage V2 process section',
   type: 'object',
   icon: BlockElementIcon,
@@ -211,15 +211,15 @@ export const homepageV2ProcessComponent = defineType({
       name: 'steps',
       title: 'Steps',
       type: 'array',
-      of: [{type: 'homepageV2ProcessStep'}],
+      of: [{type: 'homepageProcessStep'}],
       validation: (rule) => rule.required().min(1),
     }),
   ],
   preview: {select: {title: 'heading', subtitle: 'eyebrow'}},
 })
 
-export const homepageV2CareCoordinationComponent = defineType({
-  name: 'homepageV2CareCoordinationComponent',
+export const homepageCareCoordinationComponent = defineType({
+  name: 'homepageCareCoordinationComponent',
   title: 'Homepage V2 care coordination section',
   type: 'object',
   icon: HeartIcon,
@@ -229,21 +229,21 @@ export const homepageV2CareCoordinationComponent = defineType({
     defineField({
       name: 'centerCard',
       title: 'Center card',
-      type: 'homepageV2CenterCard',
+      type: 'homepageCenterCard',
     }),
     defineField({
       name: 'careMapCards',
       title: 'Care map cards',
       type: 'array',
-      of: [{type: 'homepageV2CareMapCard'}],
+      of: [{type: 'homepageCareMapCard'}],
       validation: (rule) => rule.required().min(1),
     }),
   ],
   preview: {select: {title: 'heading', subtitle: 'eyebrow'}},
 })
 
-export const homepageV2FinalCtaComponent = defineType({
-  name: 'homepageV2FinalCtaComponent',
+export const homepageFinalCtaComponent = defineType({
+  name: 'homepageFinalCtaComponent',
   title: 'Homepage V2 final CTA',
   type: 'object',
   icon: LaunchIcon,

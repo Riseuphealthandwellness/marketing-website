@@ -58,7 +58,7 @@ export type Service = {
   slug: string;
   title: string;
   description: string;
-  icon?: HomepageV2IconName;
+  icon?: HomepageIconName;
   cardColor?: string;
   cardEyebrow?: string;
   sortOrder?: number;
@@ -74,7 +74,7 @@ export type Program = {
   slug: string;
   title: string;
   description: string;
-  icon?: HomepageV2IconName;
+  icon?: HomepageIconName;
   cardColor?: string;
   cardEyebrow?: string;
   sortOrder?: number;
@@ -535,7 +535,7 @@ export type HomepageContent = {
   seo?: SeoFields;
 };
 
-export type HomepageV2IconName =
+export type HomepageIconName =
   | 'arrowRight'
   | 'brain'
   | 'checkCircle'
@@ -551,26 +551,26 @@ export type HomepageV2IconName =
   | 'stethoscope'
   | 'usersRound';
 
-export type HomepageV2Link = {
+export type HomepageLink = {
   label: string;
   href: string;
   description?: string;
 };
 
-export type HomepageV2StartPathCard = {
-  icon: HomepageV2IconName;
+export type HomepageStartPathCard = {
+  icon: HomepageIconName;
   title: string;
   body: string;
-  link: HomepageV2Link;
+  link: HomepageLink;
 };
 
-export type HomepageV2IconCard = {
-  icon: HomepageV2IconName;
+export type HomepageIconCard = {
+  icon: HomepageIconName;
   title: string;
   body: string;
 };
 
-export type HomepageV2Offering = {
+export type HomepageOffering = {
   _key?: string;
   item?: {
     _id: string;
@@ -578,86 +578,86 @@ export type HomepageV2Offering = {
     slug: string;
     title: string;
     description: string;
-    icon?: HomepageV2IconName;
+    icon?: HomepageIconName;
     cardEyebrow?: string;
     audience?: string;
     href?: string;
   };
 };
 
-export type HomepageV2ProcessStep = {
-  icon: HomepageV2IconName;
+export type HomepageProcessStep = {
+  icon: HomepageIconName;
   title: string;
   body: string;
 };
 
-export type HomepageV2CareMapCard = {
-  icon: HomepageV2IconName;
+export type HomepageCareMapCard = {
+  icon: HomepageIconName;
   title: string;
   label?: string;
 };
 
-export type HomepageV2Component =
+export type HomepageComponent =
   | {
-      _type: 'homepageV2HeroComponent';
+      _type: 'homepageHeroComponent';
       enabled?: boolean;
       eyebrow?: string;
       heading: string;
       description?: string;
       backgroundImage?: CmsImage;
       buttons?: CtaButton[];
-      pathCards?: HomepageV2StartPathCard[];
+      pathCards?: HomepageStartPathCard[];
     }
   | {
-      _type: 'homepageV2AdvantageComponent';
+      _type: 'homepageAdvantageComponent';
       enabled?: boolean;
       eyebrow?: string;
       heading: string;
       description?: string;
-      cards?: HomepageV2IconCard[];
+      cards?: HomepageIconCard[];
     }
   | {
-      _type: 'homepageV2ServicesComponent';
+      _type: 'homepageServicesComponent';
       enabled?: boolean;
       eyebrow?: string;
       heading: string;
       description?: string;
       featureImage?: CmsImage;
-      offerings?: HomepageV2Offering[];
+      offerings?: HomepageOffering[];
     }
   | {
-      _type: 'homepageV2ProcessComponent';
+      _type: 'homepageProcessComponent';
       enabled?: boolean;
       eyebrow?: string;
       heading: string;
       description?: string;
-      steps?: HomepageV2ProcessStep[];
+      steps?: HomepageProcessStep[];
     }
   | {
-      _type: 'homepageV2CareCoordinationComponent';
+      _type: 'homepageCareCoordinationComponent';
       enabled?: boolean;
       eyebrow?: string;
       heading: string;
       description?: string;
       centerCard?: {
-        icon: HomepageV2IconName;
+        icon: HomepageIconName;
         title: string;
         body?: string;
       };
-      careMapCards?: HomepageV2CareMapCard[];
+      careMapCards?: HomepageCareMapCard[];
     }
   | {
-      _type: 'homepageV2FinalCtaComponent';
+      _type: 'homepageFinalCtaComponent';
       enabled?: boolean;
       eyebrow?: string;
       heading: string;
       buttons?: CtaButton[];
     };
 
-export type HomepageV2Settings = {
+export type HomepageSettings = {
   title: string;
   routePath: string;
   status: 'draft' | 'published';
-  components?: HomepageV2Component[];
+  components?: HomepageComponent[];
   seo?: SeoFields;
 };

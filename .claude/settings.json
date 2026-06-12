@@ -14,7 +14,18 @@
       "Bash(sed -i '' 's/getTreatmentHref\\(drug, { serviceSlug: service\\\\.slug }\\)/getTreatmentHref\\(drug\\)/g' /Users/evankohout/projects/RiseUp/marketing-website/apps/web/src/app/\\\\\\(marketing\\\\\\)/care/services/\\\\[slug\\\\]/page.tsx)",
       "Bash(sed -i '' 's/getTreatmentHref\\(medication, { serviceSlug: service\\\\.slug }\\)/getTreatmentHref\\(medication\\)/g' /Users/evankohout/projects/RiseUp/marketing-website/apps/web/src/app/\\\\\\(marketing\\\\\\)/care/services/\\\\[slug\\\\]/page.tsx)",
       "Bash(sed -i '' 's/getTreatmentHref\\(med, { serviceSlug }\\)/getTreatmentHref\\(med\\)/g' /Users/evankohout/projects/RiseUp/marketing-website/apps/web/src/app/\\\\\\(marketing\\\\\\)/_components/condition-detail-page.tsx)",
-      "Bash(sed -i '' 's/getTreatmentHref\\(medication, { serviceSlug: service\\\\.slug }\\)/getTreatmentHref\\(medication\\)/g' /Users/evankohout/projects/RiseUp/marketing-website/apps/web/src/app/\\\\\\(marketing\\\\\\)/site-map/page.tsx)"
+      "Bash(sed -i '' 's/getTreatmentHref\\(medication, { serviceSlug: service\\\\.slug }\\)/getTreatmentHref\\(medication\\)/g' /Users/evankohout/projects/RiseUp/marketing-website/apps/web/src/app/\\\\\\(marketing\\\\\\)/site-map/page.tsx)",
+      "Bash(cat .env)",
+      "Bash(cat .env.local)",
+      "Bash(curl -s \"https://k23sgnrq.api.sanity.io/v2025-01-01/data/query/production?query=*%5B_id+%3D%3D+%22homepageV2Settings%22%5D%5B0%5D\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.keys\\(\\)\\)\\)\")",
+      "Bash(npx --yes @sanity/cli documents get homepageV2Settings --dataset production --project k23sgnrq --with-user-token)",
+      "Bash(node -e \"console.log\\(process.versions.node\\)\")",
+      "Bash(nvm list *)",
+      "Bash(curl -s \"https://k23sgnrq.api.sanity.io/v2025-01-01/data/query/production?query=*%5B_id+%3D%3D+%22homepageV2Settings%22%5D%5B0%5D%7Btitle%2CroutePath%7D\")",
+      "Bash(curl -s \"https://k23sgnrq.api.sanity.io/v2025-01-01/data/query/production?query=*%5B_id+%3D%3D+%22drafts.homepageV2Settings%22%5D%5B0%5D%7B_id%2Ctitle%2CroutePath%7D\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\)['result']; json.dump\\(d, open\\('/tmp/hp-raw.json','w'\\), indent=2\\); print\\('fetched ok, _id:', d['_id']\\)\")",
+      "Bash(curl -s \"https://k23sgnrq.api.sanity.io/v2025-01-01/data/query/production?query=*%5B_type+%3D%3D+%22websitePage%22+%26%26+key+%3D%3D+%22team%22%5D%5B0%5D%7Btitle%2Cdescription%2Cblocks%7D\")"
     ]
   }
 }

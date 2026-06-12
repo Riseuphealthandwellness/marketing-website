@@ -22,9 +22,12 @@ import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
 import { getProgramHref, getServiceHref } from "@/lib/care-routes";
 import type {
-  HomepageV2Component,
-  HomepageV2IconName,
-  HomepageV2Settings,
+  HomepageComponent,
+  HomepageIconName,
+  HomepageOffering,
+  HomepageSettings,
+  Program,
+  Service,
 } from "@/lib/cms/types";
 import { cn } from "@/lib/utils";
 
@@ -45,17 +48,17 @@ const iconMap = {
   sparkles: Sparkles,
   stethoscope: Stethoscope,
   usersRound: UsersRound,
-} satisfies Record<HomepageV2IconName, Icon>;
+} satisfies Record<HomepageIconName, Icon>;
 
-function getIcon(iconName?: HomepageV2IconName) {
+function getIcon(iconName?: HomepageIconName) {
   return iconMap[iconName ?? "heartPulse"] ?? HeartPulse;
 }
 
-function HomepageV2Icon({
+function HomepageIcon({
   name,
   className,
 }: {
-  name?: HomepageV2IconName;
+  name?: HomepageIconName;
   className?: string;
 }) {
   return createElement(getIcon(name), { "aria-hidden": true, className });
@@ -75,7 +78,7 @@ function IconTile({
   body,
   className,
 }: {
-  icon?: HomepageV2IconName;
+  icon?: HomepageIconName;
   title: string;
   body: string;
   className?: string;
@@ -83,7 +86,7 @@ function IconTile({
   return (
     <article className={cn("rounded-lg border border-border bg-white p-5 shadow-sm", className)}>
       <span className="flex size-12 items-center justify-center rounded-md bg-brand-trust text-brand-soft-accent">
-        <HomepageV2Icon className="size-6" name={icon} />
+        <HomepageIcon className="size-6" name={icon} />
       </span>
       <h3 className="mt-4 font-heading text-xl font-black tracking-normal text-brand-coal">
         {title}
@@ -100,7 +103,7 @@ function StartPathCard({
   href,
   label,
 }: {
-  icon?: HomepageV2IconName;
+  icon?: HomepageIconName;
   title: string;
   body: string;
   href: string;
@@ -110,7 +113,7 @@ function StartPathCard({
     <article className="rounded-lg border border-white/18 bg-white/88 p-5 text-brand-coal shadow-[0_22px_54px_rgb(31_28_25_/_22%)] backdrop-blur-sm">
       <div className="flex items-center gap-3">
         <span className="flex size-11 items-center justify-center rounded-md bg-brand-warm-white text-brand-action">
-          <HomepageV2Icon className="size-5" name={icon} />
+          <HomepageIcon className="size-5" name={icon} />
         </span>
         <h3 className="font-heading text-xl font-black tracking-normal">{title}</h3>
       </div>
@@ -133,7 +136,7 @@ function ServiceFeatureCard({
   href,
   eyebrow,
 }: {
-  icon?: HomepageV2IconName;
+  icon?: HomepageIconName;
   title: string;
   body: string;
   href: string;
@@ -145,7 +148,7 @@ function ServiceFeatureCard({
       href={href}
     >
       <span className="flex size-13 items-center justify-center bg-brand-trust text-brand-soft-accent transition-colors duration-200 group-hover:bg-brand-action group-hover:text-brand-warm-white">
-        <HomepageV2Icon
+        <HomepageIcon
           className="size-6 transition-transform duration-200 group-hover:scale-110"
           name={icon}
         />
@@ -180,15 +183,15 @@ function WaveDivider() {
   );
 }
 
-type HeroComponent = Extract<HomepageV2Component, { _type: "homepageV2HeroComponent" }>;
-type AdvantageComponent = Extract<HomepageV2Component, { _type: "homepageV2AdvantageComponent" }>;
-type ServicesComponent = Extract<HomepageV2Component, { _type: "homepageV2ServicesComponent" }>;
-type ProcessComponent = Extract<HomepageV2Component, { _type: "homepageV2ProcessComponent" }>;
+type HeroComponent = Extract<HomepageComponent, { _type: "homepageHeroComponent" }>;
+type AdvantageComponent = Extract<HomepageComponent, { _type: "homepageAdvantageComponent" }>;
+type ServicesComponent = Extract<HomepageComponent, { _type: "homepageServicesComponent" }>;
+type ProcessComponent = Extract<HomepageComponent, { _type: "homepageProcessComponent" }>;
 type CareCoordinationComponent = Extract<
-  HomepageV2Component,
-  { _type: "homepageV2CareCoordinationComponent" }
+  HomepageComponent,
+  { _type: "homepageCareCoordinationComponent" }
 >;
-type FinalCtaComponent = Extract<HomepageV2Component, { _type: "homepageV2FinalCtaComponent" }>;
+type FinalCtaComponent = Extract<HomepageComponent, { _type: "homepageFinalCtaComponent" }>;
 
 function Hero({ content }: { content: HeroComponent }) {
   const buttons = content.buttons ?? [];
@@ -307,8 +310,30 @@ function AdvantageSection({ content }: { content: AdvantageComponent }) {
   );
 }
 
-function ServicesSection({ content }: { content: ServicesComponent }) {
-  const offerings = content.offerings?.filter((offering) => offering.item) ?? [];
+function servicesToOfferings(services: Service[], programs: Program[]): HomepageOffering[] {
+  return [
+    ...services.map((s) => ({
+      _key: s._id,
+      item: { _id: s._id, _type: "service" as const, slug: s.slug, title: s.title, description: s.description, icon: s.icon, cardEyebrow: s.cardEyebrow, href: s.href },
+    })),
+    ...programs.map((p) => ({
+      _key: p._id ?? p.slug,
+      item: { _id: p._id ?? p.slug, _type: "program" as const, slug: p.slug, title: p.title, description: p.description, icon: p.icon, cardEyebrow: p.cardEyebrow, audience: p.audience, href: p.href },
+    })),
+  ];
+}
+
+function ServicesSection({
+  content,
+  allServices,
+  allPrograms,
+}: {
+  content: ServicesComponent;
+  allServices: Service[];
+  allPrograms: Program[];
+}) {
+  const curated = content.offerings?.filter((offering) => offering.item) ?? [];
+  const offerings = curated.length > 0 ? curated : servicesToOfferings(allServices, allPrograms);
   const featureImage = content.featureImage;
 
   return (
@@ -416,7 +441,7 @@ function ProcessSection({ content }: { content: ProcessComponent }) {
             <article className="rounded-lg border border-border bg-white p-6 shadow-sm" key={step.title}>
               <div className="flex items-center gap-4">
                 <span className="flex size-12 items-center justify-center rounded-md bg-brand-action text-brand-warm-white">
-                  <HomepageV2Icon className="size-7" name={step.icon} />
+                  <HomepageIcon className="size-7" name={step.icon} />
                 </span>
               </div>
               <h3 className="mt-5 font-heading text-2xl font-black tracking-normal text-brand-coal">
@@ -515,7 +540,7 @@ function TrustBand({ content }: { content: CareCoordinationComponent }) {
                       className="rounded-lg border border-brand-trust/14 bg-white p-4 text-brand-coal shadow-sm"
                       key={`${card.title}-${card.label}`}
                     >
-                      <HomepageV2Icon className="size-7 text-brand-action" name={card.icon} />
+                      <HomepageIcon className="size-7 text-brand-action" name={card.icon} />
                       <p className="mt-3 font-heading text-lg font-black">{card.title}</p>
                       {card.label ? (
                         <p className="mt-1 text-xs font-bold uppercase text-brand-trust/64">
@@ -528,7 +553,7 @@ function TrustBand({ content }: { content: CareCoordinationComponent }) {
                 {centerCard ? (
                   <div className="relative rounded-lg border border-brand-emphasis/45 bg-white p-5 text-center text-brand-coal shadow-[0_22px_48px_rgb(31_28_25_/_14%)]">
                     <span className="mx-auto flex size-14 items-center justify-center rounded-md bg-brand-action text-brand-warm-white motion-safe:animate-pulse">
-                      <HomepageV2Icon className="size-8" name={centerCard.icon} />
+                      <HomepageIcon className="size-8" name={centerCard.icon} />
                     </span>
                     <p className="mt-4 font-heading text-2xl font-black tracking-normal">
                       {centerCard.title}
@@ -544,7 +569,7 @@ function TrustBand({ content }: { content: CareCoordinationComponent }) {
                       className="rounded-lg border border-brand-trust/14 bg-white p-4 text-brand-coal shadow-sm"
                       key={`${card.title}-${card.label}`}
                     >
-                      <HomepageV2Icon className="size-7 text-brand-action" name={card.icon} />
+                      <HomepageIcon className="size-7 text-brand-action" name={card.icon} />
                       <p className="mt-3 font-heading text-lg font-black">{card.title}</p>
                       {card.label ? (
                         <p className="mt-1 text-xs font-bold uppercase text-brand-trust/64">
@@ -611,38 +636,42 @@ function FinalBand({ content }: { content: FinalCtaComponent }) {
   );
 }
 
-function renderComponent(component: HomepageV2Component) {
+function renderComponent(component: HomepageComponent, allServices: Service[], allPrograms: Program[]) {
   if (component.enabled === false) return null;
 
   switch (component._type) {
-    case "homepageV2HeroComponent":
+    case "homepageHeroComponent":
       return <Hero content={component} key={component._type} />;
-    case "homepageV2AdvantageComponent":
+    case "homepageAdvantageComponent":
       return <AdvantageSection content={component} key={component._type} />;
-    case "homepageV2ServicesComponent":
-      return <ServicesSection content={component} key={component._type} />;
-    case "homepageV2ProcessComponent":
+    case "homepageServicesComponent":
+      return <ServicesSection content={component} allServices={allServices} allPrograms={allPrograms} key={component._type} />;
+    case "homepageProcessComponent":
       return <ProcessSection content={component} key={component._type} />;
-    case "homepageV2CareCoordinationComponent":
+    case "homepageCareCoordinationComponent":
       return <TrustBand content={component} key={component._type} />;
-    case "homepageV2FinalCtaComponent":
+    case "homepageFinalCtaComponent":
       return <FinalBand content={component} key={component._type} />;
     default:
       return null;
   }
 }
 
-export function MountainWellnessHomepageConcept({
+export function HomepageConcept({
   settings,
+  allServices,
+  allPrograms,
 }: {
-  settings: HomepageV2Settings;
+  settings: HomepageSettings;
+  allServices: Service[];
+  allPrograms: Program[];
 }) {
   const components = settings.components ?? [];
 
   return (
     <>
       {components.map((component, index) => (
-        <div key={`${component._type}-${index}`}>{renderComponent(component)}</div>
+        <div key={`${component._type}-${index}`}>{renderComponent(component, allServices, allPrograms)}</div>
       ))}
     </>
   );

@@ -30,9 +30,15 @@ export default async function TeamPage() {
         title={page.title}
         description={page?.description}
       />
-      {page?.blocks && page.blocks.length > 0 ? <PageBlocks blocks={page.blocks} /> : null}
+      {page?.blocks && page.blocks.length > 0 ? (
+        <div className="pb-4 pt-6 sm:pb-6 sm:pt-8">
+          <Container>
+            <PageBlocks blocks={page.blocks} compact />
+          </Container>
+        </div>
+      ) : null}
 
-      <Section>
+      <Section className="pt-4 sm:pt-6">
         <Container>
           {teamMembers.length === 0 ? (
             page?.emptyStateText ? <p className="text-muted-foreground">{page.emptyStateText}</p> : null

@@ -1,41 +1,39 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-import { CareModelSection } from "@/components/sections/care-model-section";
-import { ContactBand } from "@/components/sections/contact-band";
-import { HighlightsGrid } from "@/components/sections/highlights-grid";
-import { HomeHero } from "@/components/sections/home-hero";
-import { ReferralBand } from "@/components/sections/referral-band";
-import { getCareModelBlock, getHomepageContent, getSiteSettings } from "@/lib/cms/content-source";
+import { HomepageConcept } from "./_components/homepage-concept-page";
+import { getHomepageSettings, getPrograms, getServices, getSiteSettings } from "@/lib/cms/content-source";
 import { JsonLd, organizationJsonLd } from "@/lib/seo/json-ld";
 import { createPageMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [settings, siteSettings] = await Promise.all([
+    getHomepageSettings(),
+    getSiteSettings(),
+  ]);
 
   return createPageMetadata({
-    title: "Integrated primary care and wellness in West Virginia",
-    description:
-      "Rise Up Health & Wellness provides integrated primary care, addiction medicine, and recovery support in West Virginia — all under one roof.",
+    title: settings?.seo?.title ?? settings?.title ?? "Integrated primary care and wellness in West Virginia",
+    description: settings?.seo?.description ?? "Rise Up Health & Wellness provides integrated primary care, addiction medicine, and recovery support in West Virginia — all under one roof.",
     path: "/",
-    site: settings ?? undefined,
+    site: siteSettings ?? undefined,
   });
 }
 
 export default async function HomePage() {
-  const [homepage, settings, careModel] = await Promise.all([
-    getHomepageContent(),
+  const [settings, allServices, allPrograms, siteSettings] = await Promise.all([
+    getHomepageSettings(),
+    getServices(),
+    getPrograms(),
     getSiteSettings(),
-    getCareModelBlock(),
   ]);
+
+  if (!settings?.components?.length) notFound();
 
   return (
     <>
-      {settings ? <JsonLd data={organizationJsonLd(settings)} /> : null}
-      <HomeHero {...homepage?.hero} featurePanel={homepage?.heroFeaturePanel} />
-      {careModel ? <CareModelSection {...careModel} /> : null}
-      <ReferralBand cta={homepage?.referralCta} accessLinks={settings?.accessLinks} />
-      <HighlightsGrid content={homepage?.careOptions} services={homepage?.serviceHighlights} />
-      <ContactBand />
+      {siteSettings ? <JsonLd data={organizationJsonLd(siteSettings)} /> : null}
+      <HomepageConcept settings={settings} allServices={allServices} allPrograms={allPrograms} />
     </>
   );
 }

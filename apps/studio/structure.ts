@@ -89,23 +89,17 @@ export const structure: StructureResolver = (S) =>
     .title('Website Content Management')
     .items([
       S.listItem()
-        .title('Pages')
+        .title('Page Settings')
         .icon(DocumentsIcon)
         .child(
           S.list()
-            .title('Pages')
+            .title('Page Settings')
             .items([
               singletonListItem(S, {
                 title: 'Homepage',
                 icon: HomeIcon,
-                schemaType: 'homepage',
-                documentId: 'singleton-homepage',
-              }),
-              singletonListItem(S, {
-                title: 'Home Page 2',
-                icon: HomeIcon,
-                schemaType: 'homepageV2Settings',
-                documentId: 'homepageV2Settings',
+                schemaType: 'homepageSettings',
+                documentId: 'homepageSettings',
               }),
               S.divider(),
               S.listItem()
@@ -250,8 +244,14 @@ export const structure: StructureResolver = (S) =>
               S.documentTypeListItem('drug')
                 .title('Treatments & medications')
                 .icon(TagIcon),
+              S.divider(),
+              S.documentTypeListItem('provider').title('Team members').icon(UsersIcon),
+              S.documentTypeListItem('location').title('Locations').icon(PinIcon),
+              S.documentTypeListItem('faq').title('FAQs').icon(HelpCircleIcon),
             ]),
         ),
+
+      S.divider(),
 
       S.listItem()
         .title('Site administration')

@@ -1,0 +1,210 @@
+name: PR Preview Environment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+env:
+  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'marketing-website-494107' }}
+  GCP_REGION: ${{ vars.GCP_REGION || secrets.GCP_REGION || 'us-east4' }}
+  GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER || secrets.GCP_WORKLOAD_IDENTITY_PROVIDER || 'projects/494499026781/locations/global/workloadIdentityPools/riseup-mktg-github/providers/riseup-mktg-provider' }}
+  GCP_DEPLOYER_SERVICE_ACCOUNT: ${{ vars.GCP_DEPLOYER_SERVICE_ACCOUNT || secrets.GCP_DEPLOYER_SERVICE_ACCOUNT || vars.GCP_TERRAFORM_SERVICE_ACCOUNT || secrets.GCP_TERRAFORM_SERVICE_ACCOUNT || 'riseup-mktg-tf-deployer@marketing-website-494107.iam.gserviceaccount.com' }}
+  ARTIFACT_REPOSITORY_ID: ${{ vars.ARTIFACT_REPOSITORY_ID || secrets.ARTIFACT_REPOSITORY_ID || 'riseup-web' }}
+  RUNTIME_SERVICE_ACCOUNT_ID: ${{ vars.RUNTIME_SERVICE_ACCOUNT_ID || secrets.RUNTIME_SERVICE_ACCOUNT_ID || 'riseup-web-runtime' }}
+  CONTACT_TO_EMAIL: ${{ vars.CONTACT_TO_EMAIL || 'contact@riseupwv.com' }}
+  REFERRAL_TO_EMAIL: ${{ vars.REFERRAL_TO_EMAIL || 'referrals@riseupwv.com' }}
+  CONTACT_FROM_EMAIL: ${{ vars.CONTACT_FROM_EMAIL || 'Rise Up Website <contact@riseupwv.com>' }}
+  AUTH_ALLOWED_DOMAINS: ${{ vars.AUTH_ALLOWED_DOMAINS || '' }}
+  SANITY_STUDIO_URL: ${{ vars.SANITY_STUDIO_URL || '' }}
+  IMAGE_NAME: marketing-website
+  SERVICE_NAME: riseup-web-pr-${{ github.event.number }}
+
+jobs:
+  deploy-preview:
+    name: Deploy PR Preview
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: pr-preview-${{ github.event.number }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_DEPLOYER_SERVICE_ACCOUNT }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          create_credentials_file: true
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Set image tag
+        id: image
+        run: |
+          registry="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REPOSITORY_ID}"
+          echo "tag=${registry}/${IMAGE_NAME}:pr-${{ github.event.number }}-${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
+
+      - name: Build and push container image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.image.outputs.tag }}
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        run: |
+          set -euo pipefail
+
+          # Deploy the service (AUTH_URL set to placeholder; updated below once URL is known)
+          gcloud run deploy "${SERVICE_NAME}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --image="${{ steps.image.outputs.tag }}" \
+            --service-account="${RUNTIME_SERVICE_ACCOUNT_ID}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
+            --set-env-vars="CONTACT_TO_EMAIL=${CONTACT_TO_EMAIL},REFERRAL_TO_EMAIL=${REFERRAL_TO_EMAIL},CONTACT_FROM_EMAIL=${CONTACT_FROM_EMAIL},AUTH_TRUST_HOST=true,AUTH_URL=https://placeholder,AUTH_ALLOWED_DOMAINS=${AUTH_ALLOWED_DOMAINS},SANITY_STUDIO_URL=${SANITY_STUDIO_URL},NEXT_PUBLIC_GA_MEASUREMENT_ID=,SANITY_PROJECT_ID=k23sgnrq,SANITY_DATASET=production,SANITY_API_VERSION=2025-01-01,ANALYTICS_PROVIDER=none" \
+            --set-secrets="SANITY_REVALIDATE_SECRET=SANITY_REVALIDATE_SECRET:latest,RESEND_API_KEY=RESEND_API_KEY:latest,MAPBOX_ACCESS_TOKEN=MAPBOX_ACCESS_TOKEN:latest,AUTH_SECRET=AUTH_SECRET:latest,AUTH_GOOGLE_ID=AUTH_GOOGLE_ID:latest,AUTH_GOOGLE_SECRET=AUTH_GOOGLE_SECRET:latest" \
+            --port=3000 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --no-invoker-iam-check \
+            --quiet
+
+          SERVICE_URL=$(gcloud run services describe "${SERVICE_NAME}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --format='value(status.url)')
+
+          echo "url=${SERVICE_URL}" >> "${GITHUB_OUTPUT}"
+
+          # Patch AUTH_URL now that the real URL is known
+          gcloud run services update "${SERVICE_NAME}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --update-env-vars="AUTH_URL=${SERVICE_URL}" \
+            --quiet
+
+      - name: Comment on PR with preview URL
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          MARKER="<!-- riseup-preview-url -->"
+          BODY="${MARKER}
+          ### 🚀 Preview environment deployed
+
+          | | |
+          |---|---|
+          | **URL** | ${{ steps.deploy.outputs.url }} |
+          | **Commit** | \`${GITHUB_SHA::7}\` |
+          | **Service** | \`${SERVICE_NAME}\` |
+
+          _Deployed to Cloud Run. Tears down automatically when this PR is closed._"
+
+          COMMENT_ID=$(gh api \
+            "repos/${{ github.repository }}/issues/${{ github.event.number }}/comments" \
+            --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" \
+            | head -1)
+
+          if [ -n "${COMMENT_ID}" ]; then
+            gh api "repos/${{ github.repository }}/issues/comments/${COMMENT_ID}" \
+              -X PATCH -f body="${BODY}"
+          else
+            gh api "repos/${{ github.repository }}/issues/${{ github.event.number }}/comments" \
+              -X POST -f body="${BODY}"
+          fi
+
+  teardown-preview:
+    name: Teardown PR Preview
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: pr-preview-${{ github.event.number }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_DEPLOYER_SERVICE_ACCOUNT }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          create_credentials_file: true
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Delete Cloud Run service
+        run: |
+          set -euo pipefail
+
+          if gcloud run services describe "${SERVICE_NAME}" \
+              --project="${GCP_PROJECT_ID}" \
+              --region="${GCP_REGION}" \
+              --quiet 2>/dev/null; then
+            gcloud run services delete "${SERVICE_NAME}" \
+              --project="${GCP_PROJECT_ID}" \
+              --region="${GCP_REGION}" \
+              --quiet
+            echo "Deleted Cloud Run service: ${SERVICE_NAME}"
+          else
+            echo "Service ${SERVICE_NAME} not found, nothing to tear down"
+          fi
+
+      - name: Delete PR container images
+        run: |
+          set -euo pipefail
+
+          registry="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REPOSITORY_ID}/${IMAGE_NAME}"
+
+          gcloud artifacts docker tags list "${registry}" \
+            --filter="tag~^pr-${{ github.event.number }}-" \
+            --format="value(tag)" \
+            --project="${GCP_PROJECT_ID}" 2>/dev/null \
+          | while read -r tag; do
+            gcloud artifacts docker images delete "${registry}:${tag}" \
+              --quiet --delete-tags 2>/dev/null || true
+          done
+
+      - name: Update PR comment with teardown notice
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          MARKER="<!-- riseup-preview-url -->"
+          BODY="${MARKER}
+          ### ✅ Preview environment removed
+
+          | | |
+          |---|---|
+          | **Service** | \`${SERVICE_NAME}\` |
+
+          _This preview environment was deleted when the PR was closed._"
+
+          COMMENT_ID=$(gh api \
+            "repos/${{ github.repository }}/issues/${{ github.event.number }}/comments" \
+            --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" \
+            | head -1)
+
+          if [ -n "${COMMENT_ID}" ]; then
+            gh api "repos/${{ github.repository }}/issues/comments/${COMMENT_ID}" \
+              -X PATCH -f body="${BODY}"
+          fi

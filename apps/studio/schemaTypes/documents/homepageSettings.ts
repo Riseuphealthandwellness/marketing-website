@@ -1,9 +1,9 @@
 import {HomeIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
 
-export const homepageV2Settings = defineType({
-  name: 'homepageV2Settings',
-  title: 'Homepage V2 settings',
+export const homepageSettings = defineType({
+  name: 'homepageSettings',
+  title: 'Homepage settings',
   type: 'document',
   icon: HomeIcon,
   fields: [
@@ -11,14 +11,14 @@ export const homepageV2Settings = defineType({
       name: 'title',
       title: 'Internal title',
       type: 'string',
-      initialValue: 'Home Page 2',
+      initialValue: 'Homepage',
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'routePath',
       title: 'Route path',
       type: 'string',
-      initialValue: '/home-page-2',
+      initialValue: '/',
       readOnly: true,
       validation: (rule) => rule.required(),
     }),
@@ -39,15 +39,15 @@ export const homepageV2Settings = defineType({
     defineField({
       name: 'components',
       title: 'Homepage components',
-      description: 'Ordered sections rendered by the Home Page 2 template.',
+      description: 'Ordered sections rendered on the homepage.',
       type: 'array',
       of: [
-        {type: 'homepageV2HeroComponent'},
-        {type: 'homepageV2AdvantageComponent'},
-        {type: 'homepageV2ServicesComponent'},
-        {type: 'homepageV2ProcessComponent'},
-        {type: 'homepageV2CareCoordinationComponent'},
-        {type: 'homepageV2FinalCtaComponent'},
+        {type: 'homepageHeroComponent'},
+        {type: 'homepageAdvantageComponent'},
+        {type: 'homepageServicesComponent'},
+        {type: 'homepageProcessComponent'},
+        {type: 'homepageCareCoordinationComponent'},
+        {type: 'homepageFinalCtaComponent'},
       ],
       validation: (rule) => rule.required().min(1),
     }),
@@ -64,8 +64,8 @@ export const homepageV2Settings = defineType({
     },
     prepare({title, status}) {
       return {
-        title: title ?? 'Home Page 2',
-        subtitle: status === 'published' ? 'Published concept homepage' : 'Draft concept homepage',
+        title: title ?? 'Homepage',
+        subtitle: status === 'published' ? 'Published homepage' : 'Draft homepage',
       }
     },
   },
