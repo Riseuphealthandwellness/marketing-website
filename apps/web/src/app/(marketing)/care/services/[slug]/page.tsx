@@ -1,14 +1,14 @@
-import Image from "next/image";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
 
-import { PortableTextContent } from "@/components/cms/portable-text-content";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ContactBand } from "@/components/sections/contact-band";
+import { PageBlocks } from "@/components/sections/page-blocks";
 import { PageHero } from "@/components/sections/page-hero";
+import { PageSidebar } from "@/components/sections/page-sidebar";
 import { getConditionHref, getTreatmentHref } from "@/lib/care-routes";
 import { getAllServiceSlugs, getServiceBySlug, getSiteSettings } from "@/lib/cms/content-source";
 import { createPageMetadata } from "@/lib/seo/metadata";
@@ -41,31 +41,39 @@ export default async function ServicePage({ params }: Props) {
 
   const hasConditions = (service.conditions?.length ?? 0) > 0;
   const hasMedications = (service.medications?.length ?? 0) > 0;
+  const sidebar = service.sidebar ?? [];
+  const hasSidebar = sidebar.length > 0;
+  const blocks = service.blocks ?? [];
+  const firstSectionIdx = hasSidebar ? blocks.findIndex((b) => b._type === "pageSection") : -1;
+  const preBlocks = firstSectionIdx > 0 ? blocks.slice(0, firstSectionIdx) : [];
+  const sectionBlock = firstSectionIdx >= 0 ? blocks[firstSectionIdx] : null;
+  const postBlocks = firstSectionIdx >= 0 ? blocks.slice(firstSectionIdx + 1) : blocks;
 
   return (
     <>
       <PageHero
+        backgroundImage={service.heroImage}
         breadcrumbs={resolveBreadcrumbs(`/care/services/${slug}`, undefined, settings?.showBreadcrumbs)}
         eyebrow="Services"
         title={service.title}
         description={service.description}
       />
 
-      {/* ── Body content ── */}
-      {service.body && (service.body as unknown[]).length > 0 ? (
+      {preBlocks.length > 0 ? <PageBlocks blocks={preBlocks} /> : null}
+
+      {hasSidebar && sectionBlock ? (
         <Section>
           <Container>
-            <PortableTextContent
-              autoLinkDrugs
-              className="max-w-3xl"
-              drugReferenceHref={(drug) => getTreatmentHref(drug)}
-              value={service.body}
-            />
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start lg:gap-12">
+              <PageBlocks blocks={[sectionBlock]} compact />
+              <PageSidebar cards={sidebar} />
+            </div>
           </Container>
         </Section>
       ) : null}
 
-      {/* ── Conditions and medications ── */}
+      {postBlocks.length > 0 ? <PageBlocks blocks={postBlocks} /> : null}
+
       {hasConditions || hasMedications ? (
         <Section tone="muted" className="py-10 sm:py-12 lg:py-14">
           <Container>
@@ -83,10 +91,7 @@ export default async function ServicePage({ params }: Props) {
                           className="group flex items-center justify-between py-1.5 text-sm text-foreground transition-colors hover:text-brand-action"
                         >
                           <span>{condition.title}</span>
-                          <ArrowRight
-                            aria-hidden="true"
-                            className="size-3 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-brand-action"
-                          />
+                          <ArrowRight aria-hidden="true" className="size-3 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-brand-action" />
                         </Link>
                       </li>
                     ))}
@@ -107,10 +112,7 @@ export default async function ServicePage({ params }: Props) {
                           className="group flex items-center justify-between py-1.5 text-sm text-foreground transition-colors hover:text-brand-action"
                         >
                           <span>{medication.name}</span>
-                          <ArrowRight
-                            aria-hidden="true"
-                            className="size-3 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-brand-action"
-                          />
+                          <ArrowRight aria-hidden="true" className="size-3 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-brand-action" />
                         </Link>
                       </li>
                     ))}
@@ -121,44 +123,6 @@ export default async function ServicePage({ params }: Props) {
           </Container>
         </Section>
       ) : null}
-
-      {/* ── Photo break ── */}
-      <section className="relative overflow-hidden bg-brand-coal text-brand-warm-white">
-        <div className="absolute inset-y-0 right-0 w-[62%]">
-          <Image
-            alt="Doctor and patient talking at golden hour in the Appalachian mountains"
-            className="h-full w-full object-cover"
-            fill
-            sizes="62vw"
-            src="/images/content/care-menu-feature.png"
-            priority={false}
-          />
-        </div>
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-[linear-gradient(90deg,rgb(31_28_25)_38%,rgb(31_28_25_/_0.88)_54%,transparent_76%)]"
-        />
-        <Container className="relative py-16 sm:py-20 lg:py-24">
-          <div className="max-w-[480px]">
-            <p className="font-heading text-xs font-black uppercase tracking-widest text-brand-soft-accent">
-              Integrated care
-            </p>
-            <h2 className="mt-3 font-heading text-3xl font-black leading-tight tracking-normal sm:text-4xl">
-              One team. Every part of your health.
-            </h2>
-            <p className="mt-4 text-base leading-7 text-brand-warm-white/78 sm:text-lg">
-              Primary care, addiction treatment, and wellness support — all coordinated by providers who already know your full picture.
-            </p>
-            <Link
-              href="/new-patients"
-              className="mt-7 inline-flex min-h-11 items-center gap-2 rounded-md border border-brand-warm-white/30 bg-brand-warm-white/8 px-5 font-heading text-sm font-bold text-brand-warm-white transition-colors hover:bg-brand-warm-white/14"
-            >
-              Get started
-              <ArrowRight aria-hidden="true" className="size-4" />
-            </Link>
-          </div>
-        </Container>
-      </section>
 
       <ContactBand />
     </>

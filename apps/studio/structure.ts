@@ -123,9 +123,7 @@ export const structure: StructureResolver = (S) =>
                   S.list()
                     .title('Care pages')
                     .items([
-                      pageBundleListItem(S, landingPage('care'), [
-                        S.documentTypeListItem('faq').title('Care FAQs').icon(HelpCircleIcon),
-                      ]),
+                      pageSettingsListItem(S, landingPage('care')),
                       pageSettingsListItem(S, landingPage('services')),
                       pageSettingsListItem(S, landingPage('programs')),
                     ]),
@@ -169,12 +167,8 @@ export const structure: StructureResolver = (S) =>
                           documentId: 'website-page-terms-of-use',
                         }),
                       ]),
-                      pageBundleListItem(S, landingPage('team'), [
-                        S.documentTypeListItem('provider').title('Team member entries').icon(UsersIcon),
-                      ]),
-                      pageBundleListItem(S, landingPage('locations'), [
-                        S.documentTypeListItem('location').title('Location entries').icon(PinIcon),
-                      ]),
+                      pageSettingsListItem(S, landingPage('team')),
+                      pageSettingsListItem(S, landingPage('locations')),
                       pageSettingsListItem(S, landingPage('careers')),
                     ]),
                 ),
@@ -246,6 +240,7 @@ export const structure: StructureResolver = (S) =>
                 .icon(TagIcon),
               S.divider(),
               S.documentTypeListItem('provider').title('Team members').icon(UsersIcon),
+              S.documentTypeListItem('position').title('Open positions').icon(LaunchIcon),
               S.documentTypeListItem('location').title('Locations').icon(PinIcon),
               S.documentTypeListItem('faq').title('FAQs').icon(HelpCircleIcon),
             ]),

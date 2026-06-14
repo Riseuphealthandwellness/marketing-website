@@ -225,7 +225,7 @@ export default async function SiteMapPage() {
   const links = new Map<string, SiteMapLink>();
   addLink(links, { href: "/", label: "Home" });
   addNavigationLinks(links, mainNav);
-  footer?.columns?.forEach((col) => col.links.forEach((link) => addLink(links, link)));
+  footer?.columns?.forEach((col) => col.links?.forEach((link) => addLink(links, link)));
   pages.forEach((page) => addLink(links, { href: page.path, label: page.title }));
 
   services.forEach((service) => {

@@ -3,7 +3,7 @@ import {defineField, defineType} from 'sanity'
 
 export const servicesBlock = defineType({
   name: 'servicesBlock',
-  title: 'Services list',
+  title: 'Services — compact list',
   type: 'object',
   icon: HeartIcon,
   fields: [

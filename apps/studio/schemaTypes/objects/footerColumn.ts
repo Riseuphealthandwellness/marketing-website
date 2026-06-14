@@ -16,7 +16,7 @@ export const footerColumn = defineType({
       title: 'Links',
       type: 'array',
       of: [{type: 'navLink'}],
-      validation: (rule) => rule.required().min(1),
+      description: 'Leave empty on a "Services" or "Programs" column to auto-populate from the care library.',
     }),
   ],
   preview: {

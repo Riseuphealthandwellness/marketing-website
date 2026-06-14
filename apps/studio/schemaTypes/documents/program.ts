@@ -14,6 +14,14 @@ export const program = defineType({
   ],
   fields: [
     defineField({
+      name: 'enabled',
+      title: 'Enabled',
+      type: 'boolean',
+      description: 'When off, this program is hidden from all listings and its page returns a 404.',
+      initialValue: true,
+      group: 'content',
+    }),
+    defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
@@ -106,6 +114,13 @@ export const program = defineType({
     select: {
       title: 'title',
       subtitle: 'description',
+      enabled: 'enabled',
+    },
+    prepare({title, subtitle, enabled}) {
+      return {
+        title: enabled === false ? `[Disabled] ${title}` : title,
+        subtitle,
+      }
     },
   },
 })

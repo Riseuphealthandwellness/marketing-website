@@ -49,7 +49,7 @@ function MegaMenuSection({
             <ChevronRight aria-hidden="true" className="size-3.5 text-brand-warm-white/80" />
           </Link>
 
-          {item.groups?.map((group) => (
+          {item.groups?.filter((g) => g.links?.length).map((group) => (
             <div key={group.title} className="px-5 pb-1">
               <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.04em] text-muted-foreground">
                 {group.title}

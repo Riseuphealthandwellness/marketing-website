@@ -20,5 +20,22 @@ export const navMegaMenuAutoReferenceLinks = defineType({
       of: [{type: 'reference', to: [{type: 'service'}]}],
       hidden: ({parent}) => !parent?.enabled,
     }),
+    defineField({
+      name: 'showConditions',
+      title: 'Show active condition links',
+      type: 'boolean',
+      description:
+        'Adds a generated condition column using only conditions attached to enabled services, after excluded services are removed.',
+      initialValue: false,
+      hidden: ({parent}) => !parent?.enabled,
+    }),
+    defineField({
+      name: 'conditionGroupTitle',
+      title: 'Condition group title',
+      type: 'string',
+      description: 'Heading for the generated condition column.',
+      initialValue: 'Conditions we treat',
+      hidden: ({parent}) => !parent?.enabled || !parent?.showConditions,
+    }),
   ],
 })

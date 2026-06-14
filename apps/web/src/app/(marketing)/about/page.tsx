@@ -135,7 +135,7 @@ export default async function AboutPage() {
                 {page.eyebrow}
               </p>
             ) : null}
-            <h1 className="mt-3 font-heading text-4xl font-black leading-tight tracking-normal text-brand-coal sm:text-5xl lg:text-6xl">
+            <h1 className="mt-3 font-heading text-4xl font-black leading-[1.02] tracking-normal text-brand-coal sm:text-5xl lg:text-6xl">
               {hero?.heading ?? page.title}
             </h1>
             {page.description ? (

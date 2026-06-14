@@ -15,22 +15,29 @@ export async function generateMetadata(): Promise<Metadata> {
   const name = settings?.name ?? "";
   const url = settings?.url ?? "https://localhost:3000";
 
+  const tagline = settings?.tagline;
+  const logoUrl = settings?.logo?.url;
+
   return {
     metadataBase: new URL(url),
     title: { default: name, template: `%s | ${name}` },
+    description: tagline,
     applicationName: name,
     authors: name ? [{ name }] : undefined,
     creator: name || undefined,
     publisher: name || undefined,
     openGraph: {
       title: name,
+      description: tagline,
       url: absoluteUrl("/", url),
       siteName: name,
       type: "website",
+      images: logoUrl ? [{ url: logoUrl, alt: name }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
       title: name,
+      description: tagline,
     },
   };
 }

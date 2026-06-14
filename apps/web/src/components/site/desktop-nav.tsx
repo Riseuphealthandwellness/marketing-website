@@ -21,18 +21,35 @@ type MegaMenuItemProps = {
   item: SiteNavMegaMenu;
 };
 
+type NavGroup = NonNullable<SiteNavMegaMenu["groups"]>[number];
+
+function splitGroups(groups: NavGroup[]): { left: NavGroup[]; right: NavGroup[] } {
+  if (groups.length <= 1) return { left: groups, right: [] };
+
+  const counts = groups.map((g) => g.links?.length ?? 0);
+  const total = counts.reduce((a, b) => a + b, 0);
+  const target = total / 2;
+
+  let cumulative = 0;
+  let splitAt = 1;
+  let bestDiff = Infinity;
+
+  for (let i = 0; i < groups.length - 1; i++) {
+    cumulative += counts[i]!;
+    const diff = Math.abs(cumulative - target);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      splitAt = i + 1;
+    }
+  }
+
+  return { left: groups.slice(0, splitAt), right: groups.slice(splitAt) };
+}
+
 function MegaMenuItem({ item }: MegaMenuItemProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const groups = item.groups ?? [];
-  const servicesGroup = groups.find((group) => group.title === "Services");
-  const programsGroup = groups.find((group) => group.title === "Programs");
-  const rightGroups = groups.filter((group) => !["Services", "Programs"].includes(group.title));
-  const conditionsGroup = rightGroups.find((group) => group.title === "Conditions");
-  const treatmentsGroup = rightGroups.find((group) => group.title === "Treatments");
-  const patientResourcesGroup = rightGroups.find((group) => group.title === "Patient resources");
-  const remainingRightGroups = rightGroups.filter(
-    (group) => !["Conditions", "Treatments", "Patient resources"].includes(group.title),
-  );
+  const groups = (item.groups ?? []).filter((g) => g.links?.length);
+  const { left, right } = splitGroups(groups);
 
   const renderGroup = (group: NonNullable<SiteNavMegaMenu["groups"]>[number]) => (
     <div key={group.title} className="rounded-lg px-0.5 py-1">
@@ -127,16 +144,8 @@ function MegaMenuItem({ item }: MegaMenuItemProps) {
 
           {groups.length > 0 ? (
             <div className="grid gap-1 sm:grid-cols-2">
-              <div>
-                {servicesGroup ? renderGroup(servicesGroup) : null}
-                {conditionsGroup ? renderGroup(conditionsGroup) : null}
-              </div>
-              <div>
-                {programsGroup ? renderGroup(programsGroup) : null}
-                {treatmentsGroup ? renderGroup(treatmentsGroup) : null}
-                {patientResourcesGroup ? renderGroup(patientResourcesGroup) : null}
-                {remainingRightGroups.map(renderGroup)}
-              </div>
+              <div>{left.map(renderGroup)}</div>
+              <div>{right.map(renderGroup)}</div>
             </div>
           ) : null}
         </div>

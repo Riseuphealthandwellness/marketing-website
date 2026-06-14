@@ -16,7 +16,6 @@ export const navItemGroup = defineType({
       title: 'Links',
       type: 'array',
       of: [{type: 'link'}],
-      validation: (rule) => rule.required().min(1),
     }),
   ],
   preview: {

@@ -110,14 +110,17 @@ export function SiteHeaderClient({
           {headerCta ? (
             <div className="hidden items-center gap-2 lg:flex">
               <Button asChild size="sm" className="h-10 px-4 text-sm">
-                <a
-                  href={headerCta.href}
-                  rel={isExternalUrl(headerCta.href) ? "noreferrer" : undefined}
-                  target={isExternalUrl(headerCta.href) ? "_blank" : undefined}
-                >
-                  {headerCta.label}
-                  <HeaderCtaIcon cta={headerCta} />
-                </a>
+                {isExternalUrl(headerCta.href) ? (
+                  <a href={headerCta.href} rel="noreferrer" target="_blank">
+                    {headerCta.label}
+                    <HeaderCtaIcon cta={headerCta} />
+                  </a>
+                ) : (
+                  <Link href={headerCta.href}>
+                    {headerCta.label}
+                    <HeaderCtaIcon cta={headerCta} />
+                  </Link>
+                )}
               </Button>
             </div>
           ) : null}

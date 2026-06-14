@@ -1,4 +1,5 @@
 const imageProjection = `{
+  ...,
   "url": asset->url,
   "alt": alt,
   "width": asset->metadata.dimensions.width,
@@ -13,21 +14,6 @@ const fileProjection = `{
 
 const seoProjection = `{ title, description, canonicalUrl, noIndex, ogImage }`;
 
-const serviceProjection = `{
-  _id,
-  "slug": slug.current,
-  title,
-  description,
-  icon,
-  cardColor,
-  cardEyebrow,
-  sortOrder,
-  body,
-  href,
-  "conditions": conditions[]->{ "slug": slug.current, title, category, shortDescription },
-  "medications": medications[]->{ name, genericName, "slug": slug.current, description },
-  seo ${seoProjection}
-}`;
 
 const programProjection = `{
   _id,
@@ -131,6 +117,22 @@ const pageBlocksProjection = `blocks[]{
     primaryLabel, primaryHref,
     secondaryLabel, secondaryHref
   },
+  _type == "featureSplitBlock" => {
+    eyebrow, heading, description, imagePosition, ctaLabel, ctaHref, tone,
+    "image": image ${imageProjection}
+  },
+  _type == "statsBandBlock" => {
+    eyebrow, heading,
+    stats[]{ value, label, description },
+    "backgroundImage": backgroundImage ${imageProjection}
+  },
+  _type == "trustStripBlock" => {
+    text, ctaLabel, ctaHref, tone
+  },
+  _type == "quoteBlock" => {
+    quote, attribution, role, tone,
+    "photo": photo ${imageProjection}
+  },
   _type == "conditionsBlock" => {
     heading,
     category,
@@ -147,14 +149,62 @@ const pageBlocksProjection = `blocks[]{
   },
   _type == "servicesBlock" => {
     heading,
-    "services": *[_type == "service"] | order(coalesce(sortOrder, 9999) asc, title asc){
+    "services": *[_type == "service" && coalesce(enabled, true)] | order(coalesce(sortOrder, 9999) asc, title asc){
       "slug": slug.current, title, description, href, icon, cardEyebrow, sortOrder
     }
   },
   _type == "programsBlock" => {
-    heading,
-    "programs": *[_type == "program"] | order(coalesce(sortOrder, 9999) asc, title asc){
+    eyebrow, heading, description, ctaLabel,
+    "programs": *[_type == "program" && coalesce(enabled, true)] | order(coalesce(sortOrder, 9999) asc, title asc){
       "slug": slug.current, title, description, audience, href, icon, cardEyebrow, sortOrder
+    }
+  },
+  _type == "servicesGridBlock" => {
+    sectionEyebrow, sectionHeading, sectionDescription, ctaLabel,
+    showViewAllCard, viewAllLabel, viewAllDescription,
+    "services": *[_type == "service" && coalesce(enabled, true)] | order(coalesce(sortOrder, 9999) asc, title asc){
+      _id, "slug": slug.current, title, description, icon, cardColor, href
+    }
+  },
+  _type == "servicesListBlock" => {
+    sectionEyebrow, sectionHeading, viewAllLabel, ctaLabel,
+    "services": *[_type == "service" && coalesce(enabled, true)] | order(coalesce(sortOrder, 9999) asc, title asc){
+      _id, "slug": slug.current, title, description, icon, cardColor, href
+    }
+  },
+  _type == "programsListBlock" => {
+    sectionEyebrow, sectionHeading, viewAllLabel, ctaLabel,
+    "programs": *[_type == "program" && coalesce(enabled, true)] | order(coalesce(sortOrder, 9999) asc, title asc){
+      _id, "slug": slug.current, title, description, audience, icon, cardColor, href
+    }
+  },
+  _type == "newPatientStepsBlock" => {
+    sectionEyebrow, sectionHeading, description,
+    steps[]{ iconName, title, body, ctaLabel, ctaHref, "image": image ${imageProjection} }
+  },
+  _type == "contactFormBlock" => {
+    eyebrow, heading, description, note, topics
+  },
+  _type == "blocksListBlock" => {
+    sectionEyebrow, sectionHeading, description,
+    items[]{ title, titleSuffix, badge, subtitle, description, tags, ctaLabel, ctaHref, "image": image ${imageProjection} }
+  },
+  _type == "teamListBlock" => {
+    sectionEyebrow, sectionHeading, description,
+    "providers": *[_type == "provider" && coalesce(showOnTeamPage, true)] | order(coalesce(sortOrder, 9999) asc, lastName asc, firstName asc, name asc) ${providerProjection}
+  },
+  _type == "positionsListBlock" => {
+    sectionEyebrow, sectionHeading, description, emptyStateText,
+    "positions": *[_type == "position"] | order(sortOrder asc, department asc, title asc) {
+      _id, title, department, employmentType, location, description, applyUrl
+    }
+  },
+  _type == "serviceConditionsBlock" => {
+    heading, description, conditionsHeading, treatmentsHeading,
+    "services": *[_type == "service" && coalesce(enabled, true)] | order(coalesce(sortOrder, 9999) asc, title asc){
+      "slug": slug.current,
+      "conditions": conditions[]->{ "slug": slug.current, title, category },
+      "medications": medications[]->{ name, "slug": slug.current }
     }
   },
   _type == "careModelBlock" => {
@@ -165,20 +215,22 @@ const pageBlocksProjection = `blocks[]{
   }
 }`;
 
-const servicesPageContentProjection = `servicesPageContent{
-  intro{eyebrow, heading, description},
-  feature{
-    eyebrow,
-    heading,
-    description,
-    ctaLabel,
-    ctaHref,
-    "image": image ${imageProjection},
-    stats[]{value, label, description}
-  },
-  services{eyebrow, heading, description, ctaLabel},
-  references{eyebrow, heading, description, conditionsHeading, treatmentsHeading, ctaLabel},
-  programs{eyebrow, heading, description, ctaLabel}
+const serviceProjection = `{
+  _id,
+  "slug": slug.current,
+  title,
+  description,
+  icon,
+  cardColor,
+  cardEyebrow,
+  sortOrder,
+  href,
+  "heroImage": heroImage ${imageProjection},
+  sidebar[]{heading, description, ctaLabel, ctaHref},
+  ${pageBlocksProjection},
+  "conditions": conditions[]->{ "slug": slug.current, title, category, shortDescription },
+  "medications": medications[]->{ name, genericName, "slug": slug.current, description },
+  seo ${seoProjection}
 }`;
 
 const aboutContentProjection = `aboutContent{
@@ -265,6 +317,8 @@ export const cmsQueries = {
         ctaHref,
         autoReferenceLinks{
           enabled,
+          showConditions,
+          conditionGroupTitle,
           "excludeServices": excludeServices[]->{ _id }
         },
         "groups": groups[]{
@@ -301,8 +355,6 @@ export const cmsQueries = {
 
   homepageSettings: `*[_type == "homepageSettings" && _id == "homepageSettings"][0]{
     title,
-    routePath,
-    status,
     components[]{
       _type,
       enabled,
@@ -311,9 +363,10 @@ export const cmsQueries = {
       description,
       buttons,
       pathCards[]{ icon, title, body, link },
-      cards[]{ icon, title, body },
+      cards[]{ icon, title, body, "image": image ${imageProjection} },
       "backgroundImage": backgroundImage ${imageProjection},
       "featureImage": featureImage ${imageProjection},
+      listingSource,
       offerings[]{
         _key,
         "item": item->{
@@ -343,13 +396,11 @@ export const cmsQueries = {
     description,
     "heroImage": heroImage ${imageProjection},
     ${aboutContentProjection},
-    ${servicesPageContentProjection},
+
     body,
     ${pageBlocksProjection},
     sidebar[]{heading, description, ctaLabel, ctaHref},
     contactForm,
-    newPatientSteps,
-    newPatientAccessCards,
     emptyStateText,
     "recordRequestPdf": recordRequestPdf ${fileProjection},
     recordRequestPdfLabel,
@@ -364,13 +415,11 @@ export const cmsQueries = {
     description,
     "heroImage": heroImage ${imageProjection},
     ${aboutContentProjection},
-    ${servicesPageContentProjection},
+
     body,
     ${pageBlocksProjection},
     sidebar[]{heading, description, ctaLabel, ctaHref},
     contactForm,
-    newPatientSteps,
-    newPatientAccessCards,
     emptyStateText,
     "recordRequestPdf": recordRequestPdf ${fileProjection},
     recordRequestPdfLabel,
@@ -428,6 +477,10 @@ export const cmsQueries = {
     eyebrow, heading, description, items[]{ title, body, iconName }
   }`,
 
+  openPositions: `*[_type == "position"] | order(sortOrder asc, department asc, title asc) {
+    _id, title, department, employmentType, location, description, applyUrl
+  }`,
+
   faqsByCategory: `*[_type == "faq" && category == $category] | order(orderRank asc, question asc){ question, answer }`,
 
   announcement: `*[_type == "announcement" && status == "published" && (!defined(expiresAt) || expiresAt > now())] | order(publishedAt desc)[0]{
@@ -448,9 +501,17 @@ export const cmsQueries = {
     copyrightText
   }`,
 
-  services: `*[_type == "service"] | order(coalesce(sortOrder, 9999) asc, title asc) ${serviceProjection}`,
+  services: `*[_type == "service" && coalesce(enabled, true)] | order(coalesce(sortOrder, 9999) asc, title asc) ${serviceProjection}`,
 
-  navigationReferenceServices: `*[_type == "service"] | order(coalesce(sortOrder, 9999) asc, title asc){
+  navigationReferencePrograms: `*[_type == "program" && coalesce(enabled, true)] | order(coalesce(sortOrder, 9999) asc, title asc){
+    _id,
+    "slug": slug.current,
+    title,
+    description,
+    href
+  }`,
+
+  navigationReferenceServices: `*[_type == "service" && coalesce(enabled, true)] | order(coalesce(sortOrder, 9999) asc, title asc){
     _id,
     "slug": slug.current,
     title,
@@ -460,15 +521,15 @@ export const cmsQueries = {
     "medications": medications[]->{ name, genericName, "slug": slug.current, description }
   }`,
 
-  serviceBySlug: `*[_type == "service" && slug.current == $slug][0] ${serviceProjection}`,
+  serviceBySlug: `*[_type == "service" && slug.current == $slug && coalesce(enabled, true)][0] ${serviceProjection}`,
 
-  allServiceSlugs: `*[_type == "service" && defined(slug.current)]{ "slug": slug.current }`,
+  allServiceSlugs: `*[_type == "service" && defined(slug.current) && coalesce(enabled, true)]{ "slug": slug.current }`,
 
-  programs: `*[_type == "program"] | order(coalesce(sortOrder, 9999) asc, title asc) ${programProjection}`,
+  programs: `*[_type == "program" && coalesce(enabled, true)] | order(coalesce(sortOrder, 9999) asc, title asc) ${programProjection}`,
 
-  programBySlug: `*[_type == "program" && slug.current == $slug][0] ${programProjection}`,
+  programBySlug: `*[_type == "program" && slug.current == $slug && coalesce(enabled, true)][0] ${programProjection}`,
 
-  allProgramSlugs: `*[_type == "program" && defined(slug.current)]{ "slug": slug.current }`,
+  allProgramSlugs: `*[_type == "program" && defined(slug.current) && coalesce(enabled, true)]{ "slug": slug.current }`,
 
   providers: `*[_type == "provider" && coalesce(showOnTeamPage, true)] | order(coalesce(sortOrder, 9999) asc, lastName asc, firstName asc, name asc) ${providerProjection}`,
 
