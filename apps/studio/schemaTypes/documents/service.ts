@@ -9,11 +9,20 @@ export const service = defineType({
   icon: HeartIcon,
   groups: [
     {name: 'content', title: 'Content', default: true},
+    {name: 'blocks', title: 'Blocks'},
     {name: 'display', title: 'Display'},
     {name: 'references', title: 'Reference pages'},
     {name: 'seo', title: 'SEO'},
   ],
   fields: [
+    defineField({
+      name: 'enabled',
+      title: 'Enabled',
+      type: 'boolean',
+      description: 'When off, this service is hidden from all listings and its page returns a 404.',
+      initialValue: true,
+      group: 'content',
+    }),
     defineField({
       name: 'title',
       title: 'Title',
@@ -38,6 +47,17 @@ export const service = defineType({
       validation: (rule) => rule.required(),
       group: 'content',
     }),
+    defineField({
+      name: 'heroImage',
+      title: 'Hero background image',
+      type: 'image',
+      description: 'Optional background image behind the page title. Leave blank for the default solid background.',
+      group: 'display',
+      options: {hotspot: true},
+      fields: [
+        defineField({name: 'alt', title: 'Alt text', type: 'string'}),
+      ],
+    }),
     careIconField({group: 'display'}),
     careCardColorField({group: 'display'}),
     defineField({
@@ -55,39 +75,38 @@ export const service = defineType({
       group: 'display',
     }),
     defineField({
-      name: 'body',
-      title: 'Full description',
-      type: 'array',
-      description: 'Detailed content shown on the service page.',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            {title: 'Normal', value: 'normal'},
-            {title: 'Heading', value: 'h3'},
-            {title: 'Sub-heading', value: 'h4'},
-          ],
-          lists: [
-            {title: 'Bullet', value: 'bullet'},
-            {title: 'Numbered', value: 'number'},
-          ],
-          marks: {
-            decorators: [
-              {title: 'Strong', value: 'strong'},
-              {title: 'Emphasis', value: 'em'},
-            ],
-            annotations: [],
-          },
-        },
-      ],
-      group: 'content',
-    }),
-    defineField({
       name: 'href',
       title: 'URL or path',
       type: 'string',
       description: 'Override the default service URL. Leave blank to use the slug.',
       group: 'content',
+    }),
+    defineField({
+      name: 'sidebar',
+      title: 'Sidebar cards',
+      type: 'array',
+      description:
+        'Optional cards shown alongside the service page body. Use for next steps, related care, or quick links.',
+      group: 'content',
+      of: [{type: 'sidebarCard'}],
+    }),
+    defineField({
+      name: 'blocks',
+      title: 'Page blocks',
+      type: 'array',
+      group: 'blocks',
+      of: [
+        {type: 'pageSection'},
+        {type: 'ctaBlock'},
+        {type: 'featureSplitBlock'},
+        {type: 'statsBandBlock'},
+        {type: 'trustStripBlock'},
+        {type: 'quoteBlock'},
+        {type: 'faqBlock'},
+        {type: 'careModelBlock'},
+        {type: 'blocksListBlock'},
+        {type: 'newPatientStepsBlock'},
+      ],
     }),
     defineField({
       name: 'conditions',
@@ -116,6 +135,13 @@ export const service = defineType({
     select: {
       title: 'title',
       subtitle: 'description',
+      enabled: 'enabled',
+    },
+    prepare({title, subtitle, enabled}) {
+      return {
+        title: enabled === false ? `[Disabled] ${title}` : title,
+        subtitle,
+      }
     },
   },
 })

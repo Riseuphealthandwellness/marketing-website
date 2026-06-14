@@ -44,23 +44,23 @@ export async function SiteFooter() {
         <div className="grid gap-10 lg:grid-cols-[1.2fr_2fr]">
           <div className="space-y-5">
             <Link className="inline-flex items-center gap-3" href="/">
-              <span className="flex size-16 items-center justify-center sm:size-20">
+              <span className="flex size-12 items-center justify-center sm:size-14">
                 <Image
                   alt={settings?.logo?.alt ?? ""}
                   className="h-full w-full object-contain grayscale contrast-125"
                   height={settings?.logo?.height ?? 160}
                   src={settings?.logo?.url ?? "/images/brand/logo-parts/riseup-mountain-mark.png"}
-                  sizes="(min-width: 640px) 80px, 64px"
+                  sizes="(min-width: 640px) 56px, 48px"
                   width={settings?.logo?.width ?? 160}
                 />
               </span>
               {settings?.name ? (
                 <span>
-                  <span className="font-logo block text-2xl leading-none text-brand-warm-white">
+                  <span className="font-logo block text-xl leading-none text-brand-warm-white">
                     {settings.name.toUpperCase()}
                   </span>
                   {settings.tagline ? (
-                    <span className="mt-1 block font-heading text-lg font-bold">
+                    <span className="mt-1 block font-heading text-sm font-bold">
                       {settings.tagline}
                     </span>
                   ) : null}
@@ -115,18 +115,20 @@ export async function SiteFooter() {
                   <h2 className="font-heading text-base font-bold tracking-normal text-brand-warm-white sm:text-lg">
                     {col.heading}
                   </h2>
-                  <ul className="mt-4 space-y-3">
-                    {col.links.map((link) => (
-                      <li key={link.href}>
-                        <Link
-                          className="text-sm text-brand-warm-white/72 hover:text-brand-warm-white"
-                          href={link.href}
-                        >
-                          {link.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                  {col.links && col.links.length > 0 ? (
+                    <ul className="mt-4 space-y-3">
+                      {col.links.map((link) => (
+                        <li key={link.href}>
+                          <Link
+                            className="text-sm text-brand-warm-white/72 hover:text-brand-warm-white"
+                            href={link.href}
+                          >
+                            {link.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </div>
               ))}
             </div>

@@ -26,7 +26,7 @@ const sectionIntroFields = [
 
 export const homepageStartPathCard = defineType({
   name: 'homepageStartPathCard',
-  title: 'Homepage V2 start path card',
+  title: 'Homepagestart path card',
   type: 'object',
   icon: LaunchIcon,
   fields: [
@@ -40,10 +40,18 @@ export const homepageStartPathCard = defineType({
 
 export const homepageIconCard = defineType({
   name: 'homepageIconCard',
-  title: 'Homepage V2 icon card',
+  title: 'Homepageicon card',
   type: 'object',
   icon: HeartIcon,
   fields: [
+    defineField({
+      name: 'image',
+      title: 'Card image',
+      type: 'image',
+      description: 'Optional background image shown above the card text. Use the Unsplash tab to search for a photo.',
+      options: {hotspot: true},
+      fields: [defineField({name: 'alt', title: 'Alt text', type: 'string'})],
+    }),
     iconField,
     defineField({name: 'title', title: 'Title', type: 'string', validation: (rule) => rule.required()}),
     defineField({name: 'body', title: 'Body', type: 'text', rows: 3, validation: (rule) => rule.required()}),
@@ -53,7 +61,7 @@ export const homepageIconCard = defineType({
 
 export const homepageOfferingReference = defineType({
   name: 'homepageOfferingReference',
-  title: 'Homepage V2 offering reference',
+  title: 'Homepageoffering reference',
   type: 'object',
   icon: StackIcon,
   fields: [
@@ -75,7 +83,7 @@ export const homepageOfferingReference = defineType({
 
 export const homepageProcessStep = defineType({
   name: 'homepageProcessStep',
-  title: 'Homepage V2 process step',
+  title: 'Homepageprocess step',
   type: 'object',
   icon: BlockElementIcon,
   fields: [
@@ -88,7 +96,7 @@ export const homepageProcessStep = defineType({
 
 export const homepageCareMapCard = defineType({
   name: 'homepageCareMapCard',
-  title: 'Homepage V2 care map card',
+  title: 'Homepagecare map card',
   type: 'object',
   icon: HeartIcon,
   fields: [
@@ -101,7 +109,7 @@ export const homepageCareMapCard = defineType({
 
 export const homepageCenterCard = defineType({
   name: 'homepageCenterCard',
-  title: 'Homepage V2 center card',
+  title: 'Homepagecenter card',
   type: 'object',
   icon: HeartIcon,
   fields: [
@@ -114,7 +122,7 @@ export const homepageCenterCard = defineType({
 
 export const homepageHeroComponent = defineType({
   name: 'homepageHeroComponent',
-  title: 'Homepage V2 hero',
+  title: 'Homepagehero',
   type: 'object',
   icon: HomeIcon,
   fields: [
@@ -154,7 +162,7 @@ export const homepageHeroComponent = defineType({
 
 export const homepageAdvantageComponent = defineType({
   name: 'homepageAdvantageComponent',
-  title: 'Homepage V2 advantage section',
+  title: 'Homepageadvantage section',
   type: 'object',
   icon: HeartIcon,
   fields: [
@@ -173,7 +181,7 @@ export const homepageAdvantageComponent = defineType({
 
 export const homepageServicesComponent = defineType({
   name: 'homepageServicesComponent',
-  title: 'Homepage V2 services section',
+  title: 'Homepageservices section',
   type: 'object',
   icon: StackIcon,
   fields: [
@@ -187,13 +195,35 @@ export const homepageServicesComponent = defineType({
       fields: [defineField({name: 'alt', title: 'Alt text', type: 'string'})],
     }),
     defineField({
+      name: 'listingSource',
+      title: 'Listing source',
+      type: 'string',
+      description:
+        'Use the selected list exactly, or automatically include every enabled service. Selected services stay first when using the automatic list.',
+      options: {
+        layout: 'radio',
+        list: [
+          {title: 'Selected services and programs', value: 'selected'},
+          {title: 'All active services', value: 'allActiveServices'},
+        ],
+      },
+      initialValue: 'selected',
+    }),
+    defineField({
       name: 'offerings',
       title: 'Services and programs',
       type: 'array',
       description:
-        'Ordered list sourced from the central Content > Services and Content > Programs documents.',
+        'Ordered list sourced from the central Content > Services and Content > Programs documents. In automatic mode, selected active services appear first and remaining active services are appended.',
       of: [{type: 'homepageOfferingReference'}],
-      validation: (rule) => rule.required().min(1),
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          const parent = context.parent as {listingSource?: string} | undefined
+          if (parent?.listingSource === 'allActiveServices') return true
+          return Array.isArray(value) && value.length > 0
+            ? true
+            : 'Add at least one service or program, or switch Listing source to all active services.'
+        }),
     }),
   ],
   preview: {select: {title: 'heading', subtitle: 'eyebrow'}},
@@ -201,7 +231,7 @@ export const homepageServicesComponent = defineType({
 
 export const homepageProcessComponent = defineType({
   name: 'homepageProcessComponent',
-  title: 'Homepage V2 process section',
+  title: 'Homepageprocess section',
   type: 'object',
   icon: BlockElementIcon,
   fields: [
@@ -220,7 +250,7 @@ export const homepageProcessComponent = defineType({
 
 export const homepageCareCoordinationComponent = defineType({
   name: 'homepageCareCoordinationComponent',
-  title: 'Homepage V2 care coordination section',
+  title: 'Homepagecare coordination section',
   type: 'object',
   icon: HeartIcon,
   fields: [
@@ -244,7 +274,7 @@ export const homepageCareCoordinationComponent = defineType({
 
 export const homepageFinalCtaComponent = defineType({
   name: 'homepageFinalCtaComponent',
-  title: 'Homepage V2 final CTA',
+  title: 'Homepagefinal CTA',
   type: 'object',
   icon: LaunchIcon,
   fields: [

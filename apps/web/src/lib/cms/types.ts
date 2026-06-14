@@ -31,6 +31,8 @@ export type SiteNavMegaMenu = {
   autoReferenceLinks?: {
     enabled?: boolean;
     excludeServices?: { _id: string }[];
+    showConditions?: boolean;
+    conditionGroupTitle?: string;
   };
 };
 
@@ -62,8 +64,10 @@ export type Service = {
   cardColor?: string;
   cardEyebrow?: string;
   sortOrder?: number;
-  body?: unknown[];
   href?: string;
+  heroImage?: CmsImage;
+  sidebar?: SidebarCard[];
+  blocks?: PageBlock[];
   conditions?: Pick<Condition, 'slug' | 'title' | 'category' | 'shortDescription'>[];
   medications?: Pick<Drug, 'slug' | 'name' | 'genericName' | 'description'>[];
   seo?: SeoFields;
@@ -121,7 +125,7 @@ export type Location = {
 export type FooterColumn = {
   _key?: string;
   heading: string;
-  links: { label: string; href: string }[];
+  links?: { label: string; href: string }[];
 };
 
 export type SiteFooter = {
@@ -199,8 +203,89 @@ export type ServicesBlock = {
 };
 
 export type ProgramsBlock = {
+  eyebrow?: string;
   heading?: string;
+  description?: string;
+  ctaLabel?: string;
   programs: Pick<Program, 'slug' | 'title' | 'description' | 'audience' | 'href'>[];
+};
+
+export type FeatureSplitBlock = {
+  eyebrow?: string;
+  heading: string;
+  description?: string;
+  image?: CmsImage;
+  imagePosition?: 'left' | 'right';
+  ctaLabel?: string;
+  ctaHref?: string;
+  tone?: 'surface' | 'white' | 'dark';
+};
+
+export type StatItem = {
+  value: string;
+  label: string;
+  description?: string;
+};
+
+export type StatsBandBlock = {
+  eyebrow?: string;
+  heading?: string;
+  stats: StatItem[];
+  backgroundImage?: CmsImage;
+};
+
+export type TrustStripBlock = {
+  text: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  tone?: 'trust' | 'action' | 'dark' | 'warm';
+};
+
+export type QuoteBlock = {
+  quote: string;
+  attribution?: string;
+  role?: string;
+  photo?: CmsImage;
+  tone?: 'surface' | 'dark';
+};
+
+export type ServicesGridBlock = {
+  sectionEyebrow?: string;
+  sectionHeading?: string;
+  sectionDescription?: string;
+  ctaLabel?: string;
+  showViewAllCard?: boolean;
+  viewAllLabel?: string;
+  viewAllDescription?: string;
+  services: Pick<Service, '_id' | 'slug' | 'title' | 'description' | 'icon' | 'cardColor' | 'href'>[];
+};
+
+export type ServicesListBlock = {
+  sectionEyebrow?: string;
+  sectionHeading?: string;
+  viewAllLabel?: string;
+  ctaLabel?: string;
+  services: Pick<Service, '_id' | 'slug' | 'title' | 'description' | 'icon' | 'cardColor' | 'href'>[];
+};
+
+export type ProgramsListBlock = {
+  sectionEyebrow?: string;
+  sectionHeading?: string;
+  viewAllLabel?: string;
+  ctaLabel?: string;
+  programs: Pick<Program, 'slug' | 'title' | 'description' | 'audience' | 'icon' | 'cardColor' | 'href'>[];
+};
+
+export type ServiceConditionsBlock = {
+  heading?: string;
+  description?: string;
+  conditionsHeading?: string;
+  treatmentsHeading?: string;
+  services: {
+    slug: string;
+    conditions?: Pick<Condition, 'slug' | 'title' | 'category'>[];
+    medications?: Pick<Drug, 'slug' | 'name'>[];
+  }[];
 };
 
 export type CareModelItem = {
@@ -216,6 +301,56 @@ export type CareModelBlock = {
   items: CareModelItem[];
 };
 
+export type NewPatientStepsBlockStep = {
+  iconName: 'phone' | 'clipboard' | 'calendar-check';
+  title: string;
+  body: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  image?: CmsImage;
+};
+
+export type NewPatientStepsBlock = {
+  sectionEyebrow?: string;
+  sectionHeading?: string;
+  description?: string;
+  steps: NewPatientStepsBlockStep[];
+};
+
+export type BlocksListItem = {
+  title: string;
+  titleSuffix?: string;
+  badge?: string;
+  subtitle?: string;
+  description: string;
+  tags?: string[];
+  ctaLabel?: string;
+  ctaHref?: string;
+  image?: CmsImage;
+};
+
+export type BlocksListBlock = {
+  sectionEyebrow?: string;
+  sectionHeading?: string;
+  description?: string;
+  items: BlocksListItem[];
+};
+
+export type TeamListBlock = {
+  sectionEyebrow?: string;
+  sectionHeading?: string;
+  description?: string;
+  providers: Provider[];
+};
+
+export type PositionsListBlock = {
+  sectionEyebrow?: string;
+  sectionHeading?: string;
+  description?: string;
+  emptyStateText?: string;
+  positions: Position[];
+};
+
 export type PageBlock =
   | ({ _type: 'pageSection' } & PageSection)
   | ({ _type: 'ctaBlock' } & CtaBlock)
@@ -223,7 +358,30 @@ export type PageBlock =
   | ({ _type: 'conditionsBlock' } & ConditionsBlock)
   | ({ _type: 'faqBlock' } & FaqBlock)
   | ({ _type: 'servicesBlock' } & ServicesBlock)
-  | ({ _type: 'programsBlock' } & ProgramsBlock);
+  | ({ _type: 'programsBlock' } & ProgramsBlock)
+  | ({ _type: 'featureSplitBlock' } & FeatureSplitBlock)
+  | ({ _type: 'statsBandBlock' } & StatsBandBlock)
+  | ({ _type: 'trustStripBlock' } & TrustStripBlock)
+  | ({ _type: 'quoteBlock' } & QuoteBlock)
+  | ({ _type: 'servicesGridBlock' } & ServicesGridBlock)
+  | ({ _type: 'servicesListBlock' } & ServicesListBlock)
+  | ({ _type: 'serviceConditionsBlock' } & ServiceConditionsBlock)
+  | ({ _type: 'programsListBlock' } & ProgramsListBlock)
+  | ({ _type: 'newPatientStepsBlock' } & NewPatientStepsBlock)
+  | ({ _type: 'contactFormBlock' } & ContactFormContent)
+  | ({ _type: 'blocksListBlock' } & BlocksListBlock)
+  | ({ _type: 'teamListBlock' } & TeamListBlock)
+  | ({ _type: 'positionsListBlock' } & PositionsListBlock);
+
+export type Position = {
+  _id: string;
+  title: string;
+  department?: string;
+  employmentType?: string;
+  location?: string;
+  description?: string;
+  applyUrl?: string;
+};
 
 export type SidebarCard = {
   heading: string;
@@ -292,37 +450,6 @@ export type AboutContent = {
   featuredNarrativeHeadings?: string[];
 };
 
-export type ServicesPageSectionContent = {
-  eyebrow?: string;
-  heading?: string;
-  description?: string;
-};
-
-export type ServicesPageContent = {
-  intro?: ServicesPageSectionContent;
-  feature?: ServicesPageSectionContent & {
-    ctaLabel?: string;
-    ctaHref?: string;
-    image?: CmsImage;
-    stats?: {
-      value?: string;
-      label?: string;
-      description?: string;
-    }[];
-  };
-  services?: ServicesPageSectionContent & {
-    ctaLabel?: string;
-  };
-  references?: ServicesPageSectionContent & {
-    conditionsHeading?: string;
-    treatmentsHeading?: string;
-    ctaLabel?: string;
-  };
-  programs?: ServicesPageSectionContent & {
-    ctaLabel?: string;
-  };
-};
-
 export type MarketingPage = {
   title: string;
   path?: string;
@@ -331,14 +458,11 @@ export type MarketingPage = {
   eyebrow?: string;
   description?: string;
   aboutContent?: AboutContent;
-  servicesPageContent?: ServicesPageContent;
   body?: unknown[];
   blocks?: PageBlock[];
   sidebar?: SidebarCard[];
   contactForm?: ContactFormContent;
   emptyStateText?: string;
-  newPatientAccessCards?: NewPatientAccessCard[];
-  newPatientSteps?: NewPatientStep[];
   recordRequestPdf?: CmsFile;
   recordRequestPdfLabel?: string;
   seo?: SeoFields;
@@ -353,10 +477,27 @@ export type CtaButton = {
 
 export type CmsImage = {
   url: string;
+  _type?: 'image';
+  asset?: {
+    _ref?: string;
+    _type?: 'reference';
+  };
   alt?: string;
   width?: number;
   height?: number;
   lqip?: string;
+  crop?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+  hotspot?: {
+    x?: number;
+    y?: number;
+    height?: number;
+    width?: number;
+  };
 };
 
 export type CmsFile = {
@@ -389,23 +530,6 @@ export type ContactFormContent = {
   description: string;
   note?: string;
   topics: string[];
-};
-
-export type NewPatientStep = {
-  iconName: 'phone' | 'clipboard' | 'calendar-check';
-  title: string;
-  body: string;
-  ctaType: 'none' | 'phone' | 'intake' | 'custom';
-  ctaLabel?: string;
-  ctaHref?: string;
-};
-
-export type NewPatientAccessCard = {
-  linkType: 'scheduling' | 'portal' | 'referral' | 'custom';
-  title: string;
-  description: string;
-  ctaLabel: string;
-  href?: string;
 };
 
 export type HomepageFeaturePanelItem = {
@@ -568,6 +692,7 @@ export type HomepageIconCard = {
   icon: HomepageIconName;
   title: string;
   body: string;
+  image?: CmsImage;
 };
 
 export type HomepageOffering = {
@@ -623,6 +748,7 @@ export type HomepageComponent =
       heading: string;
       description?: string;
       featureImage?: CmsImage;
+      listingSource?: 'selected' | 'allActiveServices';
       offerings?: HomepageOffering[];
     }
   | {
@@ -656,8 +782,6 @@ export type HomepageComponent =
 
 export type HomepageSettings = {
   title: string;
-  routePath: string;
-  status: 'draft' | 'published';
   components?: HomepageComponent[];
   seo?: SeoFields;
 };

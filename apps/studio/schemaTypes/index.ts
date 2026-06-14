@@ -1,4 +1,5 @@
 import {announcement} from './documents/announcement'
+import {position} from './documents/position'
 import {condition} from './documents/condition'
 import {drug} from './documents/drug'
 import {drugReferenceAnnotation} from './annotations/drugReference'
@@ -25,6 +26,7 @@ import {
 import {ctaButton} from './objects/ctaButton'
 import {ctaBlock} from './objects/ctaBlock'
 import {contactBandContent} from './objects/contactBandContent'
+import {contactFormBlock} from './objects/contactFormBlock'
 import {contactFormContent} from './objects/contactFormContent'
 import {homepageHero} from './objects/homepageHero'
 import {homepageCareOptions} from './objects/homepageCareOptions'
@@ -49,6 +51,10 @@ import {navMegaMenu} from './objects/navMegaMenu'
 import {navItemGroup} from './objects/navItemGroup'
 import {newPatientAccessCard} from './objects/newPatientAccessCard'
 import {newPatientStep} from './objects/newPatientStep'
+import {newPatientStepsBlock, newPatientStepsBlockStep} from './objects/newPatientStepsBlock'
+import {blocksListBlock, blocksListItem} from './objects/blocksListBlock'
+import {positionsListBlock} from './objects/positionsListBlock'
+import {teamListBlock} from './objects/teamListBlock'
 import {careModelBlock} from './objects/careModelBlock'
 import {careModelItem} from './objects/careModelItem'
 import {conditionsBlock} from './objects/conditionsBlock'
@@ -58,14 +64,16 @@ import {pageSection} from './objects/pageSection'
 import {programsBlock} from './objects/programsBlock'
 import {seoFields} from './objects/seoFields'
 import {serviceHighlight} from './objects/serviceHighlight'
-import {
-  servicesPageContent,
-  servicesPageFeature,
-  servicesPageFeatureStat,
-  servicesPageReferences,
-  servicesPageSection,
-} from './objects/servicesPageContent'
+
+import {serviceConditionsBlock} from './objects/serviceConditionsBlock'
+import {featureSplitBlock} from './objects/featureSplitBlock'
+import {quoteBlock} from './objects/quoteBlock'
+import {statItem, statsBandBlock} from './objects/statsBandBlock'
+import {trustStripBlock} from './objects/trustStripBlock'
 import {servicesBlock} from './objects/servicesBlock'
+import {servicesGridBlock} from './objects/servicesGridBlock'
+import {servicesListBlock} from './objects/servicesListBlock'
+import {programsListBlock} from './objects/programsListBlock'
 import {sidebarCard} from './objects/sidebarCard'
 import {footerColumn} from './objects/footerColumn'
 import {footerDisclaimer} from './objects/footerDisclaimer'
@@ -83,7 +91,7 @@ import {
 import { navMegaMenuAutoReferenceLinks } from './objects/navMegaMenuAutoReferenceLinks'
 import {conditionPageLabels, drugPageLabels} from './objects/pageLabels'
 import { websitePageBreadcrumbs } from './objects/websitePageBreadcrumbs'
-import { servicesPageIntro } from './objects/servicesPageIntro'
+
 
 export const schemaTypes = [
   siteSettings,
@@ -101,6 +109,7 @@ export const schemaTypes = [
   condition,
   faq,
   announcement,
+  position,
   accessLinks,
   aboutCommunityCta,
   aboutContent,
@@ -109,6 +118,7 @@ export const schemaTypes = [
   aboutIconSection,
   aboutTeamSection,
   contactBandContent,
+  contactFormBlock,
   contactFormContent,
   homepageHero,
   homepageCareOptions,
@@ -131,7 +141,13 @@ export const schemaTypes = [
   navMegaMenu,
   navItemGroup,
   newPatientAccessCard,
+  newPatientStepsBlock,
+  newPatientStepsBlockStep,
   newPatientStep,
+  blocksListBlock,
+  blocksListItem,
+  positionsListBlock,
+  teamListBlock,
   careModelBlock,
   careModelItem,
   conditionsBlock,
@@ -139,18 +155,21 @@ export const schemaTypes = [
   faqBlock,
   pageSection,
   programsBlock,
+  programsListBlock,
+  serviceConditionsBlock,
+  featureSplitBlock,
+  quoteBlock,
+  statItem,
+  statsBandBlock,
+  trustStripBlock,
   servicesBlock,
+  servicesGridBlock,
+  servicesListBlock,
   sidebarCard,
   seoFields,
-  servicesPageContent,
-  servicesPageFeature,
-  servicesPageFeatureStat,
-  servicesPageReferences,
-  servicesPageSection,
   navMegaMenuAutoReferenceLinks,
   ctaButton,
   websitePageBreadcrumbs,
-  servicesPageIntro,
   ctaBlock,
   footerColumn,
   footerDisclaimer,

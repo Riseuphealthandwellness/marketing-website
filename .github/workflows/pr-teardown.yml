@@ -39,14 +39,20 @@ jobs:
         run: |
           set -euo pipefail
 
-          if gcloud run services describe "${SERVICE_NAME}" \
+          if gcloud run services list \
               --project="${GCP_PROJECT_ID}" \
               --region="${GCP_REGION}" \
-              --quiet 2>/dev/null; then
+              --platform=managed \
+              --filter="metadata.name=${SERVICE_NAME}" \
+              --format='value(metadata.name)' \
+              2>/dev/null | grep -qx "${SERVICE_NAME}"; then
+            echo "Deleting Cloud Run service: ${SERVICE_NAME}"
             gcloud run services delete "${SERVICE_NAME}" \
               --project="${GCP_PROJECT_ID}" \
               --region="${GCP_REGION}" \
-              --quiet
+              --platform=managed \
+              --quiet \
+              --verbosity=error
             echo "Deleted Cloud Run service: ${SERVICE_NAME}"
           else
             echo "Service ${SERVICE_NAME} not found, nothing to tear down"

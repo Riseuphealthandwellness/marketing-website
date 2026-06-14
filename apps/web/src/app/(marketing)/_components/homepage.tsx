@@ -76,13 +76,44 @@ function IconTile({
   icon,
   title,
   body,
+  image,
   className,
 }: {
   icon?: HomepageIconName;
   title: string;
   body: string;
+  image?: { url: string; alt?: string };
   className?: string;
 }) {
+  if (image?.url) {
+    return (
+      <article className={cn("overflow-hidden rounded-lg border border-border bg-white shadow-sm", className)}>
+        <div className="relative">
+          <div className="aspect-[4/3] overflow-hidden">
+            <Image
+              alt={image.alt ?? title}
+              className="h-full w-full object-cover"
+              fill
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+              src={image.url}
+            />
+          </div>
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10">
+            <span className="flex size-12 items-center justify-center rounded-md bg-brand-trust text-brand-soft-accent shadow-md ring-2 ring-white">
+              <HomepageIcon className="size-6" name={icon} />
+            </span>
+          </div>
+        </div>
+        <div className="p-5 pt-9">
+          <h3 className="font-heading text-xl font-black tracking-normal text-brand-coal">
+            {title}
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-brand-coal/72">{body}</p>
+        </div>
+      </article>
+    );
+  }
+
   return (
     <article className={cn("rounded-lg border border-border bg-white p-5 shadow-sm", className)}>
       <span className="flex size-12 items-center justify-center rounded-md bg-brand-trust text-brand-soft-accent">
@@ -300,6 +331,7 @@ function AdvantageSection({ content }: { content: AdvantageComponent }) {
             <IconTile
               body={advantage.body}
               icon={advantage.icon}
+              image={advantage.image}
               key={advantage.title}
               title={advantage.title}
             />
@@ -310,17 +342,80 @@ function AdvantageSection({ content }: { content: AdvantageComponent }) {
   );
 }
 
+function serviceToOffering(service: Service): HomepageOffering {
+  return {
+    _key: service._id,
+    item: {
+      _id: service._id,
+      _type: "service",
+      slug: service.slug,
+      title: service.title,
+      description: service.description,
+      icon: service.icon,
+      cardEyebrow: service.cardEyebrow,
+      href: service.href,
+    },
+  };
+}
+
+function programToOffering(program: Program): HomepageOffering {
+  return {
+    _key: program._id ?? program.slug,
+    item: {
+      _id: program._id ?? program.slug,
+      _type: "program",
+      slug: program.slug,
+      title: program.title,
+      description: program.description,
+      icon: program.icon,
+      cardEyebrow: program.cardEyebrow,
+      audience: program.audience,
+      href: program.href,
+    },
+  };
+}
+
 function servicesToOfferings(services: Service[], programs: Program[]): HomepageOffering[] {
-  return [
-    ...services.map((s) => ({
-      _key: s._id,
-      item: { _id: s._id, _type: "service" as const, slug: s.slug, title: s.title, description: s.description, icon: s.icon, cardEyebrow: s.cardEyebrow, href: s.href },
-    })),
-    ...programs.map((p) => ({
-      _key: p._id ?? p.slug,
-      item: { _id: p._id ?? p.slug, _type: "program" as const, slug: p.slug, title: p.title, description: p.description, icon: p.icon, cardEyebrow: p.cardEyebrow, audience: p.audience, href: p.href },
-    })),
-  ];
+  return [...services.map(serviceToOffering), ...programs.map(programToOffering)];
+}
+
+function getServicesSectionOfferings(
+  content: ServicesComponent,
+  allServices: Service[],
+  allPrograms: Program[],
+): HomepageOffering[] {
+  const selected = content.offerings?.filter((offering) => offering.item) ?? [];
+
+  if (content.listingSource !== "allActiveServices") {
+    return selected.length > 0 ? selected : servicesToOfferings(allServices, allPrograms);
+  }
+
+  const activeServiceOfferings = new Map(
+    allServices.map((service) => [service._id, serviceToOffering(service)]),
+  );
+  const ordered: HomepageOffering[] = [];
+
+  for (const offering of selected) {
+    const item = offering.item;
+    if (!item || item._type !== "service") continue;
+
+    const activeOffering = activeServiceOfferings.get(item._id);
+    if (!activeOffering) continue;
+
+    ordered.push({
+      _key: offering._key ?? activeOffering._key,
+      item: {
+        ...activeOffering.item!,
+        ...item,
+        icon: item.icon ?? activeOffering.item?.icon,
+        cardEyebrow: item.cardEyebrow ?? activeOffering.item?.cardEyebrow,
+        href: item.href ?? activeOffering.item?.href,
+      },
+    });
+    activeServiceOfferings.delete(item._id);
+  }
+
+  return [...ordered, ...activeServiceOfferings.values()];
 }
 
 function ServicesSection({
@@ -332,8 +427,7 @@ function ServicesSection({
   allServices: Service[];
   allPrograms: Program[];
 }) {
-  const curated = content.offerings?.filter((offering) => offering.item) ?? [];
-  const offerings = curated.length > 0 ? curated : servicesToOfferings(allServices, allPrograms);
+  const offerings = getServicesSectionOfferings(content, allServices, allPrograms);
   const featureImage = content.featureImage;
 
   return (
@@ -407,7 +501,7 @@ function ServicesSection({
                       eyebrow={item.cardEyebrow ?? item.audience ?? ""}
                       href={href}
                       icon={item.icon}
-                      key={item._id}
+                      key={`${item._type}-${item._id}`}
                       title={item.title}
                     />
                   );

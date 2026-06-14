@@ -1,6 +1,6 @@
 import { cache } from "react";
 
-import { getConditionHref, getTreatmentHref } from "@/lib/care-routes";
+import { getConditionHref, getProgramHref, getServiceHref } from "@/lib/care-routes";
 import { isCmsConfigured, sanityClient } from "@/lib/cms/client";
 import { cmsQueries } from "@/lib/cms/queries";
 import type {
@@ -14,6 +14,7 @@ import type {
   Location,
   MarketingPage,
   NavItemGroup,
+  Position,
   Program,
   Provider,
   ReferralSettings,
@@ -44,57 +45,146 @@ export async function getNavigation(slug: string): Promise<SiteNavItem[]> {
     sanityFetchOptions,
   );
   const items = doc?.items ?? [];
-  if (!items.some((item) => item._type === "navMegaMenu" && item.autoReferenceLinks?.enabled)) {
-    return items;
-  }
 
-  const services = await sanityClient.fetch<Service[] | null>(
-    cmsQueries.navigationReferenceServices,
-    {},
-    sanityFetchOptions,
+  const needsAutoLinks = items.some(
+    (item) =>
+      item._type === "navMegaMenu" &&
+      (item.autoReferenceLinks?.enabled ||
+        item.autoReferenceLinks?.showConditions ||
+        item.groups?.some(
+          (g) =>
+            (["Services", "Programs"].includes(g.title) ||
+              isConditionReferenceGroupTitle(g.title, item.autoReferenceLinks?.conditionGroupTitle)) &&
+            !g.links?.length,
+        )),
   );
+  if (!needsAutoLinks) return items;
+
+  const [services, programs] = await Promise.all([
+    sanityClient.fetch<Service[] | null>(cmsQueries.navigationReferenceServices, {}, sanityFetchOptions),
+    sanityClient.fetch<Program[] | null>(cmsQueries.navigationReferencePrograms, {}, sanityFetchOptions),
+  ]);
 
   return items.map((item) =>
     item._type === "navMegaMenu"
-      ? withReferenceLinkGroups(item, services ?? [])
+      ? withReferenceLinkGroups(item, services ?? [], programs ?? [])
       : item,
   );
 }
 
-function withReferenceLinkGroups(item: SiteNavMegaMenu, services: Service[]): SiteNavMegaMenu {
-  if (!item.autoReferenceLinks?.enabled) return item;
+function withReferenceLinkGroups(item: SiteNavMegaMenu, services: Service[], programs: Program[]): SiteNavMegaMenu {
+  const excluded = new Set(item.autoReferenceLinks?.excludeServices?.map((s) => s._id) ?? []);
+  const enabledServices = services.filter((s) => !excluded.has(s._id));
 
-  const excluded = new Set(item.autoReferenceLinks.excludeServices?.map((service) => service._id) ?? []);
-  const referenceGroups = services
-    .filter((service) => !excluded.has(service._id))
-    .map((service): NavItemGroup | null => {
-      const conditionLinks =
-        service.conditions?.map((condition) => ({
-          label: condition.title,
-          href: getConditionHref(condition, { serviceSlug: service.slug }),
-          description: condition.shortDescription,
-        })) ?? [];
-      const medicationLinks =
-        service.medications?.map((medication) => ({
-          label: medication.name,
-          href: getTreatmentHref(medication),
-          description: medication.description,
-        })) ?? [];
-      const links = [...conditionLinks, ...medicationLinks];
+  const serviceLinks: NavItemGroup["links"] = enabledServices.map((s) => ({
+    label: s.title,
+    href: getServiceHref(s),
+    description: s.description,
+  }));
+  const programLinks: NavItemGroup["links"] = programs.map((p) => ({
+    label: p.title,
+    href: getProgramHref(p),
+    description: p.description,
+  }));
+  const conditionLinks = buildConditionReferenceLinks(enabledServices);
 
-      return links.length > 0 ? { title: service.title, links } : null;
-    })
-    .filter((group): group is NavItemGroup => group !== null);
+  const existingGroups = item.groups ?? [];
 
-  return {
-    ...item,
-    groups: [...(item.groups ?? []), ...referenceGroups],
-  };
+  // Fill in empty "Services"/"Programs"/"Conditions" placeholder groups in place so the
+  // editor's ordering is preserved. Only groups with no links are filled —
+  // groups that already have manual links are left untouched.
+  const mergedGroups = existingGroups.map((g): NavItemGroup => {
+    if (g.title === "Services" && !g.links?.length && serviceLinks.length) {
+      return { ...g, links: serviceLinks };
+    }
+    if (g.title === "Programs" && !g.links?.length && programLinks.length) {
+      return { ...g, links: programLinks };
+    }
+    if (
+      isConditionReferenceGroupTitle(g.title, item.autoReferenceLinks?.conditionGroupTitle) &&
+      !g.links?.length &&
+      conditionLinks.length
+    ) {
+      return { ...g, links: conditionLinks };
+    }
+    return g;
+  });
+
+  // If "Services"/"Programs"/"Conditions" weren't in the manual list at all but
+  // autoReferenceLinks is enabled, append them.
+  if (item.autoReferenceLinks?.enabled) {
+    const hasServices = existingGroups.some((g) => g.title === "Services");
+    const hasPrograms = existingGroups.some((g) => g.title === "Programs");
+    const hasConditions = existingGroups.some((g) =>
+      isConditionReferenceGroupTitle(g.title, item.autoReferenceLinks?.conditionGroupTitle),
+    );
+    if (!hasServices && serviceLinks.length) mergedGroups.push({ title: "Services", links: serviceLinks });
+    if (!hasPrograms && programLinks.length) mergedGroups.push({ title: "Programs", links: programLinks });
+    if (item.autoReferenceLinks.showConditions && !hasConditions && conditionLinks.length) {
+      mergedGroups.push({
+        title: item.autoReferenceLinks.conditionGroupTitle ?? "Conditions we treat",
+        links: conditionLinks,
+      });
+    }
+  }
+
+  return { ...item, groups: mergedGroups };
+}
+
+function isConditionReferenceGroupTitle(title: string, configuredTitle?: string) {
+  return [configuredTitle, "Conditions", "Conditions we treat", "All conditions we treat"].includes(title);
+}
+
+function buildConditionReferenceLinks(services: Service[]): NavItemGroup["links"] {
+  const conditions = new Map<string, NavItemGroup["links"][number]>();
+
+  services.forEach((service) => {
+    service.conditions?.forEach((condition) => {
+      if (!condition.slug) return;
+      const key = `${condition.category ?? "condition"}:${condition.slug}`;
+      if (conditions.has(key)) return;
+
+      conditions.set(key, {
+        label: condition.title,
+        href: getConditionHref(condition, { serviceSlug: service.slug }),
+        description: condition.shortDescription,
+      });
+    });
+  });
+
+  return Array.from(conditions.values()).sort((a, b) => a.label.localeCompare(b.label));
 }
 
 export async function getSiteFooter(): Promise<SiteFooter | null> {
   if (!isCmsConfigured) return null;
-  return sanityClient.fetch<SiteFooter | null>(cmsQueries.siteFooter, {}, sanityFetchOptions);
+  const footer = await sanityClient.fetch<SiteFooter | null>(cmsQueries.siteFooter, {}, sanityFetchOptions);
+  if (!footer) return null;
+
+  const needsAutoLinks = footer.columns?.some(
+    (col) => ["Services", "Programs"].includes(col.heading) && !col.links?.length,
+  );
+  if (!needsAutoLinks) return footer;
+
+  const [services, programs] = await Promise.all([
+    sanityClient.fetch<Service[] | null>(cmsQueries.navigationReferenceServices, {}, sanityFetchOptions),
+    sanityClient.fetch<Program[] | null>(cmsQueries.navigationReferencePrograms, {}, sanityFetchOptions),
+  ]);
+
+  const serviceLinks = (services ?? []).map((s) => ({ label: s.title, href: getServiceHref(s) }));
+  const programLinks = (programs ?? []).map((p) => ({ label: p.title, href: getProgramHref(p) }));
+
+  return {
+    ...footer,
+    columns: footer.columns?.map((col) => {
+      if (col.heading === "Services" && !col.links?.length && serviceLinks.length) {
+        return { ...col, links: serviceLinks };
+      }
+      if (col.heading === "Programs" && !col.links?.length && programLinks.length) {
+        return { ...col, links: programLinks };
+      }
+      return col;
+    }),
+  };
 }
 
 export async function getMarketingPage(slug: string): Promise<MarketingPage | null> {
@@ -196,6 +286,14 @@ export async function getAllConditionSlugs(): Promise<{ slug: string; category: 
 export async function getCareModelBlock(): Promise<CareModelBlock | null> {
   if (!isCmsConfigured) return null;
   return sanityClient.fetch<CareModelBlock | null>(cmsQueries.careModelBlock, {}, sanityFetchOptions);
+}
+
+// Positions
+
+export async function getOpenPositions(): Promise<Position[]> {
+  if (!isCmsConfigured) return [];
+  const rows = await sanityClient.fetch<Position[] | null>(cmsQueries.openPositions, {}, sanityFetchOptions);
+  return rows ?? [];
 }
 
 // FAQs

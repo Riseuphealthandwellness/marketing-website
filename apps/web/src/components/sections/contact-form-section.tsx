@@ -4,7 +4,6 @@ import { Send } from "lucide-react";
 import { useRef, useState } from "react";
 
 import { Container } from "@/components/layout/container";
-import { Section } from "@/components/layout/section";
 import { Button } from "@/components/ui/button";
 import type { ContactFormContent } from "@/lib/cms/types";
 
@@ -153,16 +152,16 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
   }
 
   return (
-    <Section className="bg-surface">
+    <div className="pb-12 pt-6 sm:pb-14 sm:pt-8 lg:pb-16">
       <Container className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
         <div className="max-w-3xl">
-          <p className="font-heading text-sm font-black uppercase text-brand-action">
+          <p className="font-heading text-xs font-black uppercase tracking-widest text-brand-action">
             {content.eyebrow}
           </p>
-          <h2 className="mt-3 text-3xl font-black leading-tight tracking-normal text-foreground sm:text-4xl">
+          <h2 className="mt-2 font-heading text-3xl font-black leading-tight tracking-normal text-foreground sm:text-4xl">
             {content.heading}
           </h2>
-          <p className="mt-4 text-lg leading-7 text-muted-foreground">
+          <p className="mt-3 text-lg leading-7 text-muted-foreground">
             {content.description}
           </p>
           {content.note ? (
@@ -301,6 +300,6 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
           </Button>
         </form>
       </Container>
-    </Section>
+    </div>
   );
 }

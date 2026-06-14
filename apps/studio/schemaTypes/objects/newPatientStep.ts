@@ -8,6 +8,16 @@ export const newPatientStep = defineType({
   icon: ClipboardIcon,
   fields: [
     defineField({
+      name: 'image',
+      title: 'Card image (optional)',
+      type: 'image',
+      description: 'Shown in the upper portion of the card. Leave blank to show just the icon.',
+      options: {hotspot: true},
+      fields: [
+        defineField({name: 'alt', title: 'Alt text', type: 'string'}),
+      ],
+    }),
+    defineField({
       name: 'iconName',
       title: 'Icon',
       type: 'string',

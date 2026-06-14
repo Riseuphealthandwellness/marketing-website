@@ -4,7 +4,5 @@ import { metadataForPage } from "@/app/(marketing)/_lib/page-helpers";
 export const generateMetadata = () => metadataForPage("careers");
 
 export default function CareersPage() {
-  return (
-    <StaticMarketingPage slug="careers" />
-  );
+  return <StaticMarketingPage slug="careers" />;
 }

@@ -94,7 +94,7 @@ export function HomeHero({
           fill
           priority
           sizes="100vw"
-          src={sanityImageUrl(backgroundImage.url, { width: 1800, quality: 80, fit: "crop" })}
+          src={sanityImageUrl(backgroundImage, { width: 1800, quality: 80, fit: "crop" })}
           placeholder={backgroundImage.lqip ? "blur" : "empty"}
           blurDataURL={backgroundImage.lqip}
         />

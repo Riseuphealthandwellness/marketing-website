@@ -78,7 +78,7 @@ export async function ConditionDetailPage({
       />
 
       {condition.body && (condition.body as unknown[]).length > 0 ? (
-        <Section className="bg-white py-10 sm:py-12 lg:py-14">
+        <Section className="py-10 sm:py-12 lg:py-14">
           <Container>
             <div className="grid gap-10 lg:grid-cols-[1fr_280px] lg:gap-14">
               <div>

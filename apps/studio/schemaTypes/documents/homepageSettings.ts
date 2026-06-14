@@ -15,28 +15,6 @@ export const homepageSettings = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'routePath',
-      title: 'Route path',
-      type: 'string',
-      initialValue: '/',
-      readOnly: true,
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'status',
-      title: 'Status',
-      type: 'string',
-      initialValue: 'draft',
-      options: {
-        layout: 'radio',
-        list: [
-          {title: 'Draft', value: 'draft'},
-          {title: 'Published', value: 'published'},
-        ],
-      },
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
       name: 'components',
       title: 'Homepage components',
       description: 'Ordered sections rendered on the homepage.',
@@ -58,15 +36,9 @@ export const homepageSettings = defineType({
     }),
   ],
   preview: {
-    select: {
-      title: 'title',
-      status: 'status',
-    },
-    prepare({title, status}) {
-      return {
-        title: title ?? 'Homepage',
-        subtitle: status === 'published' ? 'Published homepage' : 'Draft homepage',
-      }
+    select: {title: 'title'},
+    prepare({title}) {
+      return {title: title ?? 'Homepage'}
     },
   },
 })
