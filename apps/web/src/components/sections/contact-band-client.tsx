@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Expand, Mail, MapPin, Phone, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -107,7 +108,15 @@ export function ContactBandClient({
             >
               <X aria-hidden="true" className="size-5" />
             </button>
-            <img alt="Map of our location" className="h-auto w-full" src={mapSrcLarge!} />
+            {mapSrcLarge ? (
+              <Image
+                alt="Map of our location"
+                className="h-auto w-full"
+                height={1200}
+                src={mapSrcLarge}
+                width={1600}
+              />
+            ) : null}
           </div>
         </div>
       ) : null}
