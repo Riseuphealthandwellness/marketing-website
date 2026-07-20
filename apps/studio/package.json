@@ -30,7 +30,7 @@
     "@types/react": "^19.2.17",
     "eslint": "^9.39",
     "prettier": "^3.9.5",
-    "typescript": "^5.8"
+    "typescript": "^7.0"
   },
   "prettier": {
     "bracketSpacing": false,
