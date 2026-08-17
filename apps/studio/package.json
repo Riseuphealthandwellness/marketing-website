@@ -22,8 +22,8 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "sanity": "^5.31.1",
-    "sanity-plugin-asset-source-unsplash": "^7.0.21",
-    "styled-components": "^6.4.4"
+    "sanity-plugin-asset-source-unsplash": "^7.0.23",
+    "styled-components": "^6.5.2"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^6.0.0",
