@@ -61,6 +61,18 @@ function includesBlockedSensitiveDetails(value: string) {
   return /\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/.test(value);
 }
 
+// Strips a leading country code "1" from an 11-digit US number so it validates
+// the same as a bare 10-digit number.
+function normalizePhoneDigits(digitsOnly: string) {
+  return digitsOnly.length === 11 && digitsOnly.startsWith("1") ? digitsOnly.slice(1) : digitsOnly;
+}
+
+function isValidPhone(value: string) {
+  const normalized = normalizePhoneDigits(value.replace(/\D/g, ""));
+  // NANP area codes never start with 0 or 1, so a leading 1 always means country code.
+  return /^[2-9]\d{9}$/.test(normalized);
+}
+
 function buildEmailBody(input: {
   contactPerson: string;
   contactPhone: string;
@@ -199,6 +211,14 @@ export async function POST(request: Request) {
     return Response.json({ error: "Please complete the required fields." }, { status: 422 });
   }
 
+  if (!isValidPhone(input.contactPhone)) {
+    return Response.json({ error: "Please enter a valid contact phone number." }, { status: 422 });
+  }
+
+  if (input.patientPhone && !isValidPhone(input.patientPhone)) {
+    return Response.json({ error: "Please enter a valid patient phone number." }, { status: 422 });
+  }
+
   if (input.sex && !sexOptions.has(input.sex)) {
     return Response.json({ error: "Please select a valid sex option." }, { status: 422 });
   }
@@ -207,7 +227,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Please enter only the last 4 digits of the SSN." }, { status: 422 });
   }
 
-  if (includesBlockedSensitiveDetails(Object.values(input).join(" "))) {
+  if (includesBlockedSensitiveDetails(`${input.reasonForReferral} ${input.patientAddress}`)) {
     return Response.json(
       { error: "Please do not include full Social Security numbers in the online form." },
       { status: 422 },

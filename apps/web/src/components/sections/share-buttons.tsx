@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Check, Copy, Share2 } from 'lucide-react';
 
 type ShareButtonsProps = {
@@ -9,7 +9,12 @@ type ShareButtonsProps = {
 
 export function ShareButtons({ title }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
-  const canShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+  // Start false to match the server render, then detect after mount to avoid a hydration mismatch.
+  const [canShare, setCanShare] = useState(false);
+
+  useEffect(() => {
+    setCanShare(typeof navigator !== 'undefined' && typeof navigator.share === 'function');
+  }, []);
 
   async function handleShare() {
     try {

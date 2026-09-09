@@ -1,7 +1,7 @@
 "use client";
 
 import { Send } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ type FormState = {
   error?: string;
   ok?: boolean;
 };
+type FieldErrors = Record<string, string>;
 
 type ContactFormSectionProps = {
   content?: ContactFormContent;
@@ -22,6 +23,30 @@ function cleanText(value: FormDataEntryValue | null, maxLength: number) {
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
+}
+
+// Strips a leading country code "1" from an 11-digit US number so callers can
+// treat it the same as a bare 10-digit number.
+function normalizePhoneDigits(digitsOnly: string) {
+  return digitsOnly.length === 11 && digitsOnly.startsWith("1") ? digitsOnly.slice(1) : digitsOnly;
+}
+
+function isValidPhone(value: string) {
+  const normalized = normalizePhoneDigits(value.replace(/\D/g, ""));
+  // NANP area codes never start with 0 or 1, so a leading 1 always means country code.
+  return /^[2-9]\d{9}$/.test(normalized);
+}
+
+function formatPhoneDisplay(rawInput: string) {
+  const normalized = normalizePhoneDigits(rawInput.replace(/\D/g, "").slice(0, 11));
+  const area = normalized.slice(0, 3);
+  const prefix = normalized.slice(3, 6);
+  const line = normalized.slice(6, 10);
+  const overflow = normalized.slice(10);
+  if (!normalized) return "";
+  if (normalized.length < 4) return `(${area}`;
+  if (normalized.length < 7) return `(${area}) ${prefix}`;
+  return `(${area}) ${prefix}-${line}${overflow}`;
 }
 
 function includesEmergencyLanguage(value: string) {
@@ -39,17 +64,122 @@ function includesLikelySensitiveDetails(value: string) {
   );
 }
 
+function buildPayload(formData: FormData, startedAt: number | null) {
+  return {
+    name: cleanText(formData.get("name"), 80),
+    email: cleanText(formData.get("email"), 254).toLowerCase(),
+    phone: cleanText(formData.get("phone"), 30),
+    topic: cleanText(formData.get("topic"), 40),
+    message: cleanText(formData.get("message"), 1_500),
+    consent: formData.get("consent") === "on",
+    website: formData.get("website"),
+    startedAt,
+  };
+}
+
+function getFieldErrors(payload: ReturnType<typeof buildPayload>, topics: string[]): FieldErrors {
+  const errors: FieldErrors = {};
+  if (!payload.name) errors.name = "Required";
+  if (!payload.email) errors.email = "Required";
+  else if (!isValidEmail(payload.email)) errors.email = "Enter a valid email address";
+  if (payload.phone && !isValidPhone(payload.phone)) errors.phone = "Enter a valid phone number";
+  if (!topics.includes(payload.topic)) errors.topic = "Please select a topic";
+  if (!payload.message || payload.message.length < 20)
+    errors.message = "Please provide more detail (at least 20 characters)";
+  else if (includesEmergencyLanguage(payload.message))
+    errors.message = "This form is not monitored for urgent concerns. Please call 911 or use your approved care channel.";
+  else if (includesLikelySensitiveDetails(payload.message))
+    errors.message = "Please remove protected health, insurance, or identity details.";
+  if (!payload.consent) errors.consent = "Please confirm before submitting";
+  return errors;
+}
+
+const fieldOrder = ["name", "email", "phone", "topic", "message", "consent"] as const;
+
+const fieldIdByName: Record<string, string> = {
+  name: "contact-name",
+  email: "contact-email",
+  phone: "contact-phone",
+  topic: "contact-topic",
+  message: "contact-message",
+  consent: "contact-consent",
+};
+
+function FieldError({ id, message }: { id?: string; message?: string }) {
+  if (!message) return null;
+  return (
+    <p className="mt-1 text-xs font-semibold text-brand-action" id={id} role="alert">
+      {message}
+    </p>
+  );
+}
+
+function fieldClass(hasError: boolean) {
+  return [
+    "mt-2 h-11 w-full rounded-md border bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring",
+    hasError ? "border-brand-action" : "border-input",
+  ].join(" ");
+}
+
+function textareaClass(hasError: boolean) {
+  return [
+    "mt-2 min-h-36 w-full resize-y rounded-md border bg-background px-3 py-3 text-base leading-7 text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring",
+    hasError ? "border-brand-action" : "border-input",
+  ].join(" ");
+}
+
 export function ContactFormSection({ content }: ContactFormSectionProps) {
   const startedAtRef = useRef<number | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const touchedFieldsRef = useRef<Record<string, boolean>>({});
   const [state, setState] = useState<FormState>({});
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [canSubmit, setCanSubmit] = useState(false);
+  const [phoneDigits, setPhoneDigits] = useState("");
   const topics = content?.topics ?? [];
 
-  if (!content) return null;
+  // Anchor the anti-bot timer to page render, not the first field interaction,
+  // so autofilled or password-manager-filled submissions aren't misread as bots.
+  useEffect(() => {
+    startedAtRef.current = Date.now();
+  }, []);
 
   function markStarted() {
     startedAtRef.current ??= Date.now();
   }
+
+  // The Send button is disabled until the form is valid, so a field's error must be
+  // surfaced here too — otherwise an invalid entry just silently blocks the button
+  // with no explanation. Only show errors for fields the user has actually touched.
+  function applyLiveValidation(touchedField?: string) {
+    const form = formRef.current;
+    if (!form) return;
+    if (touchedField) touchedFieldsRef.current[touchedField] = true;
+    const payload = buildPayload(new FormData(form), startedAtRef.current);
+    const errors = getFieldErrors(payload, topics);
+    setCanSubmit(Object.keys(errors).length === 0);
+    setFieldErrors(Object.fromEntries(Object.entries(errors).filter(([key]) => touchedFieldsRef.current[key])));
+  }
+
+  function handleFormActivity(event: React.SyntheticEvent<HTMLFormElement>) {
+    markStarted();
+    const fieldName = (event.target as HTMLElement).getAttribute?.("name") ?? undefined;
+    applyLiveValidation(fieldName);
+  }
+
+  // phoneDigits lives outside the DOM value (which only ever shows formatted text), so
+  // re-check validity once the input has actually re-rendered with the new value.
+  useEffect(() => {
+    applyLiveValidation("phone");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phoneDigits]);
+
+  function handlePhoneChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setPhoneDigits(event.target.value.replace(/\D/g, "").slice(0, 11));
+  }
+
+  if (!content) return null;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -59,74 +189,23 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
     setState({});
 
     const formData = new FormData(form);
-    const name = cleanText(formData.get("name"), 80);
-    const email = cleanText(formData.get("email"), 254).toLowerCase();
-    const phone = cleanText(formData.get("phone"), 30);
-    const topic = cleanText(formData.get("topic"), 40);
-    const message = cleanText(formData.get("message"), 1_500);
-    const consent = formData.get("consent") === "on";
+    const payload = buildPayload(formData, startedAtRef.current);
 
-    if (!name) {
-      setState({ error: "Please enter your name." });
+    const errors = getFieldErrors(payload, topics);
+    if (Object.keys(errors).length > 0) {
+      for (const name of Object.keys(errors)) touchedFieldsRef.current[name] = true;
+      setFieldErrors(errors);
       setIsSubmitting(false);
+      setCanSubmit(false);
+      setState({ error: "Please review the highlighted fields below and try again." });
+      const firstErrorField = fieldOrder.find((name) => errors[name]);
+      const fieldId = firstErrorField ? fieldIdByName[firstErrorField] : undefined;
+      const invalidElement = fieldId ? form.querySelector<HTMLElement>(`#${fieldId}`) : null;
+      invalidElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+      invalidElement?.focus();
       return;
     }
-
-    if (!isValidEmail(email)) {
-      setState({ error: "Please enter a valid email address." });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!topics.includes(topic)) {
-      setState({ error: "Please select a topic." });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (message.length < 20) {
-      setState({ error: "Please enter a message with at least 20 characters." });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (includesEmergencyLanguage(message)) {
-      setState({
-        error:
-          "This form is not monitored for urgent concerns. Please call 911 or use your approved care channel.",
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (includesLikelySensitiveDetails(message)) {
-      setState({
-        error:
-          "Please remove protected health, insurance, or identity details before sending this message.",
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!consent) {
-      setState({
-        error:
-          "Please confirm that your message is non-urgent and does not include protected health information.",
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    const payload = {
-      name,
-      email,
-      phone,
-      topic,
-      message,
-      consent,
-      website: formData.get("website"),
-      startedAt: startedAtRef.current,
-    };
+    setFieldErrors({});
 
     try {
       const response = await fetch("/api/contact", {
@@ -142,7 +221,10 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
       }
 
       form.reset();
-      startedAtRef.current = null;
+      startedAtRef.current = Date.now();
+      setCanSubmit(false);
+      setPhoneDigits("");
+      touchedFieldsRef.current = {};
       setState({ ok: true });
     } catch {
       setState({ error: "The message could not be sent right now. Please call or email us directly." });
@@ -150,6 +232,7 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
       setIsSubmitting(false);
     }
   }
+
 
   return (
     <div className="pb-12 pt-6 sm:pb-14 sm:pt-8 lg:pb-16">
@@ -173,38 +256,47 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
 
         <form
           className="rounded-lg border border-border bg-card p-5 shadow-[var(--shadow-soft)]"
-          onChangeCapture={markStarted}
+          onBlurCapture={handleFormActivity}
+          onChangeCapture={handleFormActivity}
           onFocusCapture={markStarted}
           onSubmit={handleSubmit}
+          ref={formRef}
         >
-          <div className="grid gap-5 sm:grid-cols-2">
+          <p className="text-sm text-muted-foreground">
+            Fields marked <span className="text-brand-action">*</span> are required.
+          </p>
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
             <div>
               <label className="text-sm font-bold text-foreground" htmlFor="contact-name">
-                Name
+                Name <span className="text-brand-action">*</span>
               </label>
               <input
+                aria-describedby={fieldErrors.name ? "contact-name-error" : undefined}
+                aria-invalid={!!fieldErrors.name}
                 autoComplete="name"
-                className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className={fieldClass(!!fieldErrors.name)}
                 id="contact-name"
                 maxLength={80}
                 name="name"
-                required
               />
+              <FieldError id="contact-name-error" message={fieldErrors.name} />
             </div>
 
             <div>
               <label className="text-sm font-bold text-foreground" htmlFor="contact-email">
-                Email
+                Email <span className="text-brand-action">*</span>
               </label>
               <input
+                aria-describedby={fieldErrors.email ? "contact-email-error" : undefined}
+                aria-invalid={!!fieldErrors.email}
                 autoComplete="email"
-                className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className={fieldClass(!!fieldErrors.email)}
                 id="contact-email"
                 maxLength={254}
                 name="email"
-                required
                 type="email"
               />
+              <FieldError id="contact-email-error" message={fieldErrors.email} />
             </div>
 
             <div>
@@ -212,25 +304,33 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
                 Phone
               </label>
               <input
+                aria-describedby={fieldErrors.phone ? "contact-phone-error" : undefined}
+                aria-invalid={!!fieldErrors.phone}
                 autoComplete="tel"
-                className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className={fieldClass(!!fieldErrors.phone)}
                 id="contact-phone"
-                maxLength={30}
+                inputMode="numeric"
+                maxLength={16}
                 name="phone"
+                onChange={handlePhoneChange}
+                placeholder="(555) 123-4567"
                 type="tel"
+                value={formatPhoneDisplay(phoneDigits)}
               />
+              <FieldError id="contact-phone-error" message={fieldErrors.phone} />
             </div>
 
             <div>
               <label className="text-sm font-bold text-foreground" htmlFor="contact-topic">
-                Topic
+                Topic <span className="text-brand-action">*</span>
               </label>
               <select
-                className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-describedby={fieldErrors.topic ? "contact-topic-error" : undefined}
+                aria-invalid={!!fieldErrors.topic}
+                className={fieldClass(!!fieldErrors.topic)}
                 defaultValue=""
                 id="contact-topic"
                 name="topic"
-                required
               >
                 <option disabled value="">
                   Select a topic
@@ -241,21 +341,24 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
                   </option>
                 ))}
               </select>
+              <FieldError id="contact-topic-error" message={fieldErrors.topic} />
             </div>
           </div>
 
           <div className="mt-5">
             <label className="text-sm font-bold text-foreground" htmlFor="contact-message">
-              Message
+              Message <span className="text-brand-action">*</span>
             </label>
             <textarea
-              className="mt-2 min-h-36 w-full resize-y rounded-md border border-input bg-background px-3 py-3 text-base leading-7 text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-describedby={fieldErrors.message ? "contact-message-error" : undefined}
+              aria-invalid={!!fieldErrors.message}
+              className={textareaClass(!!fieldErrors.message)}
               id="contact-message"
               maxLength={1500}
               minLength={20}
               name="message"
-              required
             />
+            <FieldError id="contact-message-error" message={fieldErrors.message} />
           </div>
 
           <div className="hidden" aria-hidden="true">
@@ -271,16 +374,19 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
 
           <label className="mt-5 flex items-start gap-3 text-sm leading-6 text-muted-foreground">
             <input
+              aria-describedby={fieldErrors.consent ? "contact-consent-error" : undefined}
+              aria-invalid={!!fieldErrors.consent}
               className="mt-1 size-4 rounded border-input accent-brand-action"
+              id="contact-consent"
               name="consent"
-              required
               type="checkbox"
             />
             <span>
               I understand this is a general contact form and have not included
-              personal medical or insurance information.
+              personal medical or insurance information. <span className="text-brand-action">*</span>
             </span>
           </label>
+          <FieldError id="contact-consent-error" message={fieldErrors.consent} />
 
           {state.error ? (
             <p className="mt-4 rounded-md border border-brand-action/30 bg-brand-action/10 px-4 py-3 text-sm font-semibold text-brand-action">
@@ -294,7 +400,7 @@ export function ContactFormSection({ content }: ContactFormSectionProps) {
             </p>
           ) : null}
 
-          <Button className="mt-6" disabled={isSubmitting} type="submit">
+          <Button className="mt-6" disabled={isSubmitting || !canSubmit} type="submit">
             <Send aria-hidden="true" className="size-4" />
             {isSubmitting ? "Sending" : "Send message"}
           </Button>

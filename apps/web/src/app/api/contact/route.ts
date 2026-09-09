@@ -59,6 +59,18 @@ function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
 }
 
+// Strips a leading country code "1" from an 11-digit US number so it validates
+// the same as a bare 10-digit number.
+function normalizePhoneDigits(digitsOnly: string) {
+  return digitsOnly.length === 11 && digitsOnly.startsWith("1") ? digitsOnly.slice(1) : digitsOnly;
+}
+
+function isValidPhone(value: string) {
+  const normalized = normalizePhoneDigits(value.replace(/\D/g, ""));
+  // NANP area codes never start with 0 or 1, so a leading 1 always means country code.
+  return /^[2-9]\d{9}$/.test(normalized);
+}
+
 function includesEmergencyLanguage(value: string) {
   return /\b(911|emergency|urgent|overdose|suicid(?:e|al)|self[-\s]?harm|chest pain|can't breathe|cannot breathe)\b/i.test(
     value,
@@ -182,6 +194,10 @@ export async function POST(request: Request) {
 
   if (!name || !isValidEmail(email) || !topics.has(topic) || message.length < 20 || !consent) {
     return Response.json({ error: "Please complete the required fields." }, { status: 422 });
+  }
+
+  if (phone && !isValidPhone(phone)) {
+    return Response.json({ error: "Please enter a valid phone number." }, { status: 422 });
   }
 
   if (includesEmergencyLanguage(message)) {
