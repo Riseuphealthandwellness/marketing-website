@@ -17,19 +17,19 @@
     "sanity"
   ],
   "dependencies": {
-    "@sanity/icons": "^3.7.4",
-    "@sanity/vision": "^5.31.1",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "sanity": "^5.31.1",
-    "sanity-plugin-asset-source-unsplash": "^7.0.8",
-    "styled-components": "^6.4.2"
+    "@sanity/icons": "^3.8.0",
+    "@sanity/vision": "^5.31.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "sanity": "^5.31.2",
+    "sanity-plugin-asset-source-unsplash": "^7.0.25",
+    "styled-components": "^6.5.3"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^6.0.0",
-    "@types/react": "^19.2.17",
-    "eslint": "^9.28",
-    "prettier": "^3.8",
+    "@types/react": "^19.2.18",
+    "eslint": "^9.39",
+    "prettier": "^3.9.6",
     "typescript": "^5.8"
   },
   "prettier": {
