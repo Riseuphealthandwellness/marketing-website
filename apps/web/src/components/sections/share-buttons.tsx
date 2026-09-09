@@ -1,20 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { Check, Copy, Share2 } from 'lucide-react';
 
 type ShareButtonsProps = {
   title: string;
 };
 
+// Browser sharing support is stable for the lifetime of the page.
+const subscribe = () => () => {};
+const getCanShare = () => typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+const getServerCanShare = () => false;
+
 export function ShareButtons({ title }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
-  // Start false to match the server render, then detect after mount to avoid a hydration mismatch.
-  const [canShare, setCanShare] = useState(false);
-
-  useEffect(() => {
-    setCanShare(typeof navigator !== 'undefined' && typeof navigator.share === 'function');
-  }, []);
+  // Match the server during hydration, then read the browser's sharing support.
+  const canShare = useSyncExternalStore(subscribe, getCanShare, getServerCanShare);
 
   async function handleShare() {
     try {

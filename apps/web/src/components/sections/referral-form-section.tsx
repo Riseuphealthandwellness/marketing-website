@@ -194,7 +194,6 @@ export function ReferralFormSection({ settings, siteSettings }: ReferralFormSect
   // formatted text), so re-check validity once the mirrored inputs have actually re-rendered.
   useEffect(() => {
     applyLiveValidation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ssnDigits, contactPhoneDigits, patientPhoneDigits]);
 
   function handlePhoneChange(event: React.ChangeEvent<HTMLInputElement>, setDigits: (value: string) => void) {
