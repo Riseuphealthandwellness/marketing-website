@@ -89,7 +89,7 @@ function IconTile({
     return (
       <article className={cn("overflow-hidden rounded-lg border border-border bg-white shadow-sm", className)}>
         <div className="relative">
-          <div className="aspect-[4/3] overflow-hidden">
+          <div className="relative aspect-[4/3] overflow-hidden">
             <Image
               alt={image.alt ?? title}
               className="h-full w-full object-cover"
@@ -239,6 +239,8 @@ function Hero({ content }: { content: HeroComponent }) {
           priority
           sizes="100vw"
           src={backgroundImage.url}
+          placeholder={backgroundImage.lqip ? "blur" : "empty"}
+          blurDataURL={backgroundImage.lqip}
         />
       ) : null}
       <div
