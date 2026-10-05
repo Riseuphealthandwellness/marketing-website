@@ -22,7 +22,7 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "sanity": "^5.31.2",
-    "sanity-plugin-asset-source-unsplash": "^7.0.25",
+    "sanity-plugin-asset-source-unsplash": "^7.0.26",
     "styled-components": "^6.5.3"
   },
   "devDependencies": {
